@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <!--//永远以最新的IE版本模式来显示网页-->
+  <title>Home</title>
+
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/common.css">
+
+  <script type="text/javascript" src="./js/vue.js"></script>
+  <script type="text/javascript" src="./js/base.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/common.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">HOME</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a>Balance: <span id="balanceid"></span>ETH</a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Contact Us
+              <b class="caret"></b>
+              <%#下三角符号 %>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <h4 style="text-align:center">WU ZhuoMing:</h4>
+              </li>
+              <li><a href="mailto:1155107972@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
+              <li class="divider"></li>
+              <li>
+                <h4 style="text-align:center">CHEN Yu:</h4>
+              </li>
+              <li><a href="mailto:1155107977@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Profile
+              <b class="caret"></b>
+              <%#下三角符号 %>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <p id="currentUser_info"></p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!--------------------------------------------------------------------------------------------------------->
+  <!-- Body Part -->
+  <div style="margin-top:100px;">
+
+  </div>
+  <!-- <div onclick="submit(3)" style="cursor: pointer;">
+    <h1>Store</h1>
+  </div>
+  <div onclick="submit(2)" style="cursor: pointer;">
+    <h1>MyLock</h1>
+  </div>
+  <div onclick="submit(1)" style="cursor: pointer;">
+    <h1>CreateLock</h1>
+  </div> -->
+  <ul id="list-name">
+    <template v-for="item in iteims">
+      <li>{{item.msg}}</li>
+      <li class="divider" role="presentation">---</li>
+    </template>
+  </ul>
+
+  <form method="post">
+    <input id="hidden_state" type="text" name="hidden_state" class="hidden" />
+    <input id="userAccount" type="text" name="userAccount" class="hidden" />
+  </form>
+</body>
+<script type="text/javascript">
+  function submit(type) {
+    $('#hidden_state').val(type);
+    $('#userAccount').val($('#currentUser_info').html());
+    $("form").submit();
+  }
+</script>
+<script type="text/javascript" src="./js/pages/Home.js"><script>
+</html>

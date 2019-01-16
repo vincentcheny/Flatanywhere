@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <!--//永远以最新的IE版本模式来显示网页-->
+  <title>CreateLock</title>
+
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/buttons.css">
+  <link rel="stylesheet" type="text/css" href="./css/common.css">
+  <link rel="stylesheet" type="text/css" href="./css/pages/CreateLock.css">
+
+  <script type="text/javascript" src="./js/base.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/common.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+
+  <script type="text/javascript">
+
+    function dateFormat(time, addDay){
+      time = new Date(time.getTime() + 24*60*60*1000*addDay);
+      //格式化日，如果小于9，前面补0
+      var day = ("0" + time.getDate()).slice(-2);
+      //格式化月，如果小于9，前面补0
+      var month = ("0" + (time.getMonth() + 1)).slice(-2);
+      //拼装完整日期格式
+      var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
+      return date;
+    }
+    function createbtn(){
+      if($("#priceid").val() <= 0)
+      {
+        alert("Price should be a positive number!");
+        return;
+      }
+      var event = Flatanywhere.NewSmartLock({
+        filter:{
+          owner: sessionStorage.userAccount
+        }
+      });
+
+      var price = parseInt($("#priceid").val() * 100); // keep two decimal places 精确到0.01ETH
+      var st = new Date($("#stid").val());
+      st = parseInt(st.getTime()/1000) + 4 * 60 * 60;//默认位于+8时区，+4 hours 统一控制为中午12点整
+      var et = new Date($("#etid").val());
+      et = parseInt(et.getTime()/1000) + 4 * 60 * 60;
+      var now = new Date().getTime();
+
+      Flatanywhere.CreateSmartLock.sendTransaction(price, st, et, now, {from:sessionStorage.userAccount}, function(error, res){
+        if (!error) {
+          event.watch(function(error, result){
+            event.stopWatching();
+            console.log("SLID", result.args.SLID);
+            console.log("result.addr:",result.address, "userAccount:",sessionStorage.userAccount);
+            // 捕捉不到 newDeal
+            var newDeal = Flatanywhere.NewDeal({
+              filter:{
+                SLID: result.args.SLID
+              }
+            });
+            newDeal.watch(function(error,result){
+              if (!error) {
+                newDeal.stopWatching();
+                var msg = result.args.buyerAddr + ' bought your ' + result.args.SLID + ' from ' + result.args.checkInTime;
+                console.log(msg);
+                alert(msg);
+              }
+            });
+            setTimeout(function(){
+              $('#self0').val(sessionStorage.userAccount);
+              $('#SLIDid').val(result.args.SLID);
+              $("form")[0].submit();
+            }, 3000);
+          });
+        }
+        // $('#priceid, #nicknameid, #ucid').val(""); // empty the input
+      });
+    }
+    $(document).ready(function(){
+      $('#userAccount').val($('#currentUser_info').html());
+      $('#stid').val(dateFormat(new Date(), 0));
+      $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
+      $('input[type="radio"]').off("mousedown").on("mousedown",function(){
+        var radioChecked = $(this).prop("checked");
+        $(this).prop('checked', !radioChecked);
+        $(this).prop('value', (!radioChecked?"show":"hide")); // un-checked 状态下 value = undefined
+        return false;
+      }).off("click").on("click", function(){
+        return false;
+        });
+      });
+  </script>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">HOME</a>
+        <!-- <a class="navbar-brand" href="/Store">STORE</a> -->
+        <!-- <a class="navbar-brand" href="/MyLock">MYLOCK</a> -->
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a>Balance: <span id="balanceid"></span>ETH</a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Contact Us
+              <b class="caret"></b>
+              <%#下三角符号 %>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <h4 style="text-align:center">WU ZhuoMing:</h4>
+              </li>
+              <li><a href="mailto:1155107972@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
+              <li class="divider"></li>
+              <li>
+                <h4 style="text-align:center">CHEN Yu:</h4>
+              </li>
+              <li><a href="mailto:1155107977@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Profile
+              <b class="caret"></b>
+              <%#下三角符号 %>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <p id="currentUser_info"></p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!--------------------------------------------------------------------------------------------------------->
+  <!-- Body Part -->
+  <div style="margin-top:100px;">
+  </div>
+  <form class="cd-form floating-labels" name="myform" id="new" accept-charset="UTF-8" method="post">
+    <fieldset>
+      <div class="icon">
+        <label for="st" class="control-label">Available since:</label>
+        <input id="stid" type="date" name="stname" required/>
+      </div>
+      <div class="icon">
+        <label for="et" class="control-label">Available until:</label>
+        <input id="etid" type="date" name="etname" required/>
+      </div>
+      <input type="radio" name="isShown" value="hide">&nbsp;Display in store<br>
+      <div class="icon">
+        <label for="price" class="control-label">Price (ETH/day):</label>
+        <input id="priceid" name="pricename" type="text" placeholder="e.g. 0.5" onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')" maxlength="8" required>
+      </div>
+      <div class="icon">
+        <label for="nickname" class="control-label">Nickname:</label>
+        <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Peter's Home" required>
+      </div>
+      <div class="button-group">
+        <button type="button" onclick="createbtn()" class="button button-primary button-large" style="background-color: #84af9c;">Create</button>
+      </div>
+      <div class="hidden">
+        <input id="SLIDid" name="SLIDname" type="text" required>
+        <input id="self0" type="text" name="ownername" required>
+        <input id="userAccount" type="text" name="userAccount" required>
+      </div>
+    </fieldset>
+  <!-- <form accept-charset="UTF-8" method="post">
+    <input id="stid" type="date" name="stname" required/>
+    <input id="etid" type="date" name="etname" required/>
+    <input id="priceid" name="pricename" type="text" placeholder="Price e.g. 0.5" onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')" maxlength="8" required>
+    <input id="nicknameid" name="nickname" type="text" placeholder="Nickname e.g. Home" required>
+    <input type="radio" name="isShown" value="show" checked>Show in store<br>
+    <input type="radio" name="isShown" value="hide">Hide in store<br>
+    <div class="hidden">
+      <input id="SLIDid" name="SLIDname" type="text" required>
+      <input id="self0" type="text" name="ownername" required>
+      <input id="userAccount" type="text" name="userAccount" required>
+    </div>
+    <button type="button" class="button" id="CreateSmartLock" onclick="createbtn()">Create</button>
+  </form> -->
+  <br><br><br>
+</body>
+</html>

@@ -1,0 +1,35 @@
+body {
+	background-color: #F0F0F0;
+	font-family: "Open Sans", sans-serif;
+}
+
+p {
+	font-family: "微软雅黑";
+	font-weight: bold;
+	font-size: 120%;
+}
+
+/* nabbar */
+.navbar-header a {
+	font-size: 28px !important;
+}
+
+.navbar-nav a {
+	font-size: 22px;
+	color: #222 !important;
+}
+
+.navbar-nav a:hover, .navbar-header a:hover {
+	color: #5E5E5E !important;
+}
+
+.dropdown-menu p {
+	padding: 10px 10px 0px 10px;
+	color: #444;
+	font-size: 18px;
+}
+
+.dropdown-menu a {
+	font-size: 18px;
+}
+
