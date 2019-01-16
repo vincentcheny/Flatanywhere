@@ -6,7 +6,13 @@ A decentralized application connecting with Ethereum and smart locks.
 
 ## Introduction
 
+Flatanywhere is a decentralized application (Dapp) that enables you to control a smart lock via the blockchain network, specifically Ethereum. You can rent or rent out a flat anywhere as long as it is equipped with a smart lock that we embed some public functionalities inside.
+
 ## Characteristic
+
+- Simple and user-friendly GUI
+- Anonymous and safe operations via Ethereum
+- Unsupervised shopping experience
 
 ## Deployment
 
@@ -45,4 +51,3 @@ $ npm start # visit http://localhost:3002
 - 将 Seller 页面解锁功能由发送以太坊 Transaction 改为用二维码显示解锁码
 - 为简化调试过程暂时取消 valid time slot 检查
 - 解决 Remix 转账出现 revert 的问题
-
