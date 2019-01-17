@@ -35,13 +35,22 @@ router.get('/BindLock', function(req, res)
     {
         var client = mysql.connect();
         console.log("req.body.isShown:",req.body.isShown);
+        console.log("req.body.stname:", req.body.stname);
+        if (req.body.stname != "") {
+          req.body.stname += ' 12:00:00';
+          console.log(req.body.stname);
+          req.body.etname += ' 12:00:00';
+        } else {
+          req.body.stname = null;
+          req.body.etname = null;
+        }
         mysql.insert_SmartLock(
             client,
             req.body.SLIDname,
             req.body.ownername,
             req.body.ownername,
-            req.body.stname + ' 12:00:00',
-            req.body.etname + ' 12:00:00',
+            req.body.stname,
+            req.body.etname,
             req.body.pricename,
             0, // state
             req.body.nickname,
@@ -207,6 +216,8 @@ router.get('/MyLock', function(req, res)
             mysql.update_SmartLock_showStore(
                 client,
                 req.body.SLIDname,
+                req.body.stname,
+                req.body.etname,
                 function(error){
                     if (error) {
                         throw error;

@@ -7,7 +7,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
   <!--//永远以最新的IE版本模式来显示网页-->
   <title>Home</title>
-
   <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="./css/common.css">
   <link rel="stylesheet" type="text/css" href="./css/pages/index.css">
@@ -38,10 +37,11 @@
       background-image:url("./images/LivingRoom.jpg");
       padding-bottom: 5%;
     }
-    img {
-      padding: 0;
-      /* margin-left: 20px; */
+    #logo{
+      display: inline;
+      margin-bottom: 40px;
     }
+
   </style>
   <script type="text/javascript" src="./js/vue.js"></script>
   <script type="text/javascript" src="./js/base.js"></script>
@@ -126,11 +126,12 @@
       <div class="col-md-8 col-md-offset-2">
         <div class="fh5co-hero-wrap">
           <div class="fh5co-hero-intro">
-            <h1>Flatanywhere</h1><br>
+            <img id="logo" src="./images/roof.png">&nbsp;&nbsp;&nbsp;<h1 style="display: inline">Flatanywhere</h1><br>
             <p id="list">
               <template v-for="(name, index) in object">
                     <a href=javascript::void(0) v-on:click="jump(index)" class="btn btn-outline btn-lg">{{name.message}}</a>
               </template>
+            </p>
           </div>
         </div>
       </div>

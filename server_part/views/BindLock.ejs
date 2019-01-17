@@ -42,7 +42,6 @@
           owner: sessionStorage.userAccount
         }
       });
-
       var price = parseInt($("#priceid").val() * 100); // keep two decimal places 精确到0.01ETH
       var st = new Date($("#stid").val());
       st = parseInt(st.getTime()/1000) + 4 * 60 * 60;//默认位于+8时区，+4 hours 统一控制为中午12点整
@@ -82,12 +81,24 @@
     }
     $(document).ready(function(){
       $('#userAccount').val($('#currentUser_info').html());
-      $('#stid').val(dateFormat(new Date(), 0));
-      $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
+
       $('input[type="radio"]').off("mousedown").on("mousedown",function(){
         var radioChecked = $(this).prop("checked");
         $(this).prop('checked', !radioChecked);
         $(this).prop('value', (!radioChecked?"show":"hide")); // un-checked 状态下 value = undefined
+        console.log("radioChecked",radioChecked);
+        if (!radioChecked) {
+          // TODO: show hidden
+          $('#availablePeriod').removeClass("hidden");
+          $('#stid').val(dateFormat(new Date(), 0));
+          $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
+        }else {
+          // TODO: hide hidden and clear the value
+          $('#availablePeriod').addClass("hidden");
+          $('#stid').val("");
+          $('#etid').val("");
+        }
+
         return false;
       }).off("click").on("click", function(){
         return false;
@@ -159,14 +170,17 @@
   </div>
   <form class="cd-form floating-labels" name="myform" id="new" accept-charset="UTF-8" method="post">
     <fieldset>
-      <div class="icon">
-        <label for="st" class="control-label">Available since:</label>
-        <input id="stid" type="date" name="stname" required/>
+      <div id="availablePeriod" class="hidden">
+        <div class="icon">
+          <label for="st" class="control-label">Available since:</label>
+          <input id="stid" type="date" name="stname" required/>
+        </div>
+        <div class="icon">
+          <label for="et" class="control-label">Available until:</label>
+          <input id="etid" type="date" name="etname" required/>
+        </div>
       </div>
-      <div class="icon">
-        <label for="et" class="control-label">Available until:</label>
-        <input id="etid" type="date" name="etname" required/>
-      </div>
+
       <input type="radio" name="isShown" value="hide">&nbsp;Display in store<br>
       <div class="icon">
         <label for="price" class="control-label">Price (ETH/day):</label>

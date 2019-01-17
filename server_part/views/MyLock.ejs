@@ -148,24 +148,29 @@
       return date;
     }
     function toggleStore(SLID, showStore, st, et){
-      console.log(typeof(st), st, et);
-      console.log(new Date(st));
       $('#self_store').val(sessionStorage.userAccount);
       $('#SLIDid_store').val(SLID);
-      if (showStore==true) {
-        if (st == 'undefined') {
-          $("#newDate")[0].removeClass("hidden");
+      console.log(showStore);
+      if (showStore==false) {
+        if (st == '') {
+          // $newLine = $('<button type="button" name="button" onclick="newDateSubmit">Submit</button>');
+          // $("#newDate").append($newLine);
+          $("#newDate").removeClass("hidden");
+          $('#stid').val(dateFormat(new Date(), 0));
+          $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
           alert("Please input the available time period and submit it!");
         } else {
           // TODO: validate the st and et, and then submit
-          $('#hsid_store').val(4);
+          $('#stid').val(dateFormat(new Date(st), 0));
+          $('#etid').val(dateFormat(new Date(et), 0));
+          $('#hsid_store').val(3);
           $("form").submit();
         }
       } else {
-        if (st == 'undefined') {
-          alert("Error: Already in store but start_time undefined!");
+        if (st == '') {
+          alert("Error: Try to hide(Already in store) but start_time undefined!");
         } else {
-          $('#hsid_store').val(3);
+          $('#hsid_store').val(4);
           $("form").submit();
         }
       }
@@ -173,8 +178,9 @@
     function toggleDropDown(num){
       $('#dropdown'+num)[0].classList.toggle("show");
     }
-    function newDateSubmit() {
-
+    function newDateSubmit(num) {
+      $('#hsid_store').val(3);
+      $("form").submit();
     }
     function Unlock(num, userAccount){
       $("#qrimg").empty();
@@ -278,7 +284,7 @@
     <div id="newDate" class="hidden">
       <input id="stid" type="date" name="stname" />
       <input id="etid" type="date" name="etname" />
-      <button type="button" name="button" onclick="newDateSubmit">Submit</button>
+      <button type="button" name="button" onclick="newDateSubmit()">Submit</button>
     </div>
     <div class="hidden">
       <input id="SLIDid_store" name="SLIDname" type="text" required>
