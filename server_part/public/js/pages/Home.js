@@ -1,10 +1,17 @@
 new Vue({
-  el: '#list-name',
+  el: '#list',
   data:{
-    item: [
-      {message:'Store'},
+    object: [
+      {message:'Bind'},
       {message:'MyLock'},
-      {message:'CreateLock'}
+      {message:'Store'}
     ]
+  },
+  methods:{
+    jump: function(num){
+      $('#hidden_state').val(num);
+      $('#userAccount').val($('#currentUser_info').html());
+      $("form").submit();
+    }
   }
 })

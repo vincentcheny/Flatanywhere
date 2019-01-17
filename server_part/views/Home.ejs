@@ -10,7 +10,39 @@
 
   <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="./css/common.css">
+  <link rel="stylesheet" type="text/css" href="./css/pages/index.css">
+  <link rel="shortcut icon" href="./favicon.ico"/>
+  <link rel="bookmark" href="./favicon.ico"/>
+  <style media="screen">
+    .btn-lg{
+      font-size: 40px;
+      padding: 30px;
+    }
+    .btn-outline:hover, .btn-outline:active, .btn-outline:focus{
 
+    }
+    .entry{
+      cursor: pointer;
+      font-size: 500%;
+      padding: 0;
+      color: #fff;
+      border-color: #ddd;
+    }
+    .logoRow{
+      overflow: hidden;
+      width: 128px;
+      height: 100px;
+      background-image:url("./images/roof.png");
+    }
+    .bg{
+      background-image:url("./images/LivingRoom.jpg");
+      padding-bottom: 5%;
+    }
+    img {
+      padding: 0;
+      /* margin-left: 20px; */
+    }
+  </style>
   <script type="text/javascript" src="./js/vue.js"></script>
   <script type="text/javascript" src="./js/base.js"></script>
   <script type="text/javascript" src="./js/web3.min.js"></script>
@@ -76,7 +108,7 @@
 
   <!--------------------------------------------------------------------------------------------------------->
   <!-- Body Part -->
-  <div style="margin-top:100px;">
+  <div style="margin-bottom:100px;">
 
   </div>
   <!-- <div onclick="submit(3)" style="cursor: pointer;">
@@ -88,24 +120,45 @@
   <div onclick="submit(1)" style="cursor: pointer;">
     <h1>CreateLock</h1>
   </div> -->
-  <ul id="list-name">
-    <template v-for="item in iteims">
-      <li>{{item.msg}}</li>
-      <li class="divider" role="presentation">---</li>
-    </template>
-  </ul>
+
+  <div id="fh5co-hero">
+    <div class="container">
+      <div class="col-md-8 col-md-offset-2">
+        <div class="fh5co-hero-wrap">
+          <div class="fh5co-hero-intro">
+            <h1>Flatanywhere</h1><br>
+            <p id="list">
+              <template v-for="(name, index) in object">
+                    <a href=javascript::void(0) v-on:click="jump(index)" class="btn btn-outline btn-lg">{{name.message}}</a>
+              </template>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container hidden">
+    <div class="bg">
+      <div class="row">
+        <div class="logoRow col-md-3 col-md-offset-3">
+        </div>
+      </div>
+      <div id="list" class="row">
+        <template v-for="(name, index) in object">
+          <div class=" entry col-md-6 col-md-offset-3" v-on:click="jump(index)">
+            <!-- <p class="entry"> -->
+              {{name.message}}
+            <!-- </p> -->
+          </div>
+        </template>
+      </div>
+    </div>
+  </div>
 
   <form method="post">
     <input id="hidden_state" type="text" name="hidden_state" class="hidden" />
     <input id="userAccount" type="text" name="userAccount" class="hidden" />
   </form>
 </body>
-<script type="text/javascript">
-  function submit(type) {
-    $('#hidden_state').val(type);
-    $('#userAccount').val($('#currentUser_info').html());
-    $("form").submit();
-  }
-</script>
-<script type="text/javascript" src="./js/pages/Home.js"><script>
+<script type="text/javascript" src="./js/pages/Home.js"></script>
 </html>

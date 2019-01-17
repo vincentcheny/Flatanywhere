@@ -15,23 +15,23 @@ router.get('/', function(req, res)
     .post('/', function(req,res)
     {
         req.session.userAccount = req.body.userAccount;
-        if (req.body.hidden_state == 1) {
-            res.redirect('/CreateLock');
-        } else if (req.body.hidden_state == 2) {
+        if (req.body.hidden_state == 0) {
+            res.redirect('/BindLock');
+        } else if (req.body.hidden_state == 1) {
             res.redirect('/MyLock');
-        } else if (req.body.hidden_state == 3) {
+        } else if (req.body.hidden_state == 2) {
             res.redirect('/Store');
         }
     });
 
-router.get('/CreateLock', function(req, res)
+router.get('/BindLock', function(req, res)
 {
     if(req.session.userAccount == undefined){
         return res.redirect('/');
     }
-    res.render('CreateLock', req);
+    res.render('BindLock', req);
 })
-    .post('/CreateLock', function(req,res)
+    .post('/BindLock', function(req,res)
     {
         var client = mysql.connect();
         console.log("req.body.isShown:",req.body.isShown);

@@ -84,14 +84,14 @@
   <script type="text/javascript" src="./js/qrcode2.min.js"></script>
   <script type="text/javascript">
 
-    function addLock(SLID, info, num, icon, func, showStore){
+    function addLock(SLID, info, num, icon, func, showStore, st, et){
       var $newLock;
 
-      if (arguments.length == 6) {
+      if (arguments.length == 8) {
         $newLock = $('<div><img><div><a></a><a></a></div><input><input></div>');
         $newLock.children("div").children("a").eq(1).attr({
           'id': 'addstore'+num,
-          'onclick': "toggleStore('"+SLID+"', "+showStore+")"
+          'onclick': "toggleStore('"+SLID+"', "+showStore+", '"+st+"', '"+et+"')"
         });
         $newLock.children("div").children("a").eq(1).html((showStore==true?"Hide":"Show") + " in store");
       } else {
@@ -147,14 +147,34 @@
       var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
       return date;
     }
-    function toggleStore(SLID, showStore){
+    function toggleStore(SLID, showStore, st, et){
+      console.log(typeof(st), st, et);
+      console.log(new Date(st));
       $('#self_store').val(sessionStorage.userAccount);
       $('#SLIDid_store').val(SLID);
-      $('#hsid_store').val(showStore==true? 4 : 3);
-      $("form").submit();
+      if (showStore==true) {
+        if (st == 'undefined') {
+          $("#newDate")[0].removeClass("hidden");
+          alert("Please input the available time period and submit it!");
+        } else {
+          // TODO: validate the st and et, and then submit
+          $('#hsid_store').val(4);
+          $("form").submit();
+        }
+      } else {
+        if (st == 'undefined') {
+          alert("Error: Already in store but start_time undefined!");
+        } else {
+          $('#hsid_store').val(3);
+          $("form").submit();
+        }
+      }
     }
     function toggleDropDown(num){
       $('#dropdown'+num)[0].classList.toggle("show");
+    }
+    function newDateSubmit() {
+
     }
     function Unlock(num, userAccount){
       $("#qrimg").empty();
@@ -254,23 +274,28 @@
       </div>
       <div class="row" id="qrimg"></div>
   </div>
-  <div class="hidden">
-    <form accept-charset="UTF-8" method="post">
+  <form accept-charset="UTF-8" method="post">
+    <div id="newDate" class="hidden">
+      <input id="stid" type="date" name="stname" />
+      <input id="etid" type="date" name="etname" />
+      <button type="button" name="button" onclick="newDateSubmit">Submit</button>
+    </div>
+    <div class="hidden">
       <input id="SLIDid_store" name="SLIDname" type="text" required>
       <input id="hsid_store" name="hidden_state" type="text" required>
       <input id="userAccount_store" type="text" name="userAccount" required>
-    </form>
-  </div>
+    </div>
+  </form>
 
   <div id="lock-list" class="lock-list row">
     <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
       <%if(res.currentuser == locals.userAccount){%>
         <script type="text/javascript">
-          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_own_available.png", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")', "<%=res.isShown%>");
+          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_own_available.png", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
         </script>
       <%} else {%>
         <script type="text/javascript">
-          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_own_rent.png", 'alert("You have no access to it now!")', "<%=res.isShown%>");
+          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_own_rent.png", 'alert("You have no access to it now!")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
         </script>
       <%}%>
     <%}%>

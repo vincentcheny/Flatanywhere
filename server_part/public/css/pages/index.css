@@ -1,0 +1,212 @@
+﻿/* Home Page Poster and clickable items */
+#fh5co-hero {
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center left;
+	margin-bottom: 10em;
+	float: left;
+	width: 100%;
+	height: 300px;
+	display: table;
+	position: relative;
+	z-index: 20;
+	color: #ffffff;
+}
+
+#fh5co-hero:after {
+	content: '';
+	position: absolute;
+	left: 0px;
+	/* bottom: -40px; */
+	bottom: 0;
+	overflow: visible;
+	width: 100%;
+	height: 650px;
+	z-index: -1;
+	/* -webkit-transform: skewY(-3deg);
+	-moz-transform: skewY(-3deg);
+	-ms-transform: skewY(-3deg);
+	-o-transform: skewY(-3deg);
+	transform: skewY(-3deg); */
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center center;
+	background-image: url(../../images/LivingRoom.jpg);
+}
+
+#fh5co-hero .fh5co-hero-wrap {
+	padding-top: 5em;
+	display: table;
+	height: 600px;
+	width: 100%;
+}
+
+@media screen and (max-width: 768px) {
+	#fh5co-hero .fh5co-hero-wrap {
+		padding-top: 4em;
+	}
+}
+
+#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro {
+	vertical-align: middle;
+	text-align: center;
+	color: #ffffff;
+}
+
+#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro a {
+	color: rgba(255, 255, 255, 0.7);
+	border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro a:hover {
+	color: white;
+	border-bottom: 1px solid white;
+}
+
+#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro > h1 {
+	font-size: 80px;
+	font-weight: normal;
+	color: #ffffff;
+	text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.08);
+	-webkit-user-select:none; /*You cannot select this sentence*/
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+@media screen and (max-width: 768px) {
+	#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro > h1 {
+		font-size: 30px;
+	}
+}
+
+#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro > h2 {
+	letter-spacing: 4px;
+	line-height: 1.5;
+	font-size: 16px;
+	text-transform: uppercase;
+	padding-bottom: 20px;
+	position: relative;
+	color: #ffffff;
+	text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.08);
+	-webkit-user-select:none;
+	-moz-user-select:none;
+	-ms-user-select:none;
+	user-select:none;
+}
+
+@media screen and (max-width: 768px) {
+	#fh5co-hero .fh5co-hero-wrap .fh5co-hero-intro > h2 {
+		letter-spacing: 3px;
+	}
+}
+
+#fh5co-hero .fh5co-hero-wrap .btn {
+	color: #ffffff;
+	text-shadow: 2px 2px 1px rgba(0, 0, 0, 0.08);
+}
+
+body.inner-page #fh5co-hero .fh5co-hero-wrap {
+	padding-top: 15em;
+}
+
+@media screen and (max-width: 768px) {
+	body.inner-page #fh5co-hero .fh5co-hero-wrap {
+		padding-top: 4em;
+	}
+}
+
+@media screen and (max-width: 768px) {
+	#fh5co-hero, .fh5co-hero-wrap {
+		position: relative;
+		padding: 4em 0 3em 0;
+		height: inherit !important;
+	}
+}
+
+
+
+@media screen and (max-width: 768px) {
+	#fh5co-main {
+		margin-top: 0px;
+		padding-top: 20px;
+		/* margin-bottom: 7em; */
+	}
+}
+
+@media screen and (max-width: 768px) {
+	body.inner-page #fh5co-main {
+		margin-top: 0px;
+		padding-top: 20px;
+	}
+}
+
+/* Header */
+
+#fh5co-main {
+	padding-top: 50px;
+	position: relative;
+	float: left;
+	width: 100%;
+	clear: both;
+	margin-bottom: 10em;
+}
+
+#fh5co-header-section {
+	position: absolute;
+	top: 0;
+	width: 100%;
+	-webkit-transition: all 0.5s ease;
+	-moz-transition: all 0.5s ease;
+	-ms-transition: all 0.5s ease;
+	-o-transition: all 0.5s ease;
+	transition: all 0.5s ease;
+	z-index: 103;
+}
+
+#fh5co-menu-wrap {
+	float: right;
+	position: relative;
+	margin-right: -20px;
+}
+
+#fh5co-menu-wrap .sf-menu a {
+	padding: 2em;
+}
+
+.btn {
+	/* border-bottom: none; */
+	text-transform: uppercase;
+	letter-spacing: 2px;
+	margin-bottom: 20px;
+	-webkit-border-radius: 5px;
+	-moz-border-radius: 5px;
+	-ms-border-radius: 5px;
+	-o-border-radius: 5px;
+	border-radius: 5px;
+	padding-left: 20px;
+	padding-right: 20px;
+	margin-right: 10px;
+}
+
+.btn:hover, .btn:focus, .btn:active {
+	box-shadow: none;
+	outline: none !important;
+	border-color: transparent;
+}
+
+.btn-outline {
+	border: 2px solid #eaeaea !important;
+	background: transparent;
+	color: #2a2e37;
+}
+
+.btn-outline:hover, .btn-outline:active, .btn-outline:focus {
+	border: 2px solid #f86942 !important;
+	background: #f86942;
+	color: #ffffff;
+}
+
+.clickable{
+	cursor: pointer;
+}
