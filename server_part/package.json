@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "start": "TIMEOUT /T -1 &&start cmd /k \"cd ../truffle_part &&truffle.cmd network --clean &&truffle.cmd migrate &&TIMEOUT /T -1 &&exit\" &&cd ../server_part && start cmd /k supervisor -w ./public/js/base.js,./routes/index.js,./node_modules/dao/dbConnect.js bin/www && browser-sync start --config bs-config.js"
+    "test": "start cmd /k \"cd ../truffle_part &&truffle.cmd network --clean &&truffle.cmd migrate &&TIMEOUT /T -1 &&exit\" &&cd ../server_part &&TIMEOUT /T -1 &&node ./bin/www",
+    "dev": "start cmd /k \"cd ../truffle_part &&truffle.cmd network --clean &&truffle.cmd migrate &&TIMEOUT /T -1 &&exit\" &&cd ../server_part && start cmd /k supervisor -w ./public/js/base.js,./routes/index.js,./node_modules/dao/dbConnect.js bin/www && browser-sync start --config bs-config.js"
   },
   "dependencies": {
     "body-parser": "^1.18.3",

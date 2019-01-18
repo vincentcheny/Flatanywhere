@@ -22,11 +22,13 @@
   }
 
   .img-group {
+    min-width: 200px;
     text-align: center;
     position: relative;
     display: inline-block;
-    border-style:dashed;
+    /* border-style:dashed; */
     margin: -1px;
+    padding: 0;
   }
 
   .img-tip {
@@ -52,9 +54,9 @@
 
   .dropdown-content {
     display: none;
-    /* position: absolute; */
+    position: absolute;
     background-color: #f9f9f9;
-    min-width: 160px;
+    width: 100%;
     overflow: auto;
     box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
     z-index: 1;
@@ -64,16 +66,31 @@
     color: black;
     padding: 12px 16px;
     text-decoration: none;
-    display: block;
+    display: inline-block;
   }
 
   .dropdown-content a:hover {
     background-color: #f1f1f1;
     cursor: pointer;
   }
-
+  .showInStoreTap{
+    border-left-style:solid;
+    border-color:#ABB2BF;
+  }
   .show {
     display: block;
+  }
+  #intro{
+    float: right;
+    margin-top:-40px;
+    margin-bottom: 10px;
+  }
+  #intro>img{
+    display: inline;
+  }
+  #intro>p{
+    display: inline;
+    margin: 0 20px 0 10px;
   }
 </style>
   <script type="text/javascript" src="./js/base.js"></script>
@@ -91,6 +108,7 @@
         $newLock = $('<div><img><div><a></a><a></a></div><input><input></div>');
         $newLock.children("div").children("a").eq(1).attr({
           'id': 'addstore'+num,
+          'class': 'showInStoreTap',
           'onclick': "toggleStore('"+SLID+"', "+showStore+", '"+st+"', '"+et+"')"
         });
         $newLock.children("div").children("a").eq(1).html((showStore==true?"Hide":"Show") + " in store");
@@ -150,7 +168,6 @@
     function toggleStore(SLID, showStore, st, et){
       $('#self_store').val(sessionStorage.userAccount);
       $('#SLIDid_store').val(SLID);
-      console.log(showStore);
       if (showStore==false) {
         if (st == '') {
           // $newLine = $('<button type="button" name="button" onclick="newDateSubmit">Submit</button>');
@@ -160,7 +177,6 @@
           $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
           alert("Please input the available time period and submit it!");
         } else {
-          // TODO: validate the st and et, and then submit
           $('#stid').val(dateFormat(new Date(st), 0));
           $('#etid').val(dateFormat(new Date(et), 0));
           $('#hsid_store').val(3);
@@ -170,15 +186,41 @@
         if (st == '') {
           alert("Error: Try to hide(Already in store) but start_time undefined!");
         } else {
+          // 不能早于当前最后的一个 deal 的 check_out_time
+          if (sessionStorage.LastCheckOutTime == undefined) {
+            // 没有待完成的 Deal
+            $("#stid").val(NULL);
+            $("#etid").val(NULL);
+          } else {
+            // 有待完成的 Deal
+            $("#stid").val(dateFormat(new Date(), 0));
+            $("#etid").val(dateFormat(new Date(sessionStorage.LastCheckOutTime), 0));
+          }
           $('#hsid_store').val(4);
           $("form").submit();
         }
       }
     }
     function toggleDropDown(num){
+      for (var i = 0; i < sessionStorage.numOfLocks; i++) {
+        if (num == i) {
+          continue;
+        }
+        $('#dropdown'+i)[0].classList.remove("show");
+      }
       $('#dropdown'+num)[0].classList.toggle("show");
+
     }
     function newDateSubmit(num) {
+      var stdate = $('#stid').val();
+      var eddate = $('#etid').val();
+      if (stdate == "" || eddate == "") {
+        alert("Lack of start date or end date!");
+        return ;
+      } else if (new Date(stdate) >= new Date(eddate)) {
+        alert("Start date should be greater than end date!");
+        return ;
+      }
       $('#hsid_store').val(3);
       $("form").submit();
     }
@@ -204,11 +246,20 @@
     }
     $(document).ready(function(){
       $('#userAccount').val($('#currentUser_info').html());
+
+      // sessionStorage.futureDeal = "=futureDeal%>";
   		//关闭二维码
   		$(".close_btn").hover(function () { $(this).css({ color: 'black' }) }, function () { $(this).css({ color: '#999' }) }).on('click', function () {
   			$("#LoginBox").fadeOut("fast");
   			$("#mask").css({ display: 'none' });
   		});
+
+      '<%if (locals.FutureDeal.length > 0) {%>'
+        sessionStorage.LastCheckOutTime = "<%=locals.FutureDeal[0].check_out_time%>";
+      '<%} else {%>'
+        sessionStorage.LastCheckOutTime = undefined;
+      '<%}%>'
+
     });
   </script>
 </head>
@@ -292,16 +343,23 @@
       <input id="userAccount_store" type="text" name="userAccount" required>
     </div>
   </form>
-
+  <div id="intro">
+    <img src="./images/img_intro_spare.png" alt="Spare"><p>Free</p>
+    <img src="./images/img_intro_occupied.png" alt="occupied"><p>Occupied</p>
+    <img src="./images/img_intro_available.png" alt="available"><p>Available</p>
+  </div>
   <div id="lock-list" class="lock-list row">
+    <script type="text/javascript">
+      sessionStorage.numOfLocks = '<%=Ownerlock.length + Userlock.length%>';
+    </script>
     <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
       <%if(res.currentuser == locals.userAccount){%>
         <script type="text/javascript">
-          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_own_available.png", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_spare.svg", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
         </script>
       <%} else {%>
         <script type="text/javascript">
-          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_own_rent.png", 'alert("You have no access to it now!")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+          addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_occupied.svg", 'alert("You have no access to it now!")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
         </script>
       <%}%>
     <%}%>
@@ -313,7 +371,7 @@
     <%}%>
     <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
       <script type="text/javascript">
-        addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "icon_lock_renting.png", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")');
+        addLock("<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_available.svg", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")');
       </script>
     <%}%>
   </div>

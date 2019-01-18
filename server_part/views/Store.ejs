@@ -72,19 +72,7 @@
       // console.log($newLock[0]);
       $("#lock-item"+num).append($newLock);
     }
-    function Unlock(me){
-      console.log(me);
-			Flatanywhere.unlock.sendTransaction(me, {
-          from: sessionStorage.userAccount
-        },
-        function(err, result) {
-          if (!err) {
-            console.log("Unlock successfully!");
-          } else {
-            console.error(err);
-          }
-        });
-    }
+
     function Order(num){
       var result = checkDate(num);
       if (result == undefined) {
@@ -145,6 +133,7 @@
         }
       });
     }
+
     function checkDate(num){
       if ($('#checkinid').val() == "" || $('#checkoutid').val() == "") {
         alert("Lack of check-in date or check-out date!");

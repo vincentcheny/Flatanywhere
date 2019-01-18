@@ -38,7 +38,6 @@ router.get('/BindLock', function(req, res)
         console.log("req.body.stname:", req.body.stname);
         if (req.body.stname != "") {
           req.body.stname += ' 12:00:00';
-          console.log(req.body.stname);
           req.body.etname += ' 12:00:00';
         } else {
           req.body.stname = null;
@@ -135,7 +134,7 @@ router.get('/Store', function(req, res)
                     throw error;
                 }
                 //there should be unlock_code in a specific deal
-                res.redirect('/Store');
+                res.redirect('/MyLock');
             }
         );
     });
@@ -148,8 +147,10 @@ router.get('/MyLock', function(req, res)
     var client = mysql.connect();
     console.log("userAccount in get/MyLock:", req.session.userAccount);
 
-    mysql.select_Info_MyLockView(client, req.session.userAccount, function(result){
+    mysql.select_Info_BoughtLockView(client, req.session.userAccount, function(result){
         var modified = false;
+        // 将时间改成当前或以后,当前的则更新,以后的则传到前端
+        req.session.MyLockInfo = result
         for (var i = result.length - 1; i >= 0; i--) {
             mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, 1, function(error){
                 if(error){
@@ -158,26 +159,6 @@ router.get('/MyLock', function(req, res)
                 modified = true;
             });
         }
-        // for (var i = result.length - 1; i >= 0; i--) {
-        //     if (result[i].isFinished == null || result[i].isFinished == true) {
-        //         // no deals or no future deals
-        //         continue;
-        //     } else {
-        //         var now = new Date();
-        //         var citime = new Date(result[i].check_in_time);
-        //         var cotime = new Date(result[i].check_out_time);
-        //         // check each apartment whether it should be available now
-        //         if (result[i].state == 0 && citime.getTime() <= now.getTime() && now.getTime() <= cotime.getTime()) {
-        //             mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, 1, function(error){
-        //                 if(error){
-        //                     throw error;
-        //                 }
-        //                 console.log("A flat is newly available for you with SLID: "+result[i].SLID);
-        //                 modified = true;
-        //             });
-        //         }
-        //     }
-        // }
         if (modified == true) {
             return res.redirect('/MyLock');
         } else {
@@ -187,10 +168,15 @@ router.get('/MyLock', function(req, res)
                 mysql.select_SmartLock_by_CurrentUser(client, req.session.userAccount, function(result){
                     req.Userlock = result;
                     console.log("Userlock:\n", result);
-                    res.locals = {
-                        userAccount:req.session.userAccount
-                    };
-                    res.render('MyLock',req);
+
+                    mysql.select_Info_MyLockFutureView(client, req.session.userAccount, function(result){
+                        res.locals = {
+                            userAccount:req.session.userAccount,
+                            FutureDeal:result
+                        };
+                        console.log("FutureDeal in index.js:", result);
+                        res.render('MyLock',req);
+                    });
                 });
             });
         }
@@ -213,27 +199,29 @@ router.get('/MyLock', function(req, res)
                     res.redirect('/MyLock');
                 });
         } else if (req.body.hidden_state == 3) {
-            mysql.update_SmartLock_showStore(
-                client,
-                req.body.SLIDname,
-                req.body.stname,
-                req.body.etname,
-                function(error){
-                    if (error) {
-                        throw error;
-                    }
-                    res.redirect('/MyLock');
-                });
+          mysql.update_SmartLock_showStore(
+              client,
+              req.body.SLIDname,
+              req.body.stname,
+              req.body.etname,
+              function(error){
+                  if (error) {
+                      throw error;
+                  }
+                  res.redirect('/MyLock');
+              });
         } else if (req.body.hidden_state == 4) {
-            mysql.update_SmartLock_hideStore(
-                client,
-                req.body.SLIDname,
-                function(error){
-                    if (error) {
-                        throw error;
-                    }
-                    res.redirect('/MyLock');
-                });
+          mysql.update_SmartLock_hideStore(
+              client,
+              req.body.SLIDname,
+              req.body.stname + " 12:00:00",
+              req.body.etname + " 12:00:00",
+              function(error){
+                  if (error) {
+                      throw error;
+                  }
+                  res.redirect('/MyLock');
+              });
         }
     });
 
