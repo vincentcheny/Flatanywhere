@@ -15,10 +15,6 @@
   <style media="screen">
     .btn-lg{
       font-size: 40px;
-      padding: 30px;
-    }
-    .btn-outline:hover, .btn-outline:active, .btn-outline:focus{
-
     }
     .entry{
       cursor: pointer;
@@ -37,11 +33,48 @@
       background-image:url("./images/LivingRoom.jpg");
       padding-bottom: 5%;
     }
-    #logo{
-      display: inline;
-      margin-bottom: 40px;
+    @media screen and (max-width: 768px) {
+    	.fh5co-hero-intro>div>a{
+    		display: block;
+    	}
+    	.fh5co-hero-intro>img {
+    		display: none;
+    	}
+    	.fh5co-hero-intro>h1{
+    		display: block;
+    		font-size: 8rem;
+    	}
     }
 
+    @media screen and (min-width: 768px) {
+    	.fh5co-hero-intro > h1 {
+    		font-size: 8rem;
+    	}
+    	.fh5co-hero-intro>img {
+    		display: inline;
+    		margin-bottom: 4rem;
+    	}
+    	.btn-lg{
+    		padding: 3rem;
+    	}
+    }
+
+    @media screen and (min-width: 1200px) {
+    	.fh5co-hero-intro > h1 {
+    		font-size: 10rem;
+    	}
+    	.fh5co-hero-intro>img {
+    		width: 160px;
+    		height: 160px;
+    	}
+    	.fh5co-hero-intro>div>a{
+    		margin-left: 2vw;
+    		margin-right: 2vw;
+    	}
+    	.btn-lg{
+    		padding: 3rem;
+    	}
+    }
   </style>
   <script type="text/javascript" src="./js/vue.js"></script>
   <script type="text/javascript" src="./js/base.js"></script>
@@ -111,45 +144,34 @@
   <div style="margin-bottom:100px;">
 
   </div>
-  <!-- <div onclick="submit(3)" style="cursor: pointer;">
-    <h1>Store</h1>
-  </div>
-  <div onclick="submit(2)" style="cursor: pointer;">
-    <h1>MyLock</h1>
-  </div>
-  <div onclick="submit(1)" style="cursor: pointer;">
-    <h1>CreateLock</h1>
-  </div> -->
 
   <div id="fh5co-hero">
     <div class="container">
-      <div class="col-md-8 col-md-offset-2">
+      <div class="col-md-10 col-md-offset-1 col-lg-10 col-lg-offset-1">
         <div class="fh5co-hero-wrap">
           <div class="fh5co-hero-intro">
-            <img id="logo" src="./images/roof.png">&nbsp;&nbsp;&nbsp;<h1 style="display: inline">Flatanywhere</h1><br>
-            <p id="list">
+            <img src="./images/roof.png"><h1 style="display: inline">Flatanywhere</h1><br>
+            <div id="list">
               <template v-for="(name, index) in object">
                     <a href=javascript::void(0) v-on:click="jump(index)" class="btn btn-outline btn-lg">{{name.message}}</a>
               </template>
-            </p>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
-
+  <!-- old logo -->
   <div class="container hidden">
     <div class="bg">
-      <div class="row">
+      <!-- <div class="row">
         <div class="logoRow col-md-3 col-md-offset-3">
         </div>
-      </div>
+      </div> -->
       <div id="list" class="row">
         <template v-for="(name, index) in object">
           <div class=" entry col-md-6 col-md-offset-3" v-on:click="jump(index)">
-            <!-- <p class="entry"> -->
               {{name.message}}
-            <!-- </p> -->
           </div>
         </template>
       </div>
