@@ -79,6 +79,12 @@
         // $('#priceid, #nicknameid, #ucid').val(""); // empty the input
       });
     }
+    function pressEnter(e) {
+      if(!e) e = window.event;//火狐中是 window.event
+        if((e.keyCode || e.which) == 13){
+            createbtn();
+        }
+    }
     $(document).ready(function(){
       $('#userAccount').val($('#currentUser_info').html());
 
@@ -188,7 +194,7 @@
       </div>
       <div class="icon">
         <label for="nickname" class="control-label">Nickname:</label>
-        <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Peter's Home" required>
+        <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Peter's Home" onkeydown="pressEnter(event)" required>
       </div>
       <div class="button-group">
         <button type="button" onclick="createbtn()" class="button button-primary button-large" style="background-color: #84af9c;">Create</button>
