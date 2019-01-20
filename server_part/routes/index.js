@@ -36,7 +36,7 @@ router.get('/BindLock', function(req, res)
         var client = mysql.connect();
         console.log("req.body.isShown:",req.body.isShown);
         console.log("req.body.stname:", req.body.stname);
-        if (req.body.stname != "") {
+        if (req.body.stname != "" && req.body.stname != undefined) {
           req.body.stname += ' 12:00:00';
           req.body.etname += ' 12:00:00';
         } else {
