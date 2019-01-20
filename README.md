@@ -1,6 +1,6 @@
 # Flatanywhere
 
-A decentralized application connecting with Ethereum and smart locks.
+A decentralized application interacting with Ethereum and smart locks.
 
 ---
 
@@ -27,10 +27,16 @@ $ truffle compile
 $ truffle migrate # copy the contract address to Flatanywhere/server_part/public/js/base.js to replace the original address
 $ cd Flatanywhere/server_part
 $ npm install
-$ npm start # visit http://localhost:3002
+$ npm start # visit http://localhost:3000
 ```
 
 ## Change Log
+
+### v0.7.0 (2019.01.21)
+
+- "CreateLock"页面重命名为"BindLock"，使用Materialize CSS framework重构，新增是否公开房源选项，新增余额读取检测
+- "MyLock"页面使用新图标，新增类型筛选功能，新增公开房源时长选项，修复撤销房源时的时间更新问题
+- 修复首页在不同屏幕大小下排版错乱的问题
 
 ### v0.6.1 (2019.01.15)
 
