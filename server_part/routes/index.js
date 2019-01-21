@@ -170,12 +170,21 @@ router.get('/MyLock', function(req, res)
                     console.log("Userlock:\n", result);
 
                     mysql.select_Info_MyLockFutureView(client, req.session.userAccount, function(result){
+                        var temp = {};
+                        for (var i = 0; i < result.length; i++) {
+                          temp[result[i].SLID] = result[i].last_check_out_time;
+                        }
+                        console.log("mapping result", temp);
                         res.locals = {
                             userAccount:req.session.userAccount,
-                            FutureDeal:result
+                            LastDeal: temp
                         };
-                        console.log("FutureDeal in index.js:", result);
-                        res.render('MyLock',req);
+                        console.log("FutureDeal", res.locals.LastDeal);
+                        mysql.select_Info_BoughtLockFutureView(client, req.session.userAccount, function(result){
+                          console.log("Futurelock",result);
+                          req.Futurelock = result;
+                          res.render('MyLock',req);
+                        });
                     });
                 });
             });
@@ -184,6 +193,8 @@ router.get('/MyLock', function(req, res)
 })
     .post('/MyLock', function(req,res)
     {
+      console.log("req.body", req.body);
+      // console.log("res", res);
         var client = mysql.connect();
         if (req.body.hidden_state == 2) {
             mysql.update_SmartLock_Refresh(
@@ -208,19 +219,20 @@ router.get('/MyLock', function(req, res)
                   if (error) {
                       throw error;
                   }
-                  res.redirect('/MyLock');
+                  res.send(req.body.SLIDname);
               });
         } else if (req.body.hidden_state == 4) {
           mysql.update_SmartLock_hideStore(
               client,
               req.body.SLIDname,
-              req.body.stname + " 12:00:00",
-              req.body.etname + " 12:00:00",
+              req.body.stname == "" ? "null" : req.body.stname + " 12:00:00",
+              req.body.etname == "" ? "null" : req.body.etname + " 12:00:00",
               function(error){
                   if (error) {
                       throw error;
                   }
-                  res.redirect('/MyLock');
+                  // res.redirect('/MyLock');
+                  res.send("Discontinue Successfully");
               });
         }
     });

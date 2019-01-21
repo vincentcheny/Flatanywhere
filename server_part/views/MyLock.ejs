@@ -8,180 +8,156 @@
   <!--//永远以最新的IE版本模式来显示网页-->
   <title>MyLock</title>
 
-  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="./css/buttons.css">
-  <link rel="stylesheet" type="text/css" href="./css/common.css">
   <link rel="stylesheet" type="text/css" href="./css/qrcodeDialog.css">
   <style media="screen">
-  .info {
-    background: transparent;
-    border-style: none;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    outline: none;
-  }
+    body{
+      font-family: "微软雅黑";
+      background-color: #fff;
+    }
 
-  .img-group {
-    min-width: 200px;
-    text-align: center;
-    position: relative;
-    display: inline-block;
-    /* border-style:dashed; */
-    margin: -1px;
-    padding: 0;
-  }
+  </style>
+  <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style media="screen">
+    .card{
+      border-radius: 20px;
+    }
+    .dropdown-item {
+      color: black;
+      padding: 10px;
+      text-decoration: none;
+      display: inline-block;
+      width: 100%;
+      border-radius: 5px;
+    }
+    .dropdown-item:hover {
+      background-color: white;
+      cursor: pointer;
+    }
+    .show {
+      display: block;
+    }
+    #filter{
+      float: right;
+      margin-top:-40px;
+      margin-bottom: 10px;
+    }
+    #filter>span>img{
+      display: inline;
+      margin-right: 10px;
+    }
+    #filter>span>p{
+      display: inline;
 
-  .img-tip {
-    position: absolute;
-    top: 0;
-    background: #555;
-    color: #fff;
-    opacity: 0.6;
-    display: none;
-    border-radius: 5px;
-  }
-
-  .img-group:hover .img-tip {
-    display: block;
-    width: 60%;
-    margin-left: 20%;
-    text-align: center;
-  }
-
-  .dropdown {
-    position: relative;
-    display: inline-block;
-  }
-
-  .dropdown-content {
-    display: none;
-    position: absolute;
-    background-color: #f9f9f9;
-    width: 60%;
-    overflow: auto;
-    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
-    z-index: 1;
-    margin-left: 20%;
-    border-radius: 10px;
-    margin-top: -5px;
-    border: 1px dotted rgba(0,0,0,0.5);
-  }
-
-  .dropdown-content a {
-    color: black;
-    padding: 10px;
-    text-decoration: none;
-    display: inline-block;
-    width: 100%;
-    background-color: #eee;
-  }
-
-  .dropdown-content a:hover {
-    background-color: white;
-    cursor: pointer;
-  }
-  .showInStoreTap{
-    border-top-style:solid;
-    border-color:#ABB2BF;
-  }
-  .show {
-    display: block;
-  }
-  #intro{
-    float: right;
-    margin-top:-40px;
-    margin-bottom: 10px;
-  }
-  #intro>span>img{
-    display: inline;
-    margin-right: 10px;
-  }
-  #intro>span>p{
-    display: inline;
-
-  }
-  #intro>span{
-    margin-right: 10px;
-    padding: 8px;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  #intro>span:hover{
-    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
-  }
-  #intro>span>img{
-    border-radius: 10px;
-    border-style: dotted;
-  }
-</style>
-  <script type="text/javascript" src="./js/base.js"></script>
-  <script type="text/javascript" src="./js/web3.min.js"></script>
+    }
+    #filter>span{
+      margin-right: 10px;
+      padding: 8px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    #filter>span:hover{
+      box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
+    }
+    #filter>span>img{
+      border-radius: 10px;
+      border-style: dotted;
+    }
+    .tabs>li>a:hover{
+      cursor: pointer;
+      color: dimgrey !important;
+    }
+    .tabs>li:nth-child(1)>a:hover{
+      background-color: white;
+    }
+    .tabs>li:nth-child(2)>a:hover{
+      background-color: rgb(123, 230, 182);
+    }
+    .tabs>li:nth-child(3)>a:hover{
+      background-color: rgb(231, 240, 117);
+    }
+    .tabs>li:nth-child(4)>a:hover{
+      background-color: #90caf9;
+      color: white !important;
+    }
+    .tabs>li:nth-child(5)>a:hover{
+      background-color: rgb(191, 191, 191);
+      color: white !important;
+    }
+  </style>
   <script type="text/javascript" src="./js/jquery.min.js"></script>
-  <script type="text/javascript" src="./js/common.js"></script>
-  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
+  <script type="text/javascript" src="./js/base.js"></script>
+  <script type="text/javascript" src="./js/materialize.min.js"></script>
   <script type="text/javascript" src="./js/qrcode2.min.js"></script>
   <script type="text/javascript">
+    function addLock(type, nickname, num, SLID, isShown, st, et) {
+      var resource = {
+        'icon': ['images/lock_unleased.svg', 'images/lock_rented.svg', 'images/lock_renting.svg', 'images/lock_future.svg'],
+        'classType': ['unleasedDiv', 'rentedDiv', 'rentingDiv', 'futureDiv'],
+        'func': ['Unlock("'+SLID+'")', 'alert("You have no access to it now!")', 'Unlock("'+SLID+'")'],
+      }
 
-    function addLock(type, SLID, info, num, icon, func, showStore, st, et){
-      var $newLock;
+      var $card_image = $('<div><img><span></span></div>');
+      $card_image.filter("div").eq(0).attr({
+        'class': 'card-image waves-effect waves-block waves-light'
+      });
+      $card_image.children("img").attr({
+        'class': 'activator',
+        'src': resource.icon[type],
+      });
 
-      if (arguments.length == 9) {
-        $newLock = $('<div><img><div><a></a><a></a></div><input><input></div>');
-        $newLock.children("div").children("a").eq(1).attr({
-          'id': 'addstore'+num,
-          'class': 'showInStoreTap',
-          'onclick': "toggleStore('"+SLID+"', "+showStore+", '"+st+"', '"+et+"')"
+      var $card_content = $('<div><span></span></div>');
+      $card_content.filter("div").eq(0).attr({
+        'class': 'card-content'
+      });
+      $card_content.find("span").eq(0).attr({
+        'class': 'card-title activator grey-text text-darken-4 truncate',
+      });
+      $card_content.find("span").html(nickname);
+
+      var $card_reveal;
+      if (type == 0 || type == 1) {
+        // own
+        $card_reveal = $('<div><span></span><p></p><a></a><a></a></div>');
+        $card_reveal.find("a").eq(0).attr({
+          'onclick': "toggleStore('"+SLID+"', "+isShown+", '"+st+"', '"+et+"',"+num+")",
+          'class': 'dropdown-item hoverable ',
+          'style': 'text-align:center'
         });
-        $newLock.children("div").children("a").eq(1).html((showStore==true?"Hide from":"Show in") + " Store");
-      } else {
-        $newLock = $('<div><img><div><a></a></div><input><input></div>');
-      }
-      if (type == 0) {
-        classType = "freeDiv";
-      } else if (type == 1) {
-        classType = "occupiedDiv";
+        $card_reveal.find("a").eq(0).html(isShown==true?"Discontinue":"Launch");
       } else if (type == 2) {
-        classType = "availableDiv";
+        // renting
+        $card_reveal = $('<div><span></span><p></p><a></a></div>');
+      } else if (type == 3) {
+        // booked
+        $card_reveal = $('<div><span></span><p></p></div>');
       }
-      // image + info(nickname) + SLID
-      $newLock.filter("div").eq(0).attr({
-        'id': 'div'+num,
-        'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-2 img-group ' + classType
+      if (type == 0 || type == 2) {
+        // able to control
+        $card_reveal.find("a").last().attr({
+          'onclick': 'Unlock("'+SLID+'")',
+          'class': 'dropdown-item hoverable ',
+          'style': 'text-align:center'
+        });
+        $card_reveal.find("a").last().html("Unlock");
+      }
+      $card_reveal.filter("div").eq(0).attr({
+        'class': 'card-reveal ',
+        'id': 'reveal'+num
       });
+      $card_reveal.find("span").eq(0).attr({
+        'class': 'card-title activator grey-text text-darken-4',
+      });
+      $card_reveal.find("span").eq(0).html(nickname + "<i class='material-icons right' id='close"+num+"'>close</i>");
+      $card_reveal.find("p").eq(0).html("Placeholder");
 
-      $newLock.children("img").attr({
-        'id': 'SLIDid'+num,
-        'src': './images/' + icon,
-        'alt': 'Lock',
-        'onclick': 'toggleDropDown('+num+')',
-        'style': "cursor: pointer;",
-        'width': '128',
-        'height': '128',
-        'align': 'center'
+      var $newLockCard = $('<div><div class="card hoverable"></div></div>');
+      $newLockCard.filter("div").eq(0).attr({
+        'class': 'col s6 m4 l3 lock-item ' + resource.classType[type]
       });
-      $newLock.children("div").attr({
-        'id': 'dropdown'+num,
-        'class': 'dropdown-content'
-      });
-      $newLock.children("div").children("a").eq(0).attr({
-        'id': 'showqr'+num,
-        'onclick': func
-      });
-      $newLock.children("div").children("a").eq(0).html("Show QR-code");
-
-      $newLock.children("input").eq(0).attr({
-        'id': 'infoid'+num,
-        'class': 'info img-tip',
-        'value': info,
-        'readonly': 'readonly'
-      });
-      $newLock.children("input").eq(1).attr({
-        'id': 'SLIDid'+num,
-        'value': SLID,
-        'class': 'hidden'
-      });
-      // console.log($newLock[0]);
-      $("#lock-list").append($newLock);
+      $newLockCard.children("div").append($card_image).append($card_content).append($card_reveal);
+      $("#lock-list").append($newLockCard);
     }
     function dateFormat(time, addDay){
       time = new Date(time.getTime() + 24*60*60*1000*addDay);
@@ -193,17 +169,19 @@
       var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
       return date;
     }
-    function toggleStore(SLID, showStore, st, et){
+    function toggleStore(SLID, showStore, st, et, num){
       $('#self_store').val(sessionStorage.userAccount);
       $('#SLIDid_store').val(SLID);
       if (showStore==false) {
         if (st == '') {
           // $newLine = $('<button type="button" name="button" onclick="newDateSubmit">Submit</button>');
           // $("#newDate").append($newLine);
-          $("#newDate").removeClass("hidden");
-          $('#stid').val(dateFormat(new Date(), 0));
-          $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
-          alert("Please input the available time period and submit it!");
+          $("#newDate").removeClass("hide");
+          $("#submitRow button[name='bind']").attr({
+            'onclick': 'newDateSubmit('+num+')'
+          });
+          // $('#stid').val(dateFormat(new Date(), 0));
+          // $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
         } else {
           $('#stid').val(dateFormat(new Date(st), 0));
           $('#etid').val(dateFormat(new Date(et), 0));
@@ -215,19 +193,48 @@
           alert("Error: Try to hide(Already in store) but start_time undefined!");
         } else {
           // 不能早于当前最后的一个 deal 的 check_out_time
-          if (sessionStorage.LastCheckOutTime == undefined) {
+          if (JSON.parse(sessionStorage.getItem(SLID)) == null) {
             // 没有待完成的 Deal
-            $("#stid").val(NULL);
-            $("#etid").val(NULL);
+            $("#stid").val("");
+            $("#etid").val("");
           } else {
             // 有待完成的 Deal
-            $("#stid").val(dateFormat(new Date(sessionStorage.LastCheckInTime), 0));
-            $("#etid").val(dateFormat(new Date(sessionStorage.LastCheckOutTime), 0));
+            $("#stid").val(dateFormat(new Date(), 0));
+            $("#etid").val(dateFormat(new Date(JSON.parse(sessionStorage.getItem(SLID))), 0));
           }
           $('#hsid_store').val(4);
-          $("form").submit();
+          // $("form").submit();
+          $.ajax({
+           //几个参数需要注意一下
+               type: "POST",//方法类型
+               dataType: "text",//预期服务器返回的数据类型
+               // url: "/users/login" ,//url
+               async: false,
+               data: $('form').serialize(),
+               success: function (result) {
+                   console.log(result);//打印服务端返回的数据(调试用)
+                   if (result.resultCode == 200) {
+                       alert("SUCCESS");
+                   };
+
+                   Materialize.toast('Discontinue Successfully!', 4000);
+                   $("#reveal"+num).find("a").eq(0).attr({
+                     'onclick': "toggleStore('"+SLID+"', "+false+", '"+st+"', '"+et+"',"+num+")",
+                   });
+                   $("#reveal"+num).find("a").eq(0).html("Launch");
+                   $("#close"+num).click();
+               },
+               error : function() {
+                   alert("异常！");
+               }
+           });
         }
       }
+    }
+    function cencelNewDateSubmit() {
+      $("#stid").val("");
+      $("#etid").val("");
+      $("#newDate").addClass("hide");
     }
     function toggleDropDown(num){
       for (var i = 0; i < sessionStorage.numOfLocks; i++) {
@@ -240,29 +247,57 @@
 
     }
     function newDateSubmit(num) {
-      var stdate = $('#stid').val();
-      var eddate = $('#etid').val();
-      if (stdate == "" || eddate == "") {
+      var stdate = new Date($('#stid').val());
+      var eddate = new Date($('#etid').val());
+      if (stdate == "Invalid Date" || eddate == "Invalid Date") {
         alert("Lack of start date or end date!");
         return ;
-      } else if (new Date(stdate) >= new Date(eddate)) {
+      } else if (stdate >= eddate) {
         alert("Start date should be greater than end date!");
         return ;
       }
+      $('#stid').val(dateFormat(stdate, 0));
+      $('#etid').val(dateFormat(eddate, 0));
       $('#hsid_store').val(3);
-      $("form").submit();
+      $.ajax({
+       //几个参数需要注意一下
+           type: "POST",//方法类型
+           dataType: "text",//预期服务器返回的数据类型
+           // url: "/users/login" ,//url
+           async: false,
+           data: $('form').serialize(),
+           success: function (result) {
+               console.log(result);//打印服务端返回的数据(调试用)
+               if (result.resultCode == 200) {
+                   alert("SUCCESS");
+               };
+
+               Materialize.toast('Launch Successfully!', 4000);
+               $("#reveal"+num).find("a").eq(0).attr({
+                 'onclick': "toggleStore('"+result+"', "+true+", '"+stdate+"', '"+eddate+"',"+num+")",
+               });
+               $("#reveal"+num).find("a").eq(0).html("Discontinue");
+               $("#newDate").addClass("hide");
+               $("#close"+num).click();
+           },
+           error : function() {
+               alert("异常！");
+           }
+       });
+      // $("form").submit();
     }
-    function Unlock(num, userAccount){
+    function Unlock(SLID){
       $("#qrimg").empty();
       $("body").append("<div id='mask'></div>");
       $("#mask").addClass("mask").fadeIn("slow");
       $("#LoginBox").fadeIn("slow");
-      var qrcode = new QRCode2.default($('#qrimg')[0], {
+      var qrcode = new QRCode2.default($("#qrimg")[0], {
             width: 200,
             height: 200
           });
       qrcode.clear();
-      qrcode.makeCode(userAccount);
+      qrcode.makeCode(SLID);
+      $("html,body").animate({scrollTop:0},500);
       return ;
       Flatanywhere.unlock.sendTransaction(sessionStorage.userAccount, {from: sessionStorage.userAccount}, function(err, result){
         if (!err) {
@@ -273,33 +308,45 @@
       });
     }
     function showType(className){
-      $(".img-group").not(className).fadeOut(500);
+      $(".lock-item").not(className).fadeOut(500);
       setTimeout(function(){
-        $(".img-group").not(className).addClass("hidden");
-        $(".img-group"+className).fadeIn(500);
-        $(".img-group"+className).removeClass("hidden");
+        $(".lock-item").not(className).addClass("hide");
+        $(".lock-item"+className).fadeIn(500);
+        $(".lock-item"+className).removeClass("hide");
       }, 500);
     }
     function selectType(num){
       if (num == 0) {
-        showType(".freeDiv");
+        showType(".unleasedDiv");
       } else if (num == 1) {
-        showType(".occupiedDiv");
+        showType(".rentedDiv");
       } else if (num == 2) {
-        showType(".availableDiv");
+        showType(".rentingDiv");
+      } else if (num == 3) {
+        showType(".futureDiv");
       } else {
         // show ALL
-        $(".img-group").fadeOut(500);
+        $(".lock-item").fadeOut(500);
         setTimeout(function(){
-          $(".img-group").removeClass("hidden");
-          $(".img-group").fadeIn(500);
+          $(".lock-item").removeClass("hide");
+          $(".lock-item").fadeIn(500);
         }, 500);
       }
     }
     $(document).ready(function(){
+      setTimeout(function(){
+        if ($("#balanceid").html() == "") {
+          // alert("Cannot detect the account balance! Go back to home page now.");
+          // location.reload(true);
+        }
+      }, 3000);
       $('#userAccount').val($('#currentUser_info').html());
-
-      // sessionStorage.futureDeal = "=futureDeal%>";
+      $(".dropdown-button").dropdown();
+      $(".button-collapse").sideNav();
+      $('.datepicker').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 4 // Creates a dropdown of 15 years to control year
+      });
   		//关闭二维码
   		$(".close_btn").hover(function () {
         $(this).css({ color: 'black' })
@@ -309,13 +356,8 @@
   			$("#LoginBox").fadeOut("fast");
   			$("#mask").css({ display: 'none' });
   		});
-
-      '<%if (locals.FutureDeal.length > 0) {%>'
-        sessionStorage.LastCheckOutTime = "<%=locals.FutureDeal[0].check_out_time%>";
-        sessionStorage.LastCheckInTime = "<%=locals.FutureDeal[0].check_in_time%>";
-      '<%} else {%>'
-        sessionStorage.LastCheckOutTime = undefined;
-        sessionStorage.LastCheckInTime = undefined;
+      '<%for (var key in LastDeal) {%>'
+        sessionStorage.setItem('<%=key%>', JSON.stringify('<%=LastDeal[key]%>'));
       '<%}%>'
     });
   </script>
@@ -323,63 +365,38 @@
 
 <body>
 
+  <!-- Dropdown Structure -->
+  <ul id="dropdown-contact" class="dropdown-content">
+    <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+    <li class="divider"></li>
+    <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+  </ul>
+  <ul id="dropdown-profile" class="dropdown-content">
+    <li><a href="#!" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+  </ul>
   <!-- Navbar -->
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">HOME</a>
-        <a class="navbar-brand" href="/Store">Store</a>
-      </div>
-
-      <div class="collapse navbar-collapse" id="navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a>Balance: <span id="balanceid"></span>ETH</a>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Contact Us
-              <b class="caret"></b>
-              <%#下三角符号 %>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <h4 style="text-align:center">WU ZhuoMing:</h4>
-              </li>
-              <li><a href="mailto:1155107972@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
-              <li class="divider"></li>
-              <li>
-                <h4 style="text-align:center">CHEN Yu:</h4>
-              </li>
-              <li><a href="mailto:1155107977@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Profile
-              <b class="caret"></b>
-              <%#下三角符号 %>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <p id="currentUser_info"></p>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
+      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li><a>Balance: <span id="balanceid"></span>ETH</a></li>
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a class="dropdown-button" href="#!" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="/BindLock">BindLock</a></li>
+        <li><a href="/Store">Store</a></li>
+        <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+        <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+        <li><a href="" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+      </ul>
     </div>
   </nav>
-
+  <p id="currentUser_info" class="hide"></p>
   <!--------------------------------------------------------------------------------------------------------->
   <!-- Body Part -->
-  <div style="margin-top:100px;">
+  <div style="margin-top:30px;">
   </div>
 
   <div id="LoginBox">
@@ -389,49 +406,89 @@
       <div class="row" id="qrimg"></div>
   </div>
   <form accept-charset="UTF-8" method="post">
-    <div id="newDate" class="hidden">
+    <!-- <div id="newDate" class="hide">
       <input id="stid" type="date" name="stname" />
       <input id="etid" type="date" name="etname" />
       <button type="button" name="button" onclick="newDateSubmit()">Submit</button>
+    </div> -->
+    <div class="hide container" id="newDate">
+      <div class="row">
+        <div class="card-panel center-align ">
+          <span class="blue-text text-darken-2">Please assign a valid time period for the launched lock.</span>
+        </div>
+      </div>
+      <div class="row">
+        <div class="input-field col s12 m6">
+          <i class="material-icons prefix">date_range</i>
+          <input id="stid" type="date" name="stname" class="datepicker">
+          <label for="stid">Available Since</label>
+        </div>
+        <div class="input-field col s12 m6">
+          <i class="material-icons prefix">date_range</i>
+          <label for="etid">Available Until</label>
+          <input id="etid" type="date" name="etname" class="datepicker">
+        </div>
+      </div>
+      <div class="row" id="submitRow">
+        <div class="col s3 offset-s6">
+          <button class="btn-large waves-effect waves-light right red" type="button" onclick="cencelNewDateSubmit()" name="cancel">CANCEL
+            <i class="material-icons right">cancel</i>
+          </button>
+        </div>
+        <div class="col s3">
+          <button class="btn-large waves-effect waves-light right" type="button" onclick="newDateSubmit()" name="bind">&nbsp;BIND&nbsp;
+            <i class="material-icons right">link</i>
+          </button>
+        </div>
+
+      </div>
     </div>
-    <div class="hidden">
+
+    <div class="hide">
       <input id="SLIDid_store" name="SLIDname" type="text" required>
       <input id="hsid_store" name="hidden_state" type="text" required>
       <input id="userAccount_store" type="text" name="userAccount" required>
     </div>
   </form>
-  <div id="intro">
-    <span onclick="selectType()"> <img src="./images/img_intro_all.png" alt="All" width="20px" height="20px"><p>All</p></span>
-    <span onclick="selectType(0)"> <img src="./images/img_intro_spare.png" alt="Spare"><p>Free</p> </span>
-    <span onclick="selectType(1)"> <img src="http://via.placeholder.com/20.png/E7F075/E7F075" alt="occupied"><p>Occupied</p> </span>
-    <span onclick="selectType(2)"> <img src="./images/img_intro_available.png" alt="available"><p>Available</p> </span>
-  </div>
-  <div id="lock-list" class="lock-list row">
-    <script type="text/javascript">
-      sessionStorage.numOfLocks = '<%=Ownerlock.length + Userlock.length%>';
-    </script>
-    <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
-      <%if(res.currentuser == locals.userAccount){%>
+
+  <script type="text/javascript">
+    sessionStorage.numOfLocks = '<%=Ownerlock.length + Userlock.length%>';
+  </script>
+  <div class="container">
+    <div class="row">
+      <div class="col s12 m12 l12">
+        <ul class="tabs">
+          <li class="tab col s2 offset-s1 hoverable"><a class="active" onclick="selectType()">All</a></li>
+          <li class="tab col s2 hoverable"><a onclick="selectType(0)">Unleased</a></li>
+          <li class="tab col s2 hoverable"><a onclick="selectType(1)">Being Rented</a></li>
+          <li class="tab col s2 hoverable"><a onclick="selectType(2)">Renting</a></li>
+          <li class="tab col s2 hoverable"><a onclick="selectType(3)">Booked</a></li>
+        </ul>
+      </div>
+    </div>
+    <div id="lock-list" class="row" >
+      <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
+        <%if(res.currentuser == locals.userAccount){%>
+          <script type="text/javascript">
+            addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+          </script>
+        <%} else {%>
+          <script type="text/javascript">
+            addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+          </script>
+        <%}%>
+      <%}%>
+      <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
         <script type="text/javascript">
-          addLock(0, "<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_spare.svg", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
-        </script>
-      <%} else {%>
-        <script type="text/javascript">
-          addLock(1, "<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_occupied.svg", 'alert("You have no access to it now!")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+          addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.SLID%>");
         </script>
       <%}%>
-    <%}%>
-    <% if(Userlock.length > 0) {%>
-      <script type="text/javascript">
-        var $newLine = ("<br><h1>The locks you rent</h1>");
-        // $("#lock-list").append($newLine);
-      </script>
-    <%}%>
-    <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
-      <script type="text/javascript">
-        addLock(2, "<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_available.svg", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")');
-      </script>
-    <%}%>
+      <% for(var i = Ownerlock.length + Userlock.length; i < Ownerlock.length + Userlock.length + Futurelock.length; ++i){ var res = Futurelock[i - Ownerlock.length - Userlock.length]; %>
+        <script type="text/javascript">
+          addLock(3, "<%=res.nickname%>", <%=i%>);
+        </script>
+      <%}%>
+    </div>
   </div>
   <br><br><br>
 </body>

@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+  <!--//永远以最新的IE版本模式来显示网页-->
+  <title>MyLock</title>
+
+  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="./css/buttons.css">
+  <link rel="stylesheet" type="text/css" href="./css/common.css">
+  <link rel="stylesheet" type="text/css" href="./css/qrcodeDialog.css">
+  <style media="screen">
+  .info {
+    background: transparent;
+    border-style: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    outline: none;
+  }
+
+  .img-group {
+    min-width: 200px;
+    text-align: center;
+    position: relative;
+    display: inline-block;
+    /* border-style:dashed; */
+    margin: -1px;
+    padding: 0;
+  }
+
+  .img-tip {
+    position: absolute;
+    top: 0;
+    background: #555;
+    color: #fff;
+    opacity: 0.6;
+    display: none;
+    border-radius: 5px;
+  }
+
+  .img-group:hover .img-tip {
+    display: block;
+    width: 60%;
+    margin-left: 20%;
+    text-align: center;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: #f9f9f9;
+    width: 60%;
+    overflow: auto;
+    box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+    z-index: 1;
+    margin-left: 20%;
+    border-radius: 10px;
+    margin-top: -5px;
+    border: 1px dotted rgba(0,0,0,0.5);
+  }
+
+  .dropdown-content a {
+    color: black;
+    padding: 10px;
+    text-decoration: none;
+    display: inline-block;
+    width: 100%;
+    background-color: #eee;
+  }
+
+  .dropdown-content a:hover {
+    background-color: white;
+    cursor: pointer;
+  }
+  .showInStoreTap{
+    border-top-style:solid;
+    border-color:#ABB2BF;
+  }
+  .show {
+    display: block;
+  }
+  #intro{
+    float: right;
+    margin-top:-40px;
+    margin-bottom: 10px;
+  }
+  #intro>span>img{
+    display: inline;
+    margin-right: 10px;
+  }
+  #intro>span>p{
+    display: inline;
+
+  }
+  #intro>span{
+    margin-right: 10px;
+    padding: 8px;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  #intro>span:hover{
+    box-shadow: 2px 2px 2px 2px rgba(0, 0, 0, 0.2);
+  }
+  #intro>span>img{
+    border-radius: 10px;
+    border-style: dotted;
+  }
+</style>
+  <script type="text/javascript" src="./js/base.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/common.js"></script>
+  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/qrcode2.min.js"></script>
+  <script type="text/javascript">
+
+    function addLock(type, SLID, info, num, icon, func, showStore, st, et){
+      var $newLock;
+
+      if (arguments.length == 9) {
+        $newLock = $('<div><img><div><a></a><a></a></div><input><input></div>');
+        $newLock.children("div").children("a").eq(1).attr({
+          'id': 'addstore'+num,
+          'class': 'showInStoreTap',
+          'onclick': "toggleStore('"+SLID+"', "+showStore+", '"+st+"', '"+et+"')"
+        });
+        $newLock.children("div").children("a").eq(1).html((showStore==true?"Hide from":"Show in") + " Store");
+      } else {
+        $newLock = $('<div><img><div><a></a></div><input><input></div>');
+      }
+      if (type == 0) {
+        classType = "freeDiv";
+      } else if (type == 1) {
+        classType = "occupiedDiv";
+      } else if (type == 2) {
+        classType = "availableDiv";
+      }
+      // image + info(nickname) + SLID
+      $newLock.filter("div").eq(0).attr({
+        'id': 'div'+num,
+        'class': 'col-xs-6 col-sm-4 col-md-3 col-lg-2 img-group ' + classType
+      });
+
+      $newLock.children("img").attr({
+        'id': 'SLIDid'+num,
+        'src': './images/' + icon,
+        'alt': 'Lock',
+        'onclick': 'toggleDropDown('+num+')',
+        'style': "cursor: pointer;",
+        'width': '128',
+        'height': '128',
+        'align': 'center'
+      });
+      $newLock.children("div").attr({
+        'id': 'dropdown'+num,
+        'class': 'dropdown-content'
+      });
+      $newLock.children("div").children("a").eq(0).attr({
+        'id': 'showqr'+num,
+        'onclick': func
+      });
+      $newLock.children("div").children("a").eq(0).html("Show QR-code");
+
+      $newLock.children("input").eq(0).attr({
+        'id': 'infoid'+num,
+        'class': 'info img-tip',
+        'value': info,
+        'readonly': 'readonly'
+      });
+      $newLock.children("input").eq(1).attr({
+        'id': 'SLIDid'+num,
+        'value': SLID,
+        'class': 'hidden'
+      });
+      // console.log($newLock[0]);
+      $("#lock-list").append($newLock);
+    }
+    function dateFormat(time, addDay){
+      time = new Date(time.getTime() + 24*60*60*1000*addDay);
+      //格式化日，如果小于9，前面补0
+      var day = ("0" + time.getDate()).slice(-2);
+      //格式化月，如果小于9，前面补0
+      var month = ("0" + (time.getMonth() + 1)).slice(-2);
+      //拼装完整日期格式
+      var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
+      return date;
+    }
+    function toggleStore(SLID, showStore, st, et){
+      $('#self_store').val(sessionStorage.userAccount);
+      $('#SLIDid_store').val(SLID);
+      if (showStore==false) {
+        if (st == '') {
+          // $newLine = $('<button type="button" name="button" onclick="newDateSubmit">Submit</button>');
+          // $("#newDate").append($newLine);
+          $("#newDate").removeClass("hidden");
+          $('#stid').val(dateFormat(new Date(), 0));
+          $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
+        } else {
+          $('#stid').val(dateFormat(new Date(st), 0));
+          $('#etid').val(dateFormat(new Date(et), 0));
+          $('#hsid_store').val(3);
+          $("form").submit();
+        }
+      } else {
+        if (st == '') {
+          alert("Error: Try to hide(Already in store) but start_time undefined!");
+        } else {
+          // 不能早于当前最后的一个 deal 的 check_out_time
+          if (sessionStorage.LastCheckOutTime == undefined) {
+            // 没有待完成的 Deal
+            $("#stid").val(NULL);
+            $("#etid").val(NULL);
+          } else {
+            // 有待完成的 Deal
+            $("#stid").val(dateFormat(new Date(sessionStorage.LastCheckInTime), 0));
+            $("#etid").val(dateFormat(new Date(sessionStorage.LastCheckOutTime), 0));
+          }
+          $('#hsid_store').val(4);
+          $("form").submit();
+        }
+      }
+    }
+    function toggleDropDown(num){
+      for (var i = 0; i < sessionStorage.numOfLocks; i++) {
+        if (num == i) {
+          continue;
+        }
+        $('#dropdown'+i)[0].classList.remove("show");
+      }
+      $('#dropdown'+num)[0].classList.toggle("show");
+
+    }
+    function newDateSubmit(num) {
+      var stdate = $('#stid').val();
+      var eddate = $('#etid').val();
+      if (stdate == "" || eddate == "") {
+        alert("Lack of start date or end date!");
+        return ;
+      } else if (new Date(stdate) >= new Date(eddate)) {
+        alert("Start date should be greater than end date!");
+        return ;
+      }
+      $('#hsid_store').val(3);
+      $("form").submit();
+    }
+    function Unlock(num, userAccount){
+      $("#qrimg").empty();
+      $("body").append("<div id='mask'></div>");
+      $("#mask").addClass("mask").fadeIn("slow");
+      $("#LoginBox").fadeIn("slow");
+      var qrcode = new QRCode2.default($('#qrimg')[0], {
+            width: 200,
+            height: 200
+          });
+      qrcode.clear();
+      qrcode.makeCode(userAccount);
+      return ;
+      Flatanywhere.unlock.sendTransaction(sessionStorage.userAccount, {from: sessionStorage.userAccount}, function(err, result){
+        if (!err) {
+          console.log("Unlock Successfully!");
+        } else {
+          console.error(err);
+        }
+      });
+    }
+    function showType(className){
+      $(".img-group").not(className).fadeOut(500);
+      setTimeout(function(){
+        $(".img-group").not(className).addClass("hidden");
+        $(".img-group"+className).fadeIn(500);
+        $(".img-group"+className).removeClass("hidden");
+      }, 500);
+    }
+    function selectType(num){
+      if (num == 0) {
+        showType(".freeDiv");
+      } else if (num == 1) {
+        showType(".occupiedDiv");
+      } else if (num == 2) {
+        showType(".availableDiv");
+      } else {
+        // show ALL
+        $(".img-group").fadeOut(500);
+        setTimeout(function(){
+          $(".img-group").removeClass("hidden");
+          $(".img-group").fadeIn(500);
+        }, 500);
+      }
+    }
+    $(document).ready(function(){
+      $('#userAccount').val($('#currentUser_info').html());
+  		//关闭二维码
+  		$(".close_btn").hover(function () {
+        $(this).css({ color: 'black' })
+      }, function () {
+        $(this).css({ color: '#999' })
+      }).on('click', function () {
+  			$("#LoginBox").fadeOut("fast");
+  			$("#mask").css({ display: 'none' });
+  		});
+
+      '<%if (locals.FutureDeal.length > 0) {%>'
+        sessionStorage.LastCheckOutTime = "<%=locals.FutureDeal[0].check_out_time%>";
+        sessionStorage.LastCheckInTime = "<%=locals.FutureDeal[0].check_in_time%>";
+      '<%} else {%>'
+        sessionStorage.LastCheckOutTime = undefined;
+        sessionStorage.LastCheckInTime = undefined;
+      '<%}%>'
+    });
+  </script>
+</head>
+
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="/">HOME</a>
+        <a class="navbar-brand" href="/Store">Store</a>
+      </div>
+
+      <div class="collapse navbar-collapse" id="navbar-collapse-1">
+        <ul class="nav navbar-nav navbar-right">
+          <li>
+            <a>Balance: <span id="balanceid"></span>ETH</a>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Contact Us
+              <b class="caret"></b>
+              <%#下三角符号 %>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <h4 style="text-align:center">WU ZhuoMing:</h4>
+              </li>
+              <li><a href="mailto:1155107972@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
+              <li class="divider"></li>
+              <li>
+                <h4 style="text-align:center">CHEN Yu:</h4>
+              </li>
+              <li><a href="mailto:1155107977@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              Profile
+              <b class="caret"></b>
+              <%#下三角符号 %>
+            </a>
+            <ul class="dropdown-menu">
+              <li>
+                <p id="currentUser_info"></p>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!--------------------------------------------------------------------------------------------------------->
+  <!-- Body Part -->
+  <div style="margin-top:100px;">
+  </div>
+
+  <div id="LoginBox">
+      <div class="row1">
+          Unlock Code<a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn">×</a>
+      </div>
+      <div class="row" id="qrimg"></div>
+  </div>
+  <form accept-charset="UTF-8" method="post">
+    <div id="newDate" class="hidden">
+      <input id="stid" type="date" name="stname" />
+      <input id="etid" type="date" name="etname" />
+      <button type="button" name="button" onclick="newDateSubmit()">Submit</button>
+    </div>
+    <div class="hidden">
+      <input id="SLIDid_store" name="SLIDname" type="text" required>
+      <input id="hsid_store" name="hidden_state" type="text" required>
+      <input id="userAccount_store" type="text" name="userAccount" required>
+    </div>
+  </form>
+  <div id="intro">
+    <span onclick="selectType()"> <img src="./images/img_intro_all.png" alt="All" width="20px" height="20px"><p>All</p></span>
+    <span onclick="selectType(0)"> <img src="./images/img_intro_spare.png" alt="Spare"><p>Free</p> </span>
+    <span onclick="selectType(1)"> <img src="http://via.placeholder.com/20.png/E7F075/E7F075" alt="occupied"><p>Occupied</p> </span>
+    <span onclick="selectType(2)"> <img src="./images/img_intro_available.png" alt="available"><p>Available</p> </span>
+  </div>
+  <div id="lock-list" class="lock-list row">
+    <script type="text/javascript">
+      sessionStorage.numOfLocks = '<%=Ownerlock.length + Userlock.length%>';
+    </script>
+    <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
+      <%if(res.currentuser == locals.userAccount){%>
+        <script type="text/javascript">
+          addLock(0, "<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_spare.svg", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+        </script>
+      <%} else {%>
+        <script type="text/javascript">
+          addLock(1, "<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_occupied.svg", 'alert("You have no access to it now!")', "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+        </script>
+      <%}%>
+    <%}%>
+    <% if(Userlock.length > 0) {%>
+      <script type="text/javascript">
+        var $newLine = ("<br><h1>The locks you rent</h1>");
+        // $("#lock-list").append($newLine);
+      </script>
+    <%}%>
+    <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
+      <script type="text/javascript">
+        addLock(2, "<%=res.SLID%>", "<%=res.nickname%>", <%=i%>, "lock_available.svg", 'Unlock(<%=i%>,\"<%=res.currentuser%>\")');
+      </script>
+    <%}%>
+  </div>
+  <br><br><br>
+</body>
+</html>
