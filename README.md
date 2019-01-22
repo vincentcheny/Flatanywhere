@@ -32,6 +32,17 @@ $ npm start # visit http://localhost:3000
 
 ## Change Log
 
+### v0.9.0 (2019.01.23)
+
+- 完成“MyLock”和“Store”页面
+- 新增订单提醒功能
+- 新增上架标记、按钮提醒和 Publish Date 输入聚焦
+- 修复“重新上架”时出现的错误
+
+### v0.8.0 (2019.01.22)
+
+- "MyLock"页面使用Materialize CSS framework重构，应用ajax于更新网页内容，添加预订房源（Booked）的图标表示
+
 ### v0.7.0 (2019.01.21)
 
 - "CreateLock"页面重命名为"BindLock"，使用Materialize CSS framework重构，新增是否公开房源选项，新增余额读取检测
