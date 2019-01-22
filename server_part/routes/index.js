@@ -40,12 +40,25 @@ router.get('/Query', function(req,res)
         res.send('0');
       });
     });
-router.get('/Query1', function(req,res)
+
+router.post('/RemovalQuery', function(req,res)
+    {
+      console.log(req.body.SLID, typeof(req.body.SLID));
+        var client = mysql.connect();
+        mysql.select_SmartLock_Deletable(client, req.body.SLID, function(result){
+          return res.send(result);
+        });
+    });
+
+router.post('/Removal', function(req,res)
     {
         var client = mysql.connect();
-        mysql.select_Deal_Unread(client, req.session.userAccount, function(result){
-          var numOfNewDeals = result;
-          res.send(numOfNewDeals);
+        mysql.delete_SmartLock_by_SLID(client, req.body.SLID, function(error){
+            console.log("delete_SmartLock_by_SLID");
+            if(error){
+                throw error;
+            }
+            return res.send('0');
         });
     });
 router.get('/BindLock', function(req, res)

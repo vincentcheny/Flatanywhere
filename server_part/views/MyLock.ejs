@@ -130,12 +130,25 @@
       var $card_reveal;
       if (type == 0 || type == 1) {
         // own
-        $card_reveal = $('<div><span></span><p></p><a></a><a></a></div>');
+        $card_reveal = $('<div><span></span><p></p><a></a><a></a><a></a></div>');
         $card_reveal.find("a").eq(0).attr({
           'onclick': "toggleStore('"+SLID+"', "+isShown+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
           'class': 'dropdown-item hoverable center-align',
         });
         $card_reveal.find("a").eq(0).html(isShown==true?"Discontinue":"Publish");
+        $card_reveal.find("a").eq(2).attr({
+          'onclick': "deleteLock('"+SLID+"', "+num+")",
+          'class': 'dropdown-item hoverable center-align',
+          // 'style': 'background-color: red; color: white;'
+        });
+        $card_reveal.find("a").eq(2).hover(function() {
+          $card_reveal.find("a").eq(2).css("background-color","red");
+          $card_reveal.find("a").eq(2).css("color","white");
+        },function(){
+          $card_reveal.find("a").eq(2).css("background-color","rgba(0,0,0,0)");
+          $card_reveal.find("a").eq(2).css("color","black");
+        });
+        $card_reveal.find("a").eq(2).html("DELETE");
       } else if (type == 2) {
         // renting
         $card_reveal = $('<div><span></span><p></p><a></a></div>');
@@ -145,11 +158,12 @@
       }
       if (type == 0 || type == 2) {
         // able to control
-        $card_reveal.find("a").last().attr({
+        var idx = parseInt((2-type)/2);
+        $card_reveal.find("a").eq(idx).attr({
           'onclick': 'Unlock("'+SLID+'")',
           'class': 'dropdown-item hoverable center-align',
         });
-        $card_reveal.find("a").last().html("Unlock");
+        $card_reveal.find("a").eq(idx).html("Unlock");
       }
       $card_reveal.filter("div").eq(0).attr({
         'class': 'card-reveal ',
@@ -163,6 +177,7 @@
 
       var $newLockCard = $('<div><div class="card hoverable"></div></div>');
       $newLockCard.filter("div").eq(0).attr({
+        'id': 'lock'+num,
         'class': 'col s6 m4 l3 lock-item ' + resource.classType[type]
       });
       $newLockCard.children("div").append($card_image).append($card_content).append($card_reveal);
@@ -191,42 +206,12 @@
         $(".lock-item, .activator").css({'pointer-events': 'none'});
         if (st != ''){ // There is a future deal for the flat
           // if resetting the end_time, it has to be later than the origin one 'cause there is a future deal
-          // TODO: option: reset or follow
           $("#submitRow").find("div").eq(0).removeClass("m6");
           $("#submitRow").find("div").eq(0).addClass("m3");
-          // $("#submitRow").find("div").eq(1).addClass("s2");
-          // $("#submitRow").find("div").eq(2).addClass("s2");
-          // $("#submitRow").find("div").eq(1).removeClass("s3");
-          // $("#submitRow").find("div").eq(2).removeClass("s3");
           $("#submitRow").find("div").eq(3).removeClass("hide");
           $("#submitRow button[name='reset']").attr({
             'onclick': 'resetNewDateSubmit('+num+", '"+nickname+"', '"+st+"', '"+et+"', '"+SLID+"' )",
           });
-          // if following
-          // $('#stid').val(dateFormat(new Date(st), 0));
-          // $('#etid').val(dateFormat(new Date(et), 0));
-          // $('#hsid_store').val(3);
-          // sendAJAX("text", num, false, SLID, st, et, nickname, true);
-          // $.ajax({
-          //      type: "POST",//方法类型
-          //      dataType: "text",//预期服务器返回的数据类型
-          //      // url: "/users/login" ,//url
-          //      async: false,
-          //      data: $('form').serialize(),
-          //      success: function (result) {
-          //          Materialize.toast('Publish Successfully!', 4000);
-          //          $("#reveal"+num).find("a").eq(0).attr({
-          //            'onclick': "toggleStore('"+result+"', "+true+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
-          //          });
-          //          $("#reveal"+num).find("a").eq(0).html("Discontinue");
-          //          $("#newDate").addClass("hide");
-          //          $("#close"+num).click();
-          //      },
-          //      error : function() {
-          //          alert("异常！");
-          //      }
-          //  });
-          // $("form").submit();
         }
       } else { // Currently in store and want to discontinue
         if (st == '') {
@@ -244,24 +229,6 @@
           }
           $('#hsid_store').val(4);
           sendAJAX("text", num, false, SLID, st, et, nickname, false);
-          // $("form").submit();
-          // $.ajax({
-          //      type: "POST",//方法类型
-          //      dataType: "text",//预期服务器返回的数据类型
-          //      async: false,
-          //      data: $('form').serialize(),
-          //      success: function (result) {
-          //        Materialize.toast('Discontinue Successfully!', 4000);
-          //        $("#reveal"+num).find("a").eq(0).attr({
-          //          'onclick': "toggleStore('"+SLID+"', "+false+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
-          //        });
-          //        $("#reveal"+num).find("a").eq(0).html("Publish");
-          //        $("#close"+num).click();
-          //      },
-          //      error : function() {
-          //          alert("异常！");
-          //      }
-          //  });
         }
       }
     }
@@ -285,10 +252,6 @@
            $("#etid").val("");
            if (clearReset) {
              $("#submitRow").find("div").eq(0).addClass("m6");
-             // $("#submitRow").find("div").eq(1).removeClass("s2");
-             // $("#submitRow").find("div").eq(2).removeClass("s2");
-             // $("#submitRow").find("div").eq(1).addClass("s3");
-             // $("#submitRow").find("div").eq(2).addClass("s3");
              $("#submitRow").find("div").eq(3).addClass("hide");
            }
          },
@@ -296,6 +259,47 @@
              alert("Error in AJAX!");
          }
        });
+    }
+    function deleteLock(SLID, num) {
+      $.ajax({
+        type: "POST",//方法类型
+        dataType: "JSON",//预期服务器返回的数据类型
+        url: "/RemovalQuery" ,//url
+        async: false,
+        data: {'SLID':SLID},
+        success: function (result) {
+          console.log(result[0].count);
+          if (result[0].count > 0) {
+            Materialize.toast(SLID.substring(0,7)+"... is being booked. Cannot delete.", 5000);
+          } else {
+            $.ajax({
+              type: "POST",//方法类型
+              dataType: "text",//预期服务器返回的数据类型
+              url: "/Removal" ,//url
+              async: false,
+              data: {'SLID':SLID},
+              success: function (result) {
+                if (result != '0') {
+                  console.log("Abnormal ajax POST response:", result);
+                } else {
+                  Materialize.toast("You delete "+SLID.substring(0,7)+"...", 5000);
+                  $("#lock"+num).fadeOut(500);
+                  setTimeout(function() {
+                    $("#lock"+num).remove();
+                  }, 500);
+                }
+              },
+              error : function() {
+                alert("Error in AJAX!");
+              }
+            });
+          }
+        },
+        error : function() {
+          alert("Error in AJAX!");
+        }
+      });
+
     }
     function cencelNewDateSubmit() {
       $("#stid").val("");
@@ -324,26 +328,6 @@
       $('#etid').val(dateFormat(eddate, 0));
       $('#hsid_store').val(3);
       sendAJAX("text", num, true, SLID, stdate, eddate, nickname, false);
-      // $.ajax({
-      //      type: "POST",//方法类型
-      //      dataType: "text",//预期服务器返回的数据类型
-      //      async: false,
-      //      data: $('form').serialize(),
-      //      success: function (result) {
-      //          Materialize.toast('Publish Successfully!', 4000);
-      //          $("#reveal"+num).find("a").eq(0).attr({
-      //            'onclick': "toggleStore('"+result+"', "+true+", '"+stdate+"', '"+eddate+"',"+num+", '"+nickname+"' )",
-      //          });
-      //          console.log(result, stdate, eddate, num, nickname);
-      //          $("#reveal"+num).find("a").eq(0).html("Discontinue");
-      //          $("#newDate").addClass("hide");
-      //          $("#close"+num).click();
-      //      },
-      //      error : function() {
-      //          alert("异常！");
-      //      }
-      //  });
-      // $("form").submit();
     }
     function Unlock(SLID){
       $("#qrimg").empty();
