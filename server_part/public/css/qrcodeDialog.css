@@ -9,8 +9,9 @@
   background: #333;
   opacity: 0.6;
   filter: alpha(opacity=60);
-  z-index: 9999;
+  z-index: 10;
   position: fixed;
+  position: inherit;
   top: 0;
   left: 0;
   display: none;

@@ -34,9 +34,6 @@
       background-color: white;
       cursor: pointer;
     }
-    .show {
-      display: block;
-    }
     #filter{
       float: right;
       margin-top:-40px;
@@ -86,46 +83,59 @@
     }
   </style>
   <script type="text/javascript" src="./js/jquery.min.js"></script>
-  <script type="text/javascript" src="./js/web3.min.js"></script>
   <script type="text/javascript" src="./js/base.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
   <script type="text/javascript" src="./js/materialize.min.js"></script>
   <script type="text/javascript" src="./js/qrcode2.min.js"></script>
+  <script type="text/javascript" src="./js/common.js"></script>
   <script type="text/javascript">
-    function addLock(type, nickname, num, SLID, isShown, st, et) {
+    function addLock(type, nickname, num, price, SLID, isShown, st, et) {
       var resource = {
         'icon': ['images/lock_unleased.svg', 'images/lock_rented.svg', 'images/lock_renting.svg', 'images/lock_future.svg'],
         'classType': ['unleasedDiv', 'rentedDiv', 'rentingDiv', 'futureDiv'],
-        'func': ['Unlock("'+SLID+'")', 'alert("You have no access to it now!")', 'Unlock("'+SLID+'")'],
       }
 
       var $card_image = $('<div><img><span></span></div>');
       $card_image.filter("div").eq(0).attr({
-        'class': 'card-image waves-effect waves-block waves-light'
+        'class': 'card-image waves-effect waves-block waves-light',
+        'style': 'border-radius: 20px'
       });
       $card_image.children("img").attr({
         'class': 'activator',
         'src': resource.icon[type],
       });
 
-      var $card_content = $('<div><span></span></div>');
+      var $card_content = $('<div><span></span><div class="card-action"><span></span><span></span></div></div>');
+
       $card_content.filter("div").eq(0).attr({
         'class': 'card-content'
       });
       $card_content.find("span").eq(0).attr({
-        'class': 'card-title activator grey-text text-darken-4 truncate',
+        'class': 'card-title activator grey-text text-darken-4',
       });
-      $card_content.find("span").html(nickname);
+      $card_content.find("span").eq(0).html(nickname+'<i class="material-icons right">more_vert</i>');
+      $card_content.find("span").eq(1).attr({
+        'class': 'left',
+        'id': 'priceid'+num,
+        'readonly': 'readonly',
+      });
+      $card_content.find("span").eq(1).html(price+" ETH");
+      $card_content.find("span").eq(2).attr({
+        'class': 'right'
+      });
+      if (type < 2 && isShown == true) {
+        $card_content.find("span").eq(2).html("On Sale");
+      }
 
       var $card_reveal;
       if (type == 0 || type == 1) {
         // own
         $card_reveal = $('<div><span></span><p></p><a></a><a></a></div>');
         $card_reveal.find("a").eq(0).attr({
-          'onclick': "toggleStore('"+SLID+"', "+isShown+", '"+st+"', '"+et+"',"+num+")",
-          'class': 'dropdown-item hoverable ',
-          'style': 'text-align:center'
+          'onclick': "toggleStore('"+SLID+"', "+isShown+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
+          'class': 'dropdown-item hoverable center-align',
         });
-        $card_reveal.find("a").eq(0).html(isShown==true?"Discontinue":"Launch");
+        $card_reveal.find("a").eq(0).html(isShown==true?"Discontinue":"Publish");
       } else if (type == 2) {
         // renting
         $card_reveal = $('<div><span></span><p></p><a></a></div>');
@@ -137,8 +147,7 @@
         // able to control
         $card_reveal.find("a").last().attr({
           'onclick': 'Unlock("'+SLID+'")',
-          'class': 'dropdown-item hoverable ',
-          'style': 'text-align:center'
+          'class': 'dropdown-item hoverable center-align',
         });
         $card_reveal.find("a").last().html("Unlock");
       }
@@ -169,26 +178,57 @@
       var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
       return date;
     }
-    function toggleStore(SLID, showStore, st, et, num){
-      $('#self_store').val(sessionStorage.userAccount);
+    function toggleStore(SLID, isOnStore, st, et, num, nickname){
+      // $('#self_store').val(sessionStorage.userAccount);
       $('#SLIDid_store').val(SLID);
-      if (showStore==false) {
-        if (st == '') {
-          // $newLine = $('<button type="button" name="button" onclick="newDateSubmit">Submit</button>');
-          // $("#newDate").append($newLine);
-          $("#newDate").removeClass("hide");
-          $("#submitRow button[name='bind']").attr({
-            'onclick': 'newDateSubmit('+num+')'
+      if (isOnStore==false) { // Currently not in store and want to publish
+        $("#nicknameid")[0].value = nickname;
+        Materialize.updateTextFields();
+        $("#newDate").removeClass("hide");
+        $("#submitRow button[name='bind']").attr({
+          'onclick': 'newDateSubmit('+num+", '"+nickname+"', '"+SLID+"' )",
+        });
+        $(".lock-item, .activator").css({'pointer-events': 'none'});
+        if (st != ''){ // There is a future deal for the flat
+          // if resetting the end_time, it has to be later than the origin one 'cause there is a future deal
+          // TODO: option: reset or follow
+          $("#submitRow").find("div").eq(0).removeClass("m6");
+          $("#submitRow").find("div").eq(0).addClass("m3");
+          // $("#submitRow").find("div").eq(1).addClass("s2");
+          // $("#submitRow").find("div").eq(2).addClass("s2");
+          // $("#submitRow").find("div").eq(1).removeClass("s3");
+          // $("#submitRow").find("div").eq(2).removeClass("s3");
+          $("#submitRow").find("div").eq(3).removeClass("hide");
+          $("#submitRow button[name='reset']").attr({
+            'onclick': 'resetNewDateSubmit('+num+", '"+nickname+"', '"+st+"', '"+et+"', '"+SLID+"' )",
           });
-          // $('#stid').val(dateFormat(new Date(), 0));
-          // $('#etid').val(dateFormat(new Date(), 30));//默认有效期至30天后
-        } else {
-          $('#stid').val(dateFormat(new Date(st), 0));
-          $('#etid').val(dateFormat(new Date(et), 0));
-          $('#hsid_store').val(3);
-          $("form").submit();
+          // if following
+          // $('#stid').val(dateFormat(new Date(st), 0));
+          // $('#etid').val(dateFormat(new Date(et), 0));
+          // $('#hsid_store').val(3);
+          // sendAJAX("text", num, false, SLID, st, et, nickname, true);
+          // $.ajax({
+          //      type: "POST",//方法类型
+          //      dataType: "text",//预期服务器返回的数据类型
+          //      // url: "/users/login" ,//url
+          //      async: false,
+          //      data: $('form').serialize(),
+          //      success: function (result) {
+          //          Materialize.toast('Publish Successfully!', 4000);
+          //          $("#reveal"+num).find("a").eq(0).attr({
+          //            'onclick': "toggleStore('"+result+"', "+true+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
+          //          });
+          //          $("#reveal"+num).find("a").eq(0).html("Discontinue");
+          //          $("#newDate").addClass("hide");
+          //          $("#close"+num).click();
+          //      },
+          //      error : function() {
+          //          alert("异常！");
+          //      }
+          //  });
+          // $("form").submit();
         }
-      } else {
+      } else { // Currently in store and want to discontinue
         if (st == '') {
           alert("Error: Try to hide(Already in store) but start_time undefined!");
         } else {
@@ -203,50 +243,74 @@
             $("#etid").val(dateFormat(new Date(JSON.parse(sessionStorage.getItem(SLID))), 0));
           }
           $('#hsid_store').val(4);
+          sendAJAX("text", num, false, SLID, st, et, nickname, false);
           // $("form").submit();
-          $.ajax({
-           //几个参数需要注意一下
-               type: "POST",//方法类型
-               dataType: "text",//预期服务器返回的数据类型
-               // url: "/users/login" ,//url
-               async: false,
-               data: $('form').serialize(),
-               success: function (result) {
-                   console.log(result);//打印服务端返回的数据(调试用)
-                   if (result.resultCode == 200) {
-                       alert("SUCCESS");
-                   };
-
-                   Materialize.toast('Discontinue Successfully!', 4000);
-                   $("#reveal"+num).find("a").eq(0).attr({
-                     'onclick': "toggleStore('"+SLID+"', "+false+", '"+st+"', '"+et+"',"+num+")",
-                   });
-                   $("#reveal"+num).find("a").eq(0).html("Launch");
-                   $("#close"+num).click();
-               },
-               error : function() {
-                   alert("异常！");
-               }
-           });
+          // $.ajax({
+          //      type: "POST",//方法类型
+          //      dataType: "text",//预期服务器返回的数据类型
+          //      async: false,
+          //      data: $('form').serialize(),
+          //      success: function (result) {
+          //        Materialize.toast('Discontinue Successfully!', 4000);
+          //        $("#reveal"+num).find("a").eq(0).attr({
+          //          'onclick': "toggleStore('"+SLID+"', "+false+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
+          //        });
+          //        $("#reveal"+num).find("a").eq(0).html("Publish");
+          //        $("#close"+num).click();
+          //      },
+          //      error : function() {
+          //          alert("异常！");
+          //      }
+          //  });
         }
       }
+    }
+    function sendAJAX(datatype, num, isPublish, SLID, st, et, nickname, clearReset) {
+      $.ajax({
+         type: "POST",//方法类型
+         dataType: datatype,//预期服务器返回的数据类型
+         async: false,
+         data: $('form').serialize(),
+         success: function (result) {
+           var currentState = isPublish ? "Publish" : "Discontinue";
+           var newState = isPublish ? "Discontinue" : "Publish";
+           Materialize.toast(currentState + " Successfully!", 4000);
+           $("#reveal"+num).find("a").eq(0).attr({
+             'onclick': "toggleStore('"+SLID+"', "+isPublish+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
+           });
+           $("#reveal"+num).find("a").eq(0).html(newState);
+           $("#newDate").addClass("hide");
+           $("#close"+num).click();
+           $("#stid").val("");
+           $("#etid").val("");
+           if (clearReset) {
+             $("#submitRow").find("div").eq(0).addClass("m6");
+             // $("#submitRow").find("div").eq(1).removeClass("s2");
+             // $("#submitRow").find("div").eq(2).removeClass("s2");
+             // $("#submitRow").find("div").eq(1).addClass("s3");
+             // $("#submitRow").find("div").eq(2).addClass("s3");
+             $("#submitRow").find("div").eq(3).addClass("hide");
+           }
+         },
+         error : function() {
+             alert("Error in AJAX!");
+         }
+       });
     }
     function cencelNewDateSubmit() {
       $("#stid").val("");
       $("#etid").val("");
       $("#newDate").addClass("hide");
+      $(".lock-item, .activator").css({'pointer-events': 'auto'});
     }
-    function toggleDropDown(num){
-      for (var i = 0; i < sessionStorage.numOfLocks; i++) {
-        if (num == i) {
-          continue;
-        }
-        $('#dropdown'+i)[0].classList.remove("show");
-      }
-      $('#dropdown'+num)[0].classList.toggle("show");
-
+    function resetNewDateSubmit(num, nickname, st, et, SLID){
+      $('#stid').val(dateFormat(st, 0));
+      $('#etid').val(dateFormat(et, 0));
+      $('#hsid_store').val(3);
+      $(".lock-item, .activator").css({'pointer-events': 'auto'});
+      sendAJAX("text", num, true, SLID, st, et, nickname, true);
     }
-    function newDateSubmit(num) {
+    function newDateSubmit(num, nickname, SLID) {
       var stdate = new Date($('#stid').val());
       var eddate = new Date($('#etid').val());
       if (stdate == "Invalid Date" || eddate == "Invalid Date") {
@@ -259,31 +323,26 @@
       $('#stid').val(dateFormat(stdate, 0));
       $('#etid').val(dateFormat(eddate, 0));
       $('#hsid_store').val(3);
-      $.ajax({
-       //几个参数需要注意一下
-           type: "POST",//方法类型
-           dataType: "text",//预期服务器返回的数据类型
-           // url: "/users/login" ,//url
-           async: false,
-           data: $('form').serialize(),
-           success: function (result) {
-               console.log(result);//打印服务端返回的数据(调试用)
-               if (result.resultCode == 200) {
-                   alert("SUCCESS");
-               };
-
-               Materialize.toast('Launch Successfully!', 4000);
-               $("#reveal"+num).find("a").eq(0).attr({
-                 'onclick': "toggleStore('"+result+"', "+true+", '"+stdate+"', '"+eddate+"',"+num+")",
-               });
-               $("#reveal"+num).find("a").eq(0).html("Discontinue");
-               $("#newDate").addClass("hide");
-               $("#close"+num).click();
-           },
-           error : function() {
-               alert("异常！");
-           }
-       });
+      sendAJAX("text", num, true, SLID, stdate, eddate, nickname, false);
+      // $.ajax({
+      //      type: "POST",//方法类型
+      //      dataType: "text",//预期服务器返回的数据类型
+      //      async: false,
+      //      data: $('form').serialize(),
+      //      success: function (result) {
+      //          Materialize.toast('Publish Successfully!', 4000);
+      //          $("#reveal"+num).find("a").eq(0).attr({
+      //            'onclick': "toggleStore('"+result+"', "+true+", '"+stdate+"', '"+eddate+"',"+num+", '"+nickname+"' )",
+      //          });
+      //          console.log(result, stdate, eddate, num, nickname);
+      //          $("#reveal"+num).find("a").eq(0).html("Discontinue");
+      //          $("#newDate").addClass("hide");
+      //          $("#close"+num).click();
+      //      },
+      //      error : function() {
+      //          alert("异常！");
+      //      }
+      //  });
       // $("form").submit();
     }
     function Unlock(SLID){
@@ -334,19 +393,45 @@
       }
     }
     $(document).ready(function(){
-      setTimeout(function(){
-        if ($("#balanceid").html() == "") {
-          // alert("Cannot detect the account balance! Go back to home page now.");
-          // location.reload(true);
-        }
-      }, 3000);
-      $('#userAccount').val($('#currentUser_info').html());
+      $('#userAccount').val(sessionStorage.userAccount);
       $(".dropdown-button").dropdown();
       $(".button-collapse").sideNav();
       $('.datepicker').pickadate({
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 4 // Creates a dropdown of 15 years to control year
       });
+      sessionStorage.newDealCount = 0;
+      setInterval(function(){
+        $.ajax({
+         //几个参数需要注意一下
+             type: "GET",//方法类型
+             dataType: "json",//预期服务器返回的数据类型
+             url: "/Query" ,//url
+             async: false,
+             success: function (result) {
+               if (result[0].count != 0) {
+                 Materialize.toast("You receive "+result[0].count+" new deals!", 5000);
+                 $.ajax({
+                      type: "POST",//方法类型
+                      dataType: "text",//预期服务器返回的数据类型
+                      url: "/Query" ,//url
+                      async: false,
+                      success: function (result) {
+                        if (result != '0') {
+                          console.log("Abnormal ajax POST response:", result);
+                        }
+                      },
+                      error : function() {
+                          alert("Error in ajax POST!");
+                      }
+                  });
+               }
+             },
+             error : function() {
+                 alert("Error in ajax GET!");
+             }
+         });
+      }, 3000);
   		//关闭二维码
   		$(".close_btn").hover(function () {
         $(this).css({ color: 'black' })
@@ -372,28 +457,29 @@
     <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
   </ul>
   <ul id="dropdown-profile" class="dropdown-content">
-    <li><a href="#!" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+    <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br>UserAccount<br><br></a></li>
   </ul>
   <!-- Navbar -->
   <nav>
     <div class="nav-wrapper">
       <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
-        <li><a>Balance: <span id="balanceid"></span>ETH</a></li>
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
+        <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Bind A New Lock">Bind</a></li>
+        <li><a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Explore Your Favourite Flat">Store</a></li>
+        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
       <ul class="side-nav" id="mobile-demo">
         <li><a href="/BindLock">BindLock</a></li>
         <li><a href="/Store">Store</a></li>
-        <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
-        <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-        <li><a href="" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+        <li><a href="mailto:1155107972@link.cuhk.edu.hk">Email to: WU ZhuoMing</a></li>
+        <li><a href="mailto:1155107977@link.cuhk.edu.hk">Email to: CHEN Yu</a></li>
+        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
       </ul>
     </div>
   </nav>
-  <p id="currentUser_info" class="hide"></p>
   <!--------------------------------------------------------------------------------------------------------->
   <!-- Body Part -->
   <div style="margin-top:30px;">
@@ -406,15 +492,10 @@
       <div class="row" id="qrimg"></div>
   </div>
   <form accept-charset="UTF-8" method="post">
-    <!-- <div id="newDate" class="hide">
-      <input id="stid" type="date" name="stname" />
-      <input id="etid" type="date" name="etname" />
-      <button type="button" name="button" onclick="newDateSubmit()">Submit</button>
-    </div> -->
     <div class="hide container" id="newDate">
       <div class="row">
         <div class="card-panel center-align ">
-          <span class="blue-text text-darken-2">Please assign a valid time period for the launched lock.</span>
+          <span class="red-text text-darken-5">Please assign a valid time period for the published lock.</span>
         </div>
       </div>
       <div class="row">
@@ -430,16 +511,28 @@
         </div>
       </div>
       <div class="row" id="submitRow">
-        <div class="col s3 offset-s6">
+        <div class="input-field col s12 m6">
+          <i class="material-icons prefix">location_on</i>
+          <input disabled id="nicknameid" name="nickname" type="text">
+          <label for="nicknameid">Address</label>
+        </div>
+        <div class="col s3">
           <button class="btn-large waves-effect waves-light right red" type="button" onclick="cencelNewDateSubmit()" name="cancel">CANCEL
             <i class="material-icons right">cancel</i>
           </button>
         </div>
         <div class="col s3">
-          <button class="btn-large waves-effect waves-light right" type="button" onclick="newDateSubmit()" name="bind">&nbsp;BIND&nbsp;
+          <button class="btn-large waves-effect waves-light right tooltipped" type="button" name="bind" data-position="bottom" data-delay="50" data-tooltip="Bind a New Time and Publish">&nbsp;BIND&nbsp;
             <i class="material-icons right">link</i>
           </button>
         </div>
+        <div class="col s3 hide">
+          <button class="btn-large waves-effect waves-light right tooltipped" type="button" name="reset" data-position="bottom" data-delay="50" data-tooltip="Simply Publish">PUBLISH
+            <i class="material-icons right">link</i>
+          </button>
+        </div>
+      </div>
+      <div class="row">
 
       </div>
     </div>
@@ -456,11 +549,11 @@
   </script>
   <div class="container">
     <div class="row">
-      <div class="col s12 m12 l12">
+      <div class="col s12">
         <ul class="tabs">
-          <li class="tab col s2 offset-s1 hoverable"><a class="active" onclick="selectType()">All</a></li>
+          <li class="tab col s2 hoverable"><a class="active" onclick="selectType()">All</a></li>
           <li class="tab col s2 hoverable"><a onclick="selectType(0)">Unleased</a></li>
-          <li class="tab col s2 hoverable"><a onclick="selectType(1)">Being Rented</a></li>
+          <li class="tab col s3 hoverable"><a onclick="selectType(1)">Being Rented</a></li>
           <li class="tab col s2 hoverable"><a onclick="selectType(2)">Renting</a></li>
           <li class="tab col s2 hoverable"><a onclick="selectType(3)">Booked</a></li>
         </ul>
@@ -470,22 +563,22 @@
       <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
         <%if(res.currentuser == locals.userAccount){%>
           <script type="text/javascript">
-            addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+            addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
           </script>
         <%} else {%>
           <script type="text/javascript">
-            addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+            addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
           </script>
         <%}%>
       <%}%>
       <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
         <script type="text/javascript">
-          addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.SLID%>");
+          addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>");
         </script>
       <%}%>
       <% for(var i = Ownerlock.length + Userlock.length; i < Ownerlock.length + Userlock.length + Futurelock.length; ++i){ var res = Futurelock[i - Ownerlock.length - Userlock.length]; %>
         <script type="text/javascript">
-          addLock(3, "<%=res.nickname%>", <%=i%>);
+          addLock(3, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>");
         </script>
       <%}%>
     </div>

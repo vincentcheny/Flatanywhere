@@ -8,16 +8,15 @@
   <!--//永远以最新的IE版本模式来显示网页-->
   <title>Store</title>
 
-  <link rel="stylesheet" type="text/css" href="./css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="./css/buttons.css">
-  <link rel="stylesheet" type="text/css" href="./css/common.css">
+  <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <style media="screen">
-    .price{
-      background: transparent;
-      border-style: none;
-      text-overflow: ellipsis;
-      overflow: hidden;
-      outline: none;
+    body{
+      font-family: "微软雅黑";
+      background-color: #fff;
+    }
+    .card{
+      border-radius: 20px;
     }
   </style>
 
@@ -26,9 +25,13 @@
   <script type="text/javascript" src="./js/base.js"></script>
   <script type="text/javascript" src="./js/common.js"></script>
   <script type="text/javascript" src="./js/web3.min.js"></script>
-  <script type="text/javascript" src="./js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="./js/materialize.min.js"></script>
+  <!-- <script type="text/javascript" src="./js/bootstrap.min.js"></script> -->
   <script type="text/javascript">
     function dateFormat(time, addDay){
+      if (addDay == undefined) {
+        addDay = 0;
+      }
       time = new Date(time.getTime() + 24*60*60*1000*addDay);
       //格式化日，如果小于9，前面补0
       var day = ("0" + time.getDate()).slice(-2);
@@ -38,39 +41,68 @@
       var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
       return date;
     }
-    function addLock(SLID, price, num, icon, func, owner){
-      var $newLock = $('<div><img><input><input><input></div>');
-      $newLock.filter("div").eq(0).attr({
-        'id': 'div'+num,
-        'class': 'col-md-3 lock'
+    function addLock(SLID, price, num, owner){
+
+      var $card_image = $('<div><img><span></span></div>');
+      $card_image.filter("div").eq(0).attr({
+        'class': 'card-image waves-effect waves-block waves-light'
       });
-      $newLock.children("img").attr({
-        // 'id': 'SLIDid'+num,
-        'src': './images/' + icon,
-        'alt': 'Lock',
-        'onclick': func,
-        'style': "cursor: pointer",
-        'width': '50',
-        'height': '50'
+      $card_image.children("img").attr({
+        'class': 'activator',
+        'src': 'images/lock_store.svg',
       });
-      $newLock.children("input").eq(0).attr({
+
+      var $card_content = $('<div><span><p></p><a><i>add_shopping_cart</i></a></span><p></p></div>');// TODO: 添加 SLIDid ownerid
+      $card_content.filter("div").eq(0).attr({
+        'class': 'card-content'
+      });
+      $card_content.find("span").eq(0).attr({
+        'class': 'card-title  grey-text text-darken-4 truncate',
+      });
+      $card_content.find("a").eq(0).attr({
+        'class': 'btn-floating halfway-fab waves-effect waves-light grey right',
+        'onclick': 'Order('+num+')',
+        'href': 'javascript:void(0)'
+      });
+      $card_content.find("i").eq(0).attr({
+        'class': 'material-icons hoverable',
+      });
+      $card_content.find("p").eq(0).attr({
+        'style': 'display: inline',
         'id': 'priceid'+num,
-        'class': 'price',
-        'value': price+"ETH",
         'readonly': 'readonly'
       });
-      $newLock.children("input").eq(1).attr({
+      $card_content.find("p").eq(0).html(price+" ETH");
+      $card_content.find("p").eq(1).html("Address");
+
+      var $card_reveal = $('<div><span></span><p></p><input><input></div>');
+      $card_reveal.filter("div").eq(0).attr({
+        'class': 'card-reveal ',
+        'id': 'reveal'+num
+      });
+      $card_reveal.find("span").eq(0).attr({
+        'class': 'card-title activator grey-text text-darken-4',
+      });
+      $card_reveal.find("span").eq(0).html("Address" + "<i class='material-icons right' id='close"+num+"'>close</i>");
+      $card_reveal.find("p").eq(0).html("Introduction");
+      $card_reveal.find("input").eq(0).attr({
         'id': 'SLIDid'+num,
         'value': SLID,
-        'class': 'hidden'
+        'class': 'hide'
       });
-      $newLock.children("input").eq(2).attr({
+      $card_reveal.find("input").eq(1).attr({
         'id': 'ownerid'+num,
         'value': owner,
-        'class': 'hidden'
+        'class': 'hide'
       });
-      // console.log($newLock[0]);
-      $("#lock-item"+num).append($newLock);
+
+      var $newLockCard = $('<div><div class="card hoverable"></div></div>');
+      $newLockCard.filter("div").eq(0).attr({
+        'id': 'lockid'+num,
+        'class': 'col s6 m4 l3 lock'
+      });
+      $newLockCard.children("div").append($card_image).append($card_content).append($card_reveal);
+      $("#lock-list").append($newLockCard);
     }
 
     function Order(num){
@@ -84,12 +116,13 @@
       var cidate = new Date($('#checkinid').val()).getTime() + 4*60*60*1000;
       var codate = new Date($('#checkoutid').val()).getTime() + 4*60*60*1000;
       var day_diff = (codate - cidate) / (24*60*60*1000); // from millisecond to day
-      var amount = day_diff * $('#priceid'+num).val().substring(0,$('#priceid'+num).val().length-3);
+      var amount = day_diff * $('#priceid'+num).html().substring(0,$('#priceid'+num).html().length-4);
       if (amount <= 0) {
         alert("The price is abnormal.");
         return;
       }
-
+      $('#checkinid').val(dateFormat(new Date(cidate)));
+      $('#checkoutid').val(dateFormat(new Date(codate)));
       var SLID = $("#SLIDid"+num).val();
       var owner = $("#ownerid"+num).val();
       var cisecond = parseInt(cidate/1000);
@@ -135,26 +168,29 @@
     }
 
     function checkDate(num){
-      if ($('#checkinid').val() == "" || $('#checkoutid').val() == "") {
-        alert("Lack of check-in date or check-out date!");
+      if ($('#checkinid').val() == "") {
+        alert("Please fill in check-in date!");
+        return ;
+      } else if ($('#checkoutid').val() == "") {
+        alert("Please fill in check-out date!");
         return ;
       }
-      var cidate = new Date($('#checkinid').val()).getTime() + 4*60*60*1000;
-      var codate = new Date($('#checkoutid').val()).getTime() + 4*60*60*1000;
+      var cidate = new Date($('#checkinid').val()).getTime() + 12*60*60*1000;
+      var codate = new Date($('#checkoutid').val()).getTime() + 12*60*60*1000;
       if (cidate >= codate) {
         alert("Check-out date should be greater than check-in date!");
         return ;
       }
-      var startdate = new Date($('.st'+num)[0].innerHTML).getTime();
-      var enddate = new Date($('.et'+num)[0].innerHTML).getTime();
+      var startdate = new Date($('.st'+num)[0].innerHTML);
+      var enddate = new Date($('.et'+num)[0].innerHTML);
       if (codate > enddate || cidate < startdate) {
         return false;
       }
       for (var i = 0; i < $('.in'+num).length; i++) {
-        var s = new Date($('.in'+num)[i].innerHTML).getTime();
-        var e = new Date($('.out'+num)[i].innerHTML).getTime();
-        // console.log(cidate, codate, s, e, (cidate < s) && (codate <= s), (cidate >= e) && (codate > e));
+        var s = new Date($('.in'+num)[i].innerHTML);
+        var e = new Date($('.out'+num)[i].innerHTML);
         if (!((cidate < s) && (codate <= s) || (cidate >= e) && (codate > e))) {
+          console.log(new Date(cidate), new Date(codate), s, e, (cidate < s) && (codate <= s), (cidate >= e) && (codate > e));
           return false;
         }
       }
@@ -166,118 +202,137 @@
         if (result == undefined) {
           return;
         } else if (result == true) {
-          $("#div"+i).removeClass("hidden");
+          $("#lockid"+i).removeClass("hide");
         } else if (result == false) {
-          $("#div"+i).addClass("hidden");
+          $("#lockid"+i).addClass("hide");
         }
       }
     }
     $(document).ready(function(){
-      $('#userAccount').val($('#currentUser_info').html());
-      $('#checkinid').val(dateFormat(new Date(), 0));
-      $('#checkoutid').val(dateFormat(new Date(), 1));
+      $('#userAccount').val(sessionStorage.userAccount);
+      $(".button-collapse").sideNav();
+      $('.datepicker').pickadate({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 4 // Creates a dropdown of 15 years to control year
+      });
+      setInterval(function(){
+        $.ajax({
+         //几个参数需要注意一下
+             type: "GET",//方法类型
+             dataType: "json",//预期服务器返回的数据类型
+             url: "/Query" ,//url
+             // async: true,
+             success: function (result) {
+                 // console.log(result);//打印服务端返回的数据(调试用)
+                 if (result[0].count > sessionStorage.newDealCount) {
+                   Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
+                   sessionStorage.newDealCount = result[0].count;
+                   if ($("#mylock").find("span").length > 0) {
+                     $("#mylock").find("span").html = result[0].count;
+                   } else {
+                     $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+                   }
+                 } else if (sessionStorage.newDealCount != 0) {
+                   $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+                 }
+             },
+             error : function() {
+                 alert("异常！");
+             }
+         });
+      }, 3000);
     });
   </script>
 </head>
 
 <body>
-
+  <!-- Dropdown Structure -->
+  <ul id="dropdown-contact" class="dropdown-content">
+    <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+    <li class="divider"></li>
+    <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+  </ul>
+  <ul id="dropdown-profile" class="dropdown-content">
+    <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+  </ul>
   <!-- Navbar -->
-  <nav class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="/">HOME</a>
-        <a class="navbar-brand" href="/MyLock">MyLock</a>
-      </div>
-
-      <div class="collapse navbar-collapse" id="navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li>
-            <a>Balance: <span id="balanceid"></span>ETH</a>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Contact Us
-              <b class="caret"></b>
-              <%#下三角符号 %>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <h4 style="text-align:center">WU ZhuoMing:</h4>
-              </li>
-              <li><a href="mailto:1155107972@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
-              <li class="divider"></li>
-              <li>
-                <h4 style="text-align:center">CHEN Yu:</h4>
-              </li>
-              <li><a href="mailto:1155107977@link.cuhk.edu.hk">1155107977@link.cuhk.edu.hk</a></li>
-            </ul>
-          </li>
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-              Profile
-              <b class="caret"></b>
-              <%#下三角符号 %>
-            </a>
-            <ul class="dropdown-menu">
-              <li>
-                <p id="currentUser_info"></p>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </div>
+  <nav>
+    <div class="nav-wrapper">
+      <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
+      <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <ul class="right hide-on-med-and-down">
+        <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
+        <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Bind A New Lock">Bind</a></li>
+        <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat">MyLock</a></li>
+        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
+      </ul>
+      <ul class="side-nav" id="mobile-demo">
+        <li><a href="/BindLock">BindLock</a></li>
+        <li><a href="/MyLock">MyLock</a></li>
+        <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+        <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+      </ul>
     </div>
   </nav>
-
   <!--------------------------------------------------------------------------------------------------------->
   <!-- Body Part -->
   <div style="margin-top:100px;">
   </div>
-
-  <form method="post">
-    <input id="checkinid" type="date" name="checkinname" required/>
-    <input id="checkoutid" type="date" name="checkoutname" required/>
-    <div class="hidden">
-      <input id="DEALID" type="text" name="DEALIDname" required/>
-      <input id="SLIDid" type="text" name="SLIDname" required/>
-      <input id="sellerid" type="text" name="sellername" required/>
-      <input id="buyerid" type="text" name="buyerDname" required/>
-      <input id="amountid" type="text" name="amountname" required/>
-      <input id="userAccount" type="text" name="userAccount" required>
-    </div>
-  </form>
-  <button type="button" class="button" onclick="search()">Search</button>
-  <div id="lock-list" class="lock-list">
-    <%for(var i = 0; i < StoreLocks.length; ++i){%>
-      <%var res = StoreLocks[i]; %>
-      <%var start = arrStartTime[res.SLID]; %>
-      <%var end = arrEndTime[res.SLID]; %>
-      <div id=lock-item<%=i%>>
-        <div class="hidden">
-          <div class=st<%=i%>><%=res.start_time%></div>
-          <div class=et<%=i%>><%=res.end_time%></div>
-          <%if(start != undefined) { %>
-            <%for(var j = 0; j < Object.keys(start).length; ++j){  %>
-              <div class=in<%=i%>><%=start[j]%></div>
-              <div class=out<%=i%>><%=end[j]%></div>
-            <%}%>
-          <%}%>
+  <div class="container">
+    <form method="post">
+      <div class="row">
+        <div class="input-field col s12 m4 offset-m1">
+          <i class="material-icons prefix">date_range</i>
+          <input id="checkinid" type="date" name="checkinname" class="datepicker">
+          <label for="checkinid">Check-in Date</label>
         </div>
-        <script type="text/javascript">
-          addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "icon_lock.png", 'Order(<%=i%>)', "<%=res.owner%>");
-        </script>
+        <div class="input-field col s12 m4">
+          <i class="material-icons prefix">date_range</i>
+          <input id="checkoutid" type="date" name="checkoutname" class="datepicker">
+          <label for="checkoutid">Check-out Date</label>
+        </div>
+        <div class="col s12 m3">
+          <button class="btn-large waves-effect waves-light right btn-flat" type="button" onclick="search()">&nbsp;Search&nbsp;
+            <i class="material-icons right">search</i>
+          </button>
+        </div>
       </div>
-    <%}%>
+      <div class="hide">
+        <input id="DEALID" type="text" name="DEALIDname" required/>
+        <input id="SLIDid" type="text" name="SLIDname" required/>
+        <input id="sellerid" type="text" name="sellername" required/>
+        <input id="buyerid" type="text" name="buyerDname" required/>
+        <input id="amountid" type="text" name="amountname" required/>
+        <input id="userAccount" type="text" name="userAccount" required>
+      </div>
+    </form>
+
+    <div id="lock-list" class="row">
+      <%for(var i = 0; i < StoreLocks.length; ++i){%>
+        <%var res = StoreLocks[i]; %>
+        <%var start = arrStartTime[res.SLID]; %>
+        <%var end = arrEndTime[res.SLID]; %>
+        <div id=lock-item<%=i%>>
+          <div class="hide">
+            <div class=st<%=i%>><%=res.start_time%></div>
+            <div class=et<%=i%>><%=res.end_time%></div>
+            <%if(start != undefined) { %>
+              <%for(var j = 0; j < Object.keys(start).length; ++j){  %>
+                <div class=in<%=i%>><%=start[j]%></div>
+                <div class=out<%=i%>><%=end[j]%></div>
+              <%}%>
+            <%}%>
+          </div>
+          <script type="text/javascript">
+            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "<%=res.owner%>");
+          </script>
+        </div>
+      <%}%>
+    </div>
   </div>
   <br><br><br>
-
 </body>
 
 </html>

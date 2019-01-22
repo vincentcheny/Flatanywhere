@@ -17,10 +17,11 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 
   <script type="text/javascript" src="./js/jquery.min.js"></script>
-  <script type="text/javascript" src="./js/materialize.min.js"></script>
   <script type="text/javascript" src="./js/base.js"></script>
-  <script type="text/javascript" src="./js/web3.min.js"></script>
   <script type="text/javascript" src="./js/common.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
+  <script type="text/javascript" src="./js/materialize.min.js"></script>
+
 
   <script type="text/javascript">
     function dateFormat(time){
@@ -67,19 +68,19 @@
             console.log("SLID", result.args.SLID);
             console.log("result.addr:",result.address, "userAccount:",sessionStorage.userAccount);
             // 捕捉不到 newDeal
-            var newDeal = Flatanywhere.NewDeal({
-              filter:{
-                SLID: result.args.SLID
-              }
-            });
-            newDeal.watch(function(error,result){
-              if (!error) {
-                newDeal.stopWatching();
-                var msg = result.args.buyerAddr + ' bought your ' + result.args.SLID + ' from ' + result.args.checkInTime;
-                console.log(msg);
-                alert(msg);
-              }
-            });
+            // var newDeal = Flatanywhere.NewDeal({
+            //   filter:{
+            //     SLID: result.args.SLID
+            //   }
+            // });
+            // newDeal.watch(function(error,result){
+            //   if (!error) {
+            //     newDeal.stopWatching();
+            //     var msg = result.args.buyerAddr + ' bought your ' + result.args.SLID + ' from ' + result.args.checkInTime;
+            //     console.log(msg);
+            //     alert(msg);
+            //   }
+            // });
             setTimeout(function(){
               $('#self0').val(sessionStorage.userAccount);
               $('#SLIDid').val(result.args.SLID);
@@ -109,26 +110,53 @@
     $(document).ready(function(){
       setTimeout(function(){
         if ($("#balanceid").html() == "") {
-          alert("Cannot detect the account balance! Go back to home page now.");
-          // location.reload(true);
+          // alert("Cannot detect the account balance! Go back to home page now.");
+          web3.eth.getBalance(web3.eth.accounts[0],function(err,res){
+            if(!err){
+              $('#balanceid').html(res.c[0]/10000);
+            }
+          });
         }
-      }, 3000);
-      $('#userAccount').val($('#currentUser_info').html());
+      }, 500);
+
+      $('#userAccount').val(sessionStorage.userAccount);
       $(".dropdown-button").dropdown();
       $(".button-collapse").sideNav();
       $('.datepicker').pickadate({
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 4 // Creates a dropdown of 15 years to control year
       });
+      setInterval(function(){
+        $.ajax({
+         //几个参数需要注意一下
+             type: "GET",//方法类型
+             dataType: "json",//预期服务器返回的数据类型
+             url: "/Query" ,//url
+             // async: true,
+             success: function (result) {
+                 // console.log(result);//打印服务端返回的数据(调试用)
+                 if (result[0].count > sessionStorage.newDealCount) {
+                   Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
+                   sessionStorage.newDealCount = result[0].count;
+                   if ($("#mylock").find("span").length > 0) {
+                     $("#mylock").find("span").html = result[0].count;
+                   } else {
+                     $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+                   }
+                 } else if (sessionStorage.newDealCount != 0) {
+                   $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+                 }
+             },
+             error : function() {
+                 alert("异常！");
+             }
+         });
+      }, 3000);
     });
   </script>
 </head>
 
 <body>
-  <div style="display:none;">
-    <p id="currentUser_info"></p>
-  </div>
-
   <!-- Dropdown Structure -->
   <ul id="dropdown-contact" class="dropdown-content">
     <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
@@ -136,22 +164,26 @@
     <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
   </ul>
   <ul id="dropdown-profile" class="dropdown-content">
-    <li><a href="#!" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+    <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br>UserAccount<br><br></a></li>
   </ul>
   <!-- Navbar -->
   <nav>
     <div class="nav-wrapper">
       <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-      <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+      <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
-        <li><a>Balance: <span id="balanceid"></span>ETH</a></li>
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
-        <li><a class="dropdown-button" href="#!" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
+        <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat" id="mylock">MyLock</a></li>
+        <li><a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Explore Your Favourite Flat">Store</a></li>
+        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
+        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
       <ul class="side-nav" id="mobile-demo">
+        <li><a href="/MyLock">MyLock</a></li>
+        <li><a href="/Store">Store</a></li>
         <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
         <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-        <li><a href="#!" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
       </ul>
     </div>
   </nav>

@@ -24,6 +24,30 @@ router.get('/', function(req, res)
         }
     });
 
+router.get('/Query', function(req,res)
+    {
+        var client = mysql.connect();
+        mysql.select_Deal_Unread(client, req.session.userAccount, function(result){
+          res.send(result);
+        });
+    })
+    .post('/Query', function(req, res){
+      var client = mysql.connect();
+      mysql.update_Deal_Unread(client, req.session.userAccount, function(error){
+        if(error) {
+            throw error;
+        }
+        res.send('0');
+      });
+    });
+router.get('/Query1', function(req,res)
+    {
+        var client = mysql.connect();
+        mysql.select_Deal_Unread(client, req.session.userAccount, function(result){
+          var numOfNewDeals = result;
+          res.send(numOfNewDeals);
+        });
+    });
 router.get('/BindLock', function(req, res)
 {
     if(req.session.userAccount == undefined){
@@ -53,11 +77,12 @@ router.get('/BindLock', function(req, res)
             req.body.pricename,
             0, // state
             req.body.nickname,
-            (req.body.isShown == "show"? true : false),
+            (req.body.isShown == "hide"? false : true),
             function(error)
             {
                 if(error) {
                     throw error;
+                    res.redirect('/BindLock');
                 }
                 res.redirect('/MyLock');
             });
@@ -94,7 +119,7 @@ router.get('/Store', function(req, res)
                     var cotime = new Date(result[i].check_out_time);
                     if (result[i].state == 0 && citime.getTime() <= now.getTime() && now.getTime() <= cotime.getTime() ) {
                         console.log("decide to update: "+result[i].SLID, result[i]);
-                        mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, 1, function(error){
+                        mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, function(error){
                             // indicate that the msg sender is the new "current_user"
                             console.log("update_SmartLock_Renting");
                             if(error){
@@ -152,7 +177,7 @@ router.get('/MyLock', function(req, res)
         // 将时间改成当前或以后,当前的则更新,以后的则传到前端
         req.session.MyLockInfo = result
         for (var i = result.length - 1; i >= 0; i--) {
-            mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, 1, function(error){
+            mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, function(error){
                 if(error){
                     throw error;
                 }
@@ -202,7 +227,6 @@ router.get('/MyLock', function(req, res)
                 req.body.SLIDname,
                 req.session.userAccount,
                 req.body.etname,
-                0,
                 function(error){
                     if(error) {
                         throw error;
@@ -225,8 +249,8 @@ router.get('/MyLock', function(req, res)
           mysql.update_SmartLock_hideStore(
               client,
               req.body.SLIDname,
-              req.body.stname == "" ? "null" : req.body.stname + " 12:00:00",
-              req.body.etname == "" ? "null" : req.body.etname + " 12:00:00",
+              req.body.stname == "" ? "null" : '"' + req.body.stname + ' 12:00:00"',
+              req.body.etname == "" ? "null" : '"' + req.body.etname + ' 12:00:00"',
               function(error){
                   if (error) {
                       throw error;
