@@ -28,7 +28,7 @@ router.get('/Query', function(req,res)
     {
         var client = mysql.connect();
         mysql.select_Deal_Unread(client, req.session.userAccount, function(result){
-          res.send(result);
+          return res.send(result);
         });
     })
     .post('/Query', function(req, res){
@@ -37,7 +37,7 @@ router.get('/Query', function(req,res)
         if(error) {
             throw error;
         }
-        res.send('0');
+        return res.send('0');
       });
     });
 
@@ -46,6 +46,7 @@ router.post('/RemovalQuery', function(req,res)
       console.log(req.body.SLID, typeof(req.body.SLID));
         var client = mysql.connect();
         mysql.select_SmartLock_Deletable(client, req.body.SLID, function(result){
+          console.log("RemovalQuery result\n", result);
           return res.send(result);
         });
     });
@@ -97,7 +98,7 @@ router.get('/BindLock', function(req, res)
                     throw error;
                     res.redirect('/BindLock');
                 }
-                res.redirect('/MyLock');
+                return res.redirect('/MyLock');
             });
     });
 
@@ -144,13 +145,13 @@ router.get('/Store', function(req, res)
                 }
             }
             if (modified == true) {
-                res.redirect('/Store');
+                return res.redirect('/Store');
             }
             req.arrStartTime = st;
             req.arrEndTime = et;
             console.log("arrStartTime\n",st);
             console.log("arrEndTime\n",et);
-            res.render('Store', req);
+            return res.render('Store', req);
         });
     });
 
@@ -172,7 +173,7 @@ router.get('/Store', function(req, res)
                     throw error;
                 }
                 //there should be unlock_code in a specific deal
-                res.redirect('/MyLock');
+                return res.redirect('/MyLock');
             }
         );
     });
@@ -221,7 +222,7 @@ router.get('/MyLock', function(req, res)
                         mysql.select_Info_BoughtLockFutureView(client, req.session.userAccount, function(result){
                           console.log("Futurelock",result);
                           req.Futurelock = result;
-                          res.render('MyLock',req);
+                          return res.render('MyLock',req);
                         });
                     });
                 });
@@ -244,7 +245,7 @@ router.get('/MyLock', function(req, res)
                     if(error) {
                         throw error;
                     }
-                    res.redirect('/MyLock');
+                    return res.redirect('/MyLock');
                 });
         } else if (req.body.hidden_state == 3) {
           mysql.update_SmartLock_showStore(
@@ -256,7 +257,7 @@ router.get('/MyLock', function(req, res)
                   if (error) {
                       throw error;
                   }
-                  res.send(req.body.SLIDname);
+                  return res.send(req.body.SLIDname);
               });
         } else if (req.body.hidden_state == 4) {
           mysql.update_SmartLock_hideStore(
@@ -269,7 +270,7 @@ router.get('/MyLock', function(req, res)
                       throw error;
                   }
                   // res.redirect('/MyLock');
-                  res.send("Discontinue Successfully");
+                  return res.send("Discontinue Successfully");
               });
         }
     });

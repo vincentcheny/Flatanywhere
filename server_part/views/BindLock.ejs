@@ -34,7 +34,15 @@
       var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
       return date;
     }
-    function createbtn(){
+    function bind(){
+      if ($("#stid").val() == "") {
+        alert("Start time is emtpy. Please fill in it before binding.");
+        return ;
+      }
+      if ($("#etid").val() == "") {
+        alert("End time is emtpy. Please fill in it before binding.");
+        return ;
+      }
       var st = new Date($("#stid").val());
       st = parseInt(st.getTime()/1000) + 4 * 60 * 60;//默认位于+8时区，+4 hours 统一控制为中午12点整
       var et = new Date($("#etid").val());
@@ -94,7 +102,7 @@
     function pressEnter(e) {
       if(!e) e = window.event;//火狐中是 window.event
         if((e.keyCode || e.which) == 13){
-            createbtn();
+            bind();
         }
     }
     function checkboxOnclick(checkbox){
@@ -106,6 +114,34 @@
         $("#dateRow").addClass('hide');
         $("#stid, #etid").val("");
       }
+    }
+    function LongQuery(){
+      $.ajax({
+         type: "GET",//方法类型
+         dataType: "json",//预期服务器返回的数据类型
+         url: "/Query" ,//url
+         timeout: 10000,
+         success: function (result) {
+             // console.log(result);//打印服务端返回的数据(调试用)
+             if (result[0].count > sessionStorage.newDealCount) {
+               Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
+               sessionStorage.newDealCount = result[0].count;
+               if ($("#mylock").find("span").length > 0) {
+                 $("#mylock").find("span").html = result[0].count;
+               } else {
+                 $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+
+               }
+             } else if (sessionStorage.newDealCount != 0) {
+               $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+             }
+             setTimeout("LongQuery()", 1000);
+             return ;
+         },
+         error : function() {
+             console.log("Error in AJAX GET");
+         }
+       });
     }
     $(document).ready(function(){
       setTimeout(function(){
@@ -126,32 +162,7 @@
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 4 // Creates a dropdown of 15 years to control year
       });
-      setInterval(function(){
-        $.ajax({
-         //几个参数需要注意一下
-             type: "GET",//方法类型
-             dataType: "json",//预期服务器返回的数据类型
-             url: "/Query" ,//url
-             // async: true,
-             success: function (result) {
-                 // console.log(result);//打印服务端返回的数据(调试用)
-                 if (result[0].count > sessionStorage.newDealCount) {
-                   Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
-                   sessionStorage.newDealCount = result[0].count;
-                   if ($("#mylock").find("span").length > 0) {
-                     $("#mylock").find("span").html = result[0].count;
-                   } else {
-                     $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
-                   }
-                 } else if (sessionStorage.newDealCount != 0) {
-                   $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
-                 }
-             },
-             error : function() {
-                 alert("异常！");
-             }
-         });
-      }, 3000);
+      LongQuery();
     });
   </script>
 </head>
@@ -232,7 +243,7 @@
           </div>
         </div>
         <div class="row" id="submitRow">
-            <button class="btn-large waves-effect waves-light right" type="button" onclick="createbtn()" name="action">BIND
+            <button class="btn-large waves-effect waves-light right" type="button" onclick="bind()" name="action">BIND
               <i class="material-icons right">link</i>
             </button>
         </div>

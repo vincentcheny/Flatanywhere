@@ -115,38 +115,7 @@ body.inner-page #fh5co-hero .fh5co-hero-wrap {
 	padding: 2em;
 }
 
-.btn {
-	/* border-bottom: none; */
-	text-transform: uppercase;
-	letter-spacing: 2px;
-	margin-bottom: 20px;
-	-webkit-border-radius: 5px;
-	-moz-border-radius: 5px;
-	-ms-border-radius: 5px;
-	-o-border-radius: 5px;
-	border-radius: 5px;
-	padding-left: 20px;
-	padding-right: 20px;
-	margin-right: 10px;
-}
 
-.btn:hover, .btn:focus, .btn:active {
-	box-shadow: none;
-	outline: none !important;
-	border-color: transparent;
-}
-
-.btn-outline {
-	border: 2px solid #eaeaea !important;
-	background: transparent;
-	color: #2a2e37;
-}
-
-.btn-outline:hover, .btn-outline:active, .btn-outline:focus {
-	border: 2px solid #f86942 !important;
-	background: #f86942;
-	color: #ffffff;
-}
 
 .clickable{
 	cursor: pointer;

@@ -208,6 +208,34 @@
         }
       }
     }
+    function LongQuery(){
+      $.ajax({
+         type: "GET",//方法类型
+         dataType: "json",//预期服务器返回的数据类型
+         url: "/Query" ,//url
+         timeout: 10000,
+         success: function (result) {
+             // console.log(result);//打印服务端返回的数据(调试用)
+             if (result[0].count > sessionStorage.newDealCount) {
+               Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
+               sessionStorage.newDealCount = result[0].count;
+               if ($("#mylock").find("span").length > 0) {
+                 $("#mylock").find("span").html = result[0].count;
+               } else {
+                 $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+
+               }
+             } else if (sessionStorage.newDealCount != 0) {
+               $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
+             }
+             setTimeout("LongQuery()", 1000);
+             return ;
+         },
+         error : function() {
+             console.log("Error in AJAX GET");
+         }
+       });
+    }
     $(document).ready(function(){
       $('#userAccount').val(sessionStorage.userAccount);
       $(".button-collapse").sideNav();
@@ -215,32 +243,8 @@
         selectMonths: true, // Creates a dropdown to control month
         selectYears: 4 // Creates a dropdown of 15 years to control year
       });
-      setInterval(function(){
-        $.ajax({
-         //几个参数需要注意一下
-             type: "GET",//方法类型
-             dataType: "json",//预期服务器返回的数据类型
-             url: "/Query" ,//url
-             // async: true,
-             success: function (result) {
-                 // console.log(result);//打印服务端返回的数据(调试用)
-                 if (result[0].count > sessionStorage.newDealCount) {
-                   Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
-                   sessionStorage.newDealCount = result[0].count;
-                   if ($("#mylock").find("span").length > 0) {
-                     $("#mylock").find("span").html = result[0].count;
-                   } else {
-                     $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
-                   }
-                 } else if (sessionStorage.newDealCount != 0) {
-                   $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
-                 }
-             },
-             error : function() {
-                 alert("异常！");
-             }
-         });
-      }, 3000);
+      sessionStorage.newDealCount = 0;
+      LongQuery();
     });
   </script>
 </head>
@@ -263,7 +267,7 @@
       <ul class="right hide-on-med-and-down">
         <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
         <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Bind A New Lock">Bind</a></li>
-        <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat">MyLock</a></li>
+        <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat" id="mylock">MyLock</a></li>
         <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
         <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
       </ul>
