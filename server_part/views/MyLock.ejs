@@ -102,6 +102,13 @@
     .btn-large{
       width:80%;
     }
+    @media screen and (max-width: 430px) {
+      #LoginBox {
+        left: 0;
+        right: 0;
+        width: 100%;
+      }
+    }
   </style>
   <script type="text/javascript" src="./js/jquery.min.js"></script>
   <script type="text/javascript" src="./js/base.js"></script>
@@ -136,14 +143,26 @@
       });
       $card_content.find("span").eq(0).html(nickname);
       $card_content.find("span").eq(1).attr({
-        'class': 'left',
         'id': 'priceid'+num,
         'readonly': 'readonly',
       });
       $card_content.find("span").eq(1).html(price+" ETH");
-      $card_content.find("span").eq(2).attr({
-        'class': 'right'
-      });
+      if (screen.width > 375) {
+        $card_content.find("span").eq(1).attr({
+          'class': 'left'
+        });
+        $card_content.find("span").eq(2).attr({
+          'class': 'right'
+        });
+
+      } else {
+        $card_content.find("span").eq(1).attr({
+          'style': 'display:block'
+        });
+        $card_content.find("span").eq(2).attr({
+          'style': 'display:block'
+        });
+      }
       if (type < 2 && isShown == true) {
         $card_content.find("span").eq(2).html("On Sale");
       }
@@ -261,8 +280,8 @@
          async: false,
          data: $('form').serialize(),
          success: function (result) {
-           var currentState = isPublish ? "Publish" : "Discontinue";
-           var newState = isPublish ? "Discontinue" : "Publish";
+           var currentState = isPublish ? "Publish" : "Remove";
+           var newState = isPublish ? "Remove" : "Publish";
            Materialize.toast(currentState + " Successfully!", 4000);
            $("#reveal"+num).find("a").eq(0).attr({
              'onclick': "toggleStore('"+SLID+"', "+isPublish+", '"+st+"', '"+et+"',"+num+", '"+nickname+"' )",
@@ -283,6 +302,13 @@
        });
     }
     function deleteLock(SLID, num) {
+      // Materialize.toast("Sorry, this function is not available for now.", 5000);
+      // return ;
+      var event = Flatanywhere.DeleteLock({
+        filter:{
+          SLID: SLID
+        }
+      });
       $.ajax({
         type: "POST",//方法类型
         dataType: "JSON",//预期服务器返回的数据类型
@@ -296,25 +322,35 @@
           } else if (result[0].numOfDeletable == undefined) {
             alert("There is an error when trying to delete it.");
           } else {
-            $.ajax({
-              type: "POST",//方法类型
-              dataType: "text",//预期服务器返回的数据类型
-              url: "/Removal" ,//url
-              async: false,
-              data: {'SLID':SLID},
-              success: function (result) {
-                if (result != '0') {
-                  console.log("Abnormal ajax POST response:", result);
-                } else {
-                  Materialize.toast("You delete "+SLID.substring(0,7)+"...", 5000);
-                  $("#lock"+num).fadeOut(500);
-                  setTimeout(function() {
-                    $("#lock"+num).remove();
-                  }, 500);
-                }
-              },
-              error : function() {
-                alert("Error in AJAX!");
+            Flatanywhere.DeleteSmartLock.sendTransaction(SLID, sessionStorage.userAccount, {from: sessionStorage.userAccount}, function(err, result){
+              if (!err) {
+                event.watch(function(error, result) {
+                  event.stopWatching();
+                  console.log("result", result.args.success, result.args.success == true);
+                  $.ajax({
+                    type: "POST",//方法类型
+                    dataType: "text",//预期服务器返回的数据类型
+                    url: "/Removal" ,//url
+                    async: false,
+                    data: {'SLID':SLID},
+                    success: function (result) {
+                      if (result != '0') {
+                        console.log("Abnormal ajax POST response:", result);
+                      } else {
+                        Materialize.toast("You delete "+SLID.substring(0,7)+"...", 5000);
+                        $("#lock"+num).fadeOut(500);
+                        setTimeout(function() {
+                          $("#lock"+num).remove();
+                        }, 500);
+                      }
+                    },
+                    error : function() {
+                      alert("Error in AJAX!");
+                    }
+                  });
+                });
+              } else {
+                console.error(err);
               }
             });
           }
@@ -541,12 +577,12 @@
         </div>
       </div>
       <div class="row">
-        <div class="input-field col s12 m6">
+        <div class="input-field col s12 m6 disabled">
           <i class="material-icons prefix">date_range</i>
           <input id="stid" type="date" name="stname" class="datepicker">
           <label for="stid">Available Since</label>
         </div>
-        <div class="input-field col s12 m6">
+        <div class="input-field col s12 m6 disabled">
           <i class="material-icons prefix">date_range</i>
           <label for="etid">Available Until</label>
           <input id="etid" type="date" name="etname" class="datepicker">

@@ -15,7 +15,6 @@ contract Flatanywhere
       uint256 unitPrice;
       uint256 startTime;
       uint256 endTime;
-      bool isRent;
     }
 
     struct Deal
@@ -31,6 +30,7 @@ contract Flatanywhere
 
     mapping(bytes32=>Deal) Deals;
     mapping(bytes32=>SmartLock) SmartLocks;
+    mapping(bytes32=>uint256) LastCheckOutTimeList;
 
      /*
      * event declear
@@ -47,13 +47,10 @@ contract Flatanywhere
       uint256 totalAmount,
       uint256 checkInTime,
       uint256 checkOutTime);
-
-     event SmartLockRefresh(
-      bytes32 indexed SLID,
-      address currentUser,
-      uint256 endTime,
-      bool isRent);
-
+     event DeleteLock(
+       bytes32 indexed SLID,
+       bool success
+     );
      event Newunlock(
       address sender,
       address indexed host,
@@ -106,7 +103,7 @@ contract Flatanywhere
     /**
     * Smart Lock functions
     * CreateSmartLock : create smart lock
-    * RefreshSmartLock : reset the current user and extend the endTime
+    * DeleteSmartLock : delete smart lock
     */
 
     function ExistSmartLock(bytes32 _SLID)
@@ -135,20 +132,22 @@ contract Flatanywhere
         msg.sender,
         _unitPrice,
         _startTime,
-        _endTime,
-        false);
+        _endTime);
       emit NewSmartLock(_lockID, msg.sender);
     }
-
-    function RefreshSmartLock(bytes32 _SLID)
-      public
+    function DeleteSmartLock(bytes32 SLID, address owner)
+      external
+      returns (bool success)
     {
-      require(ExistSmartLock(_SLID) == true, "ExistSmartLock: SmartLock Not Exist!");
-      require(OwnSmartLock(_SLID, msg.sender) == true, "OwnSmartLock: Current user does not own this lock!");
-      SmartLocks[_SLID].currentUser = SmartLocks[_SLID].owner; // reset the owning state
-      SmartLocks[_SLID].endTime = now + 100 * 1 days; // entend the lock time automatically
-      SmartLocks[_SLID].isRent = false;
-      emit SmartLockRefresh(_SLID, SmartLocks[_SLID].currentUser, SmartLocks[_SLID].endTime, SmartLocks[_SLID].isRent);
+      require(ExistSmartLock(SLID) == true, "ExistSmartLock: SmartLock Not Exist!");
+      require(OwnSmartLock(SLID, owner) == true, "OwnSmartLock: Current user does not own this lock!");
+      if (LastCheckOutTimeList[SLID] < now){
+        delete SmartLocks[SLID];
+        success = true;
+      } else {
+        success = false;
+      }
+      emit DeleteLock(SLID, success);
     }
 
     function CreateDeal(bytes32 SLID, address sellerAddr, uint256 checkInTime, uint256 checkOutTime)
@@ -179,7 +178,9 @@ contract Flatanywhere
         checkInTime,
         checkOutTime);
       SmartLocks[SLID].currentUser = msg.sender;
-      SmartLocks[SLID].isRent = true;
+      if(LastCheckOutTimeList[SLID] < checkOutTime){
+        LastCheckOutTimeList[SLID] = checkOutTime;
+      }
       sellerAddr.transfer(msg.value);
       emit NewDeal(
         DEALID,
@@ -190,7 +191,7 @@ contract Flatanywhere
         checkInTime,
         checkOutTime);
     }
-    
+
     /*
     * Get function for checking the contract and lock info
     *
@@ -199,11 +200,11 @@ contract Flatanywhere
     function getSmartLock(bytes32 _SLID)
       public
       view
-      returns(bytes32 SLID, address owner, uint256 unitPrice)
+      returns(bytes32 SLID, address owner, uint256 unitPrice, uint256 startTime, uint256 endTime)
     {
       require(ExistSmartLock(_SLID) == true, "ExistSmartLock: SmartLock Not Exist!");
       SmartLock storage c = SmartLocks[_SLID];
-      return (_SLID, c.owner, c.unitPrice);
+      return (_SLID, c.owner, c.unitPrice, c.startTime, c.endTime);
     }
 
     function getDeal(bytes32 _DEALID)
@@ -219,7 +220,7 @@ contract Flatanywhere
         uint256 checkOutTime)
     {
       Deal storage d = Deals[_DEALID];
-      return (d.SLID, d.sellerAddr, d.buyerAddr, d.totalAmount, 
+      return (d.SLID, d.sellerAddr, d.buyerAddr, d.totalAmount,
         d.checkInTime, d.checkOutTime);
     }
 
@@ -243,21 +244,21 @@ contract Flatanywhere
     function unlock(address hostaddr)
       external
     {
-      emit Newunlock(msg.sender, hostaddr, now);   
+      emit Newunlock(msg.sender, hostaddr, now);
     }
-    
+
     function purchase(address hostaddr)
       external
     {
       emit SetNewUser(msg.sender, hostaddr, now);
     }
-    
+
     function refresh(address hostaddr)
       external
     {
       emit HostRefresh(msg.sender, hostaddr, now);
     }
-    
+
     function checkConnection()
       external
       view
@@ -270,5 +271,5 @@ contract Flatanywhere
     {
 
     }
-    
+
   }

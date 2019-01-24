@@ -189,7 +189,7 @@ router.get('/MyLock', function(req, res)
     mysql.select_Info_BoughtLockView(client, req.session.userAccount, function(result){
         var modified = false;
         // 将时间改成当前或以后,当前的则更新,以后的则传到前端
-        req.session.MyLockInfo = result
+        req.session.MyLockInfo = result;
         for (var i = result.length - 1; i >= 0; i--) {
             mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, function(error){
                 if(error){
@@ -235,24 +235,12 @@ router.get('/MyLock', function(req, res)
       console.log("req.body", req.body);
       // console.log("res", res);
         var client = mysql.connect();
-        if (req.body.hidden_state == 2) {
-            mysql.update_SmartLock_Refresh(
-                client,
-                req.body.SLIDname,
-                req.session.userAccount,
-                req.body.etname,
-                function(error){
-                    if(error) {
-                        throw error;
-                    }
-                    return res.redirect('/MyLock');
-                });
-        } else if (req.body.hidden_state == 3) {
+        if (req.body.hidden_state == 3) {
           mysql.update_SmartLock_showStore(
               client,
               req.body.SLIDname,
-              req.body.stname,
-              req.body.etname,
+              // req.body.stname,
+              // req.body.etname,
               function(error){
                   if (error) {
                       throw error;
@@ -263,8 +251,8 @@ router.get('/MyLock', function(req, res)
           mysql.update_SmartLock_hideStore(
               client,
               req.body.SLIDname,
-              req.body.stname == "" ? "null" : '"' + req.body.stname + ' 12:00:00"',
-              req.body.etname == "" ? "null" : '"' + req.body.etname + ' 12:00:00"',
+              // req.body.stname == "" ? "null" : '"' + req.body.stname + ' 12:00:00"',
+              // req.body.etname == "" ? "null" : '"' + req.body.etname + ' 12:00:00"',
               function(error){
                   if (error) {
                       throw error;

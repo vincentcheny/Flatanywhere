@@ -35,23 +35,26 @@
       return date;
     }
     function bind(){
-      if ($("#stid").val() == "") {
-        alert("Start time is emtpy. Please fill in it before binding.");
-        return ;
-      }
-      if ($("#etid").val() == "") {
-        alert("End time is emtpy. Please fill in it before binding.");
-        return ;
-      }
-      var st = new Date($("#stid").val());
-      st = parseInt(st.getTime()/1000) + 4 * 60 * 60;//默认位于+8时区，+4 hours 统一控制为中午12点整
-      var et = new Date($("#etid").val());
-      et = parseInt(et.getTime()/1000) + 4 * 60 * 60;
-      if (st >= et) {
-        alert("Check-out date should be greater than check-in date!");
-        return ;
-      }
+
+      var st = 0;
+      var et = 0;
       if ($('input[type="checkbox"]')[0].checked == true) {
+        if ($("#stid").val() == "") {
+          alert("Start time is emtpy. Please fill in it before binding.");
+          return ;
+        }
+        if ($("#etid").val() == "") {
+          alert("End time is emtpy. Please fill in it before binding.");
+          return ;
+        }
+        st = new Date($("#stid").val());
+        st = parseInt(st.getTime()/1000) + 4 * 60 * 60;//默认位于+8时区，+4 hours 统一控制为中午12点整
+        et = new Date($("#etid").val());
+        et = parseInt(et.getTime()/1000) + 4 * 60 * 60;
+        if (st >= et) {
+          alert("Check-out date should be greater than check-in date!");
+          return ;
+        }
         $("#stid").val(dateFormat($("#stid").val()));
         $("#etid").val(dateFormat($("#etid").val()));
       }
@@ -69,6 +72,7 @@
           owner: sessionStorage.userAccount
         }
       });
+      console.log(price, st, et, now);
       Flatanywhere.CreateSmartLock.sendTransaction(price, st, et, now, {from:sessionStorage.userAccount}, function(error, res){
         if (!error) {
           event.watch(function(error, result){
@@ -95,6 +99,8 @@
               $("form")[0].submit();
             }, 3000);
           });
+        } else {
+          location.reload();
         }
         // $('#priceid, #nicknameid, #ucid').val(""); // empty the input
       });
