@@ -32,18 +32,25 @@ $ npm start # visit http://localhost:3000
 
 ## Change Log
 
-### v0.9.0 (2019.01.23)
+### v0.10 (2019.01.26)
+
+- 完成全部页面基本美化
+- 解决AJAX长轮询连接过多和 Connection Lost 的问题
+- smart contract 上添加删除 lock 功能
+- 更新连接数据库的一些函数与数据库表格样式
+
+### v0.9 (2019.01.23)
 
 - 完成“MyLock”和“Store”页面
 - 新增订单提醒功能
 - 新增上架标记、按钮提醒和 Publish Date 输入聚焦
 - 修复“重新上架”时出现的错误
 
-### v0.8.0 (2019.01.22)
+### v0.8 (2019.01.22)
 
 - "MyLock"页面使用Materialize CSS framework重构，应用ajax于更新网页内容，添加预订房源（Booked）的图标表示
 
-### v0.7.0 (2019.01.21)
+### v0.7 (2019.01.21)
 
 - "CreateLock"页面重命名为"BindLock"，使用Materialize CSS framework重构，新增是否公开房源选项，新增余额读取检测
 - "MyLock"页面使用新图标，新增类型筛选功能，新增公开房源时长选项，修复撤销房源时的时间更新问题
