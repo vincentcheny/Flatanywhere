@@ -117,7 +117,7 @@
   <script type="text/javascript" src="./js/qrcode2.min.js"></script>
   <script type="text/javascript" src="./js/common.js"></script>
   <script type="text/javascript">
-    function addLock(type, nickname, num, price, SLID, isShown, st, et) {
+    function addLock(type, nickname, num, price, SLID, address, isShown, st, et) {
       var resource = {
         'icon': ['images/lock_unleased.svg', 'images/lock_rented.svg', 'images/lock_renting.svg', 'images/lock_future.svg'],
         'classType': ['unleasedDiv', 'rentedDiv', 'rentingDiv', 'futureDiv'],
@@ -129,6 +129,7 @@
         'style': 'border-radius: 20px'
       });
       $card_image.children("img").attr({
+        'id': 'pic'+num,
         'class': 'activator',
         'src': resource.icon[type],
       });
@@ -154,7 +155,6 @@
         $card_content.find("span").eq(2).attr({
           'class': 'right'
         });
-
       } else {
         $card_content.find("span").eq(1).attr({
           'style': 'display:block'
@@ -163,7 +163,7 @@
           'style': 'display:block'
         });
       }
-      if (type < 2 && isShown == true) {
+      if (type < 2 && isShown == true && new Date().getTime() < new Date(et).getTime()) {
         $card_content.find("span").eq(2).html("On Sale");
       }
 
@@ -189,12 +189,9 @@
           $card_reveal.find("a").eq(2).css("color","black");
         });
         $card_reveal.find("a").eq(2).html("DELETE");
-      } else if (type == 2) {
-        // renting
+      } else{
+        // renting or booked
         $card_reveal = $('<div><span></span><p></p><a></a></div>');
-      } else if (type == 3) {
-        // booked
-        $card_reveal = $('<div><span></span><p></p></div>');
       }
       if (type == 0 || type == 2) {
         // able to control
@@ -204,6 +201,13 @@
           'class': 'dropdown-item hoverable center-align',
         });
         $card_reveal.find("a").eq(idx).html("Unlock");
+      } else if (type == 3) {
+        $card_reveal.find("a").eq(0).attr({
+          'id': 'opBtn'+num,
+          'onclick': 'CheckIn('+num+',"'+SLID+'","'+arguments[6]+'","'+arguments[7]+'")', // [6]:checkintime [7]:DEALID
+          'class': 'dropdown-item hoverable center-align',
+        });
+        $card_reveal.find("a").eq(0).html("Check In");
       }
       $card_reveal.filter("div").eq(0).attr({
         'class': 'card-reveal ',
@@ -213,7 +217,7 @@
         'class': 'card-title activator grey-text text-darken-4',
       });
       $card_reveal.find("span").eq(0).html(nickname + "<i class='material-icons right' id='close"+num+"'>close</i>");
-      $card_reveal.find("p").eq(0).html("Placeholder");
+      $card_reveal.find("p").eq(0).html(address);
 
       var $newLockCard = $('<div><div class="card hoverable"></div></div>');
       $newLockCard.filter("div").eq(0).attr({
@@ -389,6 +393,53 @@
       $('#hsid_store').val(3);
       sendAJAX("text", num, true, SLID, stdate, eddate, nickname, false);
     }
+    function CheckIn(num, SLID, checkintime, DEALID) {
+      if (new Date() < new Date(checkintime)) {
+        Materialize.toast("It is not the check-in time yet.", 5000);
+      } else {
+        console.log(SLID, DEALID, DEALID.length, SLID.length);
+        console.log(sessionStorage.userAccount);
+        var event = Flatanywhere.WithdrawableDeal({
+          filter:{
+            DEALID: DEALID
+          }
+        });
+        Flatanywhere.CheckIn.sendTransaction(SLID, DEALID, {from: sessionStorage.userAccount}, function(err, result) {
+          if (!err) {
+            event.watch(function(error, result){
+              event.stopWatching();
+              console.log("See whether SLID can be passed", SLID);
+              $.ajax({
+                   type: "POST",//方法类型
+                   dataType: "text",//预期服务器返回的数据类型
+                   url: "/CheckIn" ,//url
+                   data: {
+                     'SLID': SLID,
+                     'DEALID': DEALID,
+                     'num': num},
+                   async: false,
+                   success: function (result) {
+                     Materialize.toast("Check-in Successfully", 5000);
+                     $("#pic"+result).attr({
+                       'src': 'images/lock_renting.svg'
+                     });
+                     $("#lock"+result).removeClass("futureDiv");
+                     $("#lock"+result).addClass("rentingDiv");
+                     $("#opBtn"+result).attr({
+                       'onclick': 'Unlock("'+SLID+'")'
+                     });
+                     $("#opBtn"+result).html("Unlock");
+                     $("#close"+result).click();
+                   },
+                   error : function() {
+                       alert("Error in ajax POST!");
+                   }
+               });
+            });
+          }
+        })
+      }
+    }
     function Unlock(SLID){
       $("#qrimg").empty();
       $("body").append("<div id='mask'></div>");
@@ -436,7 +487,7 @@
         }, 500);
       }
     }
-    function LongQuery(){
+    function LongQueryNewDeal(){
       $.ajax({
          type: "GET",//方法类型
          dataType: "json",//预期服务器返回的数据类型
@@ -461,7 +512,7 @@
                     }
                 });
              }
-             setTimeout("LongQuery()", 1000);
+             setTimeout("LongQueryNewDeal()", 3000);
              return ;
          },
          error : function() {
@@ -478,38 +529,7 @@
         selectYears: 4 // Creates a dropdown of 15 years to control year
       });
       sessionStorage.newDealCount = 0;
-      LongQuery();
-      // setInterval(function(){
-      //   $.ajax({
-      //    //几个参数需要注意一下
-      //        type: "GET",//方法类型
-      //        dataType: "json",//预期服务器返回的数据类型
-      //        url: "/Query" ,//url
-      //        async: false,
-      //        success: function (result) {
-      //          if (result[0].count != 0) {
-      //            Materialize.toast("You receive "+result[0].count+" new deals!", 5000);
-      //            $.ajax({
-      //                 type: "POST",//方法类型
-      //                 dataType: "text",//预期服务器返回的数据类型
-      //                 url: "/Query" ,//url
-      //                 async: false,
-      //                 success: function (result) {
-      //                   if (result != '0') {
-      //                     console.log("Abnormal ajax POST response:", result);
-      //                   }
-      //                 },
-      //                 error : function() {
-      //                     alert("Error in ajax POST!");
-      //                 }
-      //             });
-      //          }
-      //        },
-      //        error : function() {
-      //            alert("Error in ajax GET!");
-      //        }
-      //    });
-      // }, 3000);
+      LongQueryNewDeal();
   		//关闭二维码
   		$(".close_btn").hover(function () {
         $(this).css({ color: 'black' })
@@ -521,6 +541,36 @@
   		});
       '<%for (var key in LastDeal) {%>'
         sessionStorage.setItem('<%=key%>', JSON.stringify('<%=LastDeal[key]%>'));
+      '<%}%>'
+      '<%for (var i = 0; i < WithdrawableDeal.length; ++i) { var res = WithdrawableDeal[i];%>'
+        console.log('<%=res.DEALID%>');
+        var event = Flatanywhere.WithdrawableDeal({
+          filter:{
+            DEALID: '<%=res.DEALID%>'
+          }
+        });
+        event.watch(function(error, result){
+          event.stopWatching();
+          var SLID = result.args.SLID;
+          var amount = result.args.totalAmount / 1000000000000000000;
+          $.ajax({
+             type: "POST",//方法类型
+             dataType: "text",//预期服务器返回的数据类型
+             url: "/Withdraw" ,//url
+             data: {'DEALID':result.args.DEALID},
+             timeout: 10000,
+             success: function (result) {
+               if (result != '0') {
+                 console.log("Abnormal ajax POST to /Withdraw response:", result);
+               } else {
+                 Materialize.toast("You withdraw "+amount+" ETH for "+SLID.substring(0,7)+"...", 5000);
+               }
+             },
+             error : function() {
+                 console.log("Error in AJAX POST to /Withdraw");
+             }
+           });
+        });
       '<%}%>'
     });
   </script>
@@ -641,22 +691,22 @@
       <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
         <%if(res.currentuser == locals.userAccount){%>
           <script type="text/javascript">
-            addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+            addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
           </script>
         <%} else {%>
           <script type="text/javascript">
-            addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+            addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
           </script>
         <%}%>
       <%}%>
       <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
         <script type="text/javascript">
-          addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>");
+          addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>");
         </script>
       <%}%>
       <% for(var i = Ownerlock.length + Userlock.length; i < Ownerlock.length + Userlock.length + Futurelock.length; ++i){ var res = Futurelock[i - Ownerlock.length - Userlock.length]; %>
         <script type="text/javascript">
-          addLock(3, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>");
+          addLock(3, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.check_in_time%>", "<%=res.DEALID%>");
         </script>
       <%}%>
     </div>

@@ -41,7 +41,7 @@
       var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
       return date;
     }
-    function addLock(SLID, price, num, owner){
+    function addLock(SLID, price, num, owner, address){
 
       var $card_image = $('<div><img><span></span></div>');
       $card_image.filter("div").eq(0).attr({
@@ -73,7 +73,7 @@
         'readonly': 'readonly'
       });
       $card_content.find("p").eq(0).html(price+" ETH");
-      $card_content.find("p").eq(1).html("Address");
+      $card_content.find("p").eq(1).html(address.substring(0, 100) || "Undefined Address");
 
       var $card_reveal = $('<div><span></span><p></p><input><input></div>');
       $card_reveal.filter("div").eq(0).attr({
@@ -143,14 +143,12 @@
         value: amount * 1000000000000000000}, //1ETH = 10^18wei
         function(err, result){
           if (!err) {
-            var DEALID = result;
-            console.log("DEALID:",DEALID);
             newDeal.watch(function(error,result){
               if (!error) {
                 newDeal.stopWatching();
                 console.log("Create Deal Successfully!");
                 setTimeout(function(){
-                  $('#DEALID').val(DEALID);
+                  $('#DEALID').val(result.args.DEALID);
                   $('#SLIDid').val(SLID);
                   $('#sellerid').val(owner);
                   $('#buyerid').val(sessionStorage.userAccount);
@@ -181,16 +179,18 @@
         alert("Check-out date should be greater than check-in date!");
         return ;
       }
-      var startdate = new Date($('.st'+num)[0].innerHTML);
-      var enddate = new Date($('.et'+num)[0].innerHTML);
+      var startdate = new Date($('.st'+num)[0].innerHTML).getTime();
+      var enddate = new Date($('.et'+num)[0].innerHTML).getTime();
       if (codate > enddate || cidate < startdate) {
+        console.log(cidate, codate, startdate, enddate);
         return false;
       }
       for (var i = 0; i < $('.in'+num).length; i++) {
-        var s = new Date($('.in'+num)[i].innerHTML);
-        var e = new Date($('.out'+num)[i].innerHTML);
+        var s = new Date($('.in'+num)[i].innerHTML).getTime();
+        var e = new Date($('.out'+num)[i].innerHTML).getTime();
+        console.log(new Date(cidate), new Date(codate), s, e, (cidate < s) && (codate <= s), (cidate >= e) && (codate > e));
         if (!((cidate < s) && (codate <= s) || (cidate >= e) && (codate > e))) {
-          console.log(new Date(cidate), new Date(codate), s, e, (cidate < s) && (codate <= s), (cidate >= e) && (codate > e));
+          // console.log(new Date(cidate), new Date(codate), s, e, (cidate < s) && (codate <= s), (cidate >= e) && (codate > e));
           return false;
         }
       }
@@ -225,10 +225,10 @@
                  $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
 
                }
-             } else if (sessionStorage.newDealCount != 0) {
+             } else if (sessionStorage.newDealCount > 0) {
                $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
              }
-             setTimeout("LongQuery()", 1000);
+             setTimeout("LongQuery()", 3000);
              return ;
          },
          error : function() {
@@ -330,7 +330,7 @@
             <%}%>
           </div>
           <script type="text/javascript">
-            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "<%=res.owner%>");
+            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "<%=res.owner%>", "<%=res.address%>");
           </script>
         </div>
       <%}%>

@@ -35,16 +35,19 @@
       return date;
     }
     function bind(){
-
       var st = 0;
       var et = 0;
       if ($('input[type="checkbox"]')[0].checked == true) {
         if ($("#stid").val() == "") {
-          alert("Start time is emtpy. Please fill in it before binding.");
+          alert("Start time is emtpy. Please fill it in before binding.");
           return ;
         }
         if ($("#etid").val() == "") {
-          alert("End time is emtpy. Please fill in it before binding.");
+          alert("End time is emtpy. Please fill it in before binding.");
+          return ;
+        }
+        if ($("#addrnameid").val() == "") {
+          alert("Address is emtpy. Please fill it in before binding.");
           return ;
         }
         st = new Date($("#stid").val());
@@ -115,9 +118,11 @@
       if ( checkbox.checked == true){
         checkbox.value = "show";
         $("#dateRow").removeClass('hide');
+        $("#addrRow").removeClass('hide');
       } else {
         checkbox.value = "hide";
         $("#dateRow").addClass('hide');
+        $("#addrRow").addClass('hide');
         $("#stid, #etid").val("");
       }
     }
@@ -138,10 +143,10 @@
                  $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
 
                }
-             } else if (sessionStorage.newDealCount != 0) {
+             } else if ( sessionStorage.newDealCount > 0 ) {
                $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
              }
-             setTimeout("LongQuery()", 1000);
+             setTimeout("LongQuery()", 3000);
              return ;
          },
          error : function() {
@@ -160,7 +165,7 @@
           });
         }
       }, 500);
-
+      sessionStorage.newDealCount = 0;
       $('#userAccount').val(sessionStorage.userAccount);
       $(".dropdown-button").dropdown();
       $(".button-collapse").sideNav();
@@ -210,18 +215,29 @@
   </div>
 
   <div class="container">
-    <div class="switch">
-      <label>
-        Private
-        <input type="checkbox" name="isShown" onclick="checkboxOnclick(this)" value="show" checked>
-        <span class="lever"></span>
-        Public
-      </label>
-    </div>
+    <form accept-charset="UTF-8" method="post">
+      <div class="switch">
+        <label>
+          Private
+          <input type="checkbox" name="isShown" onclick="checkboxOnclick(this)" value="show" checked>
+          <span class="lever"></span>
+          Public
+        </label>
+      </div>
 
-    <div class="row">
-      <form class="col s12" accept-charset="UTF-8" method="post">
+      <div class="row">
         <div class="row">
+          <script type="text/javascript">
+            function fill(){
+              $("#stid").val(new Date('2019-01-01'));
+              $("#etid").val(new Date('2019-01-31'));
+              $("#priceid").val(1);
+              $("#nicknameid").val('nick1');
+              $("#addrnameid").val('addr1');
+            }
+          </script>
+          <button class="btn-large waves-effect waves-light right" type="button" onclick="fill()">FILL
+          </button>
           <!-- Placeholder -->
         </div>
         <div class="row" id="dateRow">
@@ -243,9 +259,16 @@
             <label for="priceid">Price (ETH/day)</label>
           </div>
           <div class="input-field col s12 m6">
+            <i class="material-icons prefix">insert_emoticon</i>
+            <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Home" onkeydown="pressEnter(event)" maxlength="15" required>
+            <label for="nicknameid">Nickname (max-length:15)</label>
+          </div>
+        </div>
+        <div class="row" id="addrRow">
+          <div class="input-field col s12">
             <i class="material-icons prefix">location_on</i>
-            <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Home" onkeydown="pressEnter(event)" required>
-            <label for="nicknameid">Address</label>
+            <input id="addrnameid" name="addrname" type="text" placeholder="e.g. Wall Street A1-09" onkeydown="pressEnter(event)" maxlength="60">
+            <label for="addrnameid">Address (max-length:60)</label>
           </div>
         </div>
         <div class="row" id="submitRow">
@@ -258,8 +281,8 @@
           <input id="self0" type="text" name="ownername" required>
           <input id="userAccount" type="text" name="userAccount" required>
         </div>
-      </form>
-    </div>
+      </div>
+    </form>
   </div>
   <br><br><br>
 </body>
