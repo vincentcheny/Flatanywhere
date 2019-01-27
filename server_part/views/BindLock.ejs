@@ -3,7 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
   <!--//永远以最新的IE版本模式来显示网页-->
   <title>BindLock</title>
@@ -12,170 +12,12 @@
       font-family: "微软雅黑";
       background-color: #fff;
     }
+    html{
+      min-width: 320px;
+    }
   </style>
   <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-
-  <script type="text/javascript" src="./js/jquery.min.js"></script>
-  <script type="text/javascript" src="./js/base.js"></script>
-  <script type="text/javascript" src="./js/common.js"></script>
-  <script type="text/javascript" src="./js/web3.min.js"></script>
-  <script type="text/javascript" src="./js/materialize.min.js"></script>
-
-
-  <script type="text/javascript">
-    function dateFormat(time){
-      time = new Date(time);
-      //格式化日，如果小于9，前面补0
-      var day = ("0" + time.getDate()).slice(-2);
-      //格式化月，如果小于9，前面补0
-      var month = ("0" + (time.getMonth() + 1)).slice(-2);
-      //拼装完整日期格式
-      var date = time.getFullYear()+"-"+(month)+"-"+(day) ;
-      return date;
-    }
-    function bind(){
-      var st = 0;
-      var et = 0;
-      if ($('input[type="checkbox"]')[0].checked == true) {
-        if ($("#stid").val() == "") {
-          alert("Start time is emtpy. Please fill it in before binding.");
-          return ;
-        }
-        if ($("#etid").val() == "") {
-          alert("End time is emtpy. Please fill it in before binding.");
-          return ;
-        }
-        if ($("#addrnameid").val() == "") {
-          alert("Address is emtpy. Please fill it in before binding.");
-          return ;
-        }
-        st = new Date($("#stid").val());
-        st = parseInt(st.getTime()/1000) + 4 * 60 * 60;//默认位于+8时区，+4 hours 统一控制为中午12点整
-        et = new Date($("#etid").val());
-        et = parseInt(et.getTime()/1000) + 4 * 60 * 60;
-        if (st >= et) {
-          alert("Check-out date should be greater than check-in date!");
-          return ;
-        }
-        $("#stid").val(dateFormat($("#stid").val()));
-        $("#etid").val(dateFormat($("#etid").val()));
-      }
-      var now = new Date().getTime();
-      if($("#priceid").val() <= 0)
-      {
-        alert("Price should be a positive number!");
-        return;
-      }
-      var price = parseInt($("#priceid").val() * 100); // keep two decimal places 精确到0.01ETH
-      $("#submitRow").html("");
-      $("#submitRow").append('<div class="progress"><div class="indeterminate"></div></div>');
-      var event = Flatanywhere.NewSmartLock({
-        filter:{
-          owner: sessionStorage.userAccount
-        }
-      });
-      console.log(price, st, et, now);
-      Flatanywhere.CreateSmartLock.sendTransaction(price, st, et, now, {from:sessionStorage.userAccount}, function(error, res){
-        if (!error) {
-          event.watch(function(error, result){
-            event.stopWatching();
-            console.log("SLID", result.args.SLID);
-            console.log("result.addr:",result.address, "userAccount:",sessionStorage.userAccount);
-            // 捕捉不到 newDeal
-            // var newDeal = Flatanywhere.NewDeal({
-            //   filter:{
-            //     SLID: result.args.SLID
-            //   }
-            // });
-            // newDeal.watch(function(error,result){
-            //   if (!error) {
-            //     newDeal.stopWatching();
-            //     var msg = result.args.buyerAddr + ' bought your ' + result.args.SLID + ' from ' + result.args.checkInTime;
-            //     console.log(msg);
-            //     alert(msg);
-            //   }
-            // });
-            setTimeout(function(){
-              $('#self0').val(sessionStorage.userAccount);
-              $('#SLIDid').val(result.args.SLID);
-              $("form")[0].submit();
-            }, 3000);
-          });
-        } else {
-          location.reload();
-        }
-        // $('#priceid, #nicknameid, #ucid').val(""); // empty the input
-      });
-    }
-    function pressEnter(e) {
-      if(!e) e = window.event;//火狐中是 window.event
-        if((e.keyCode || e.which) == 13){
-            bind();
-        }
-    }
-    function checkboxOnclick(checkbox){
-      if ( checkbox.checked == true){
-        checkbox.value = "show";
-        $("#dateRow").removeClass('hide');
-        $("#addrRow").removeClass('hide');
-      } else {
-        checkbox.value = "hide";
-        $("#dateRow").addClass('hide');
-        $("#addrRow").addClass('hide');
-        $("#stid, #etid").val("");
-      }
-    }
-    function LongQuery(){
-      $.ajax({
-         type: "GET",//方法类型
-         dataType: "json",//预期服务器返回的数据类型
-         url: "/Query" ,//url
-         timeout: 10000,
-         success: function (result) {
-             // console.log(result);//打印服务端返回的数据(调试用)
-             if (result[0].count > sessionStorage.newDealCount) {
-               Materialize.toast("You receive "+(result[0].count-sessionStorage.newDealCount)+" new deals!", 5000);
-               sessionStorage.newDealCount = result[0].count;
-               if ($("#mylock").find("span").length > 0) {
-                 $("#mylock").find("span").html = result[0].count;
-               } else {
-                 $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
-
-               }
-             } else if ( sessionStorage.newDealCount > 0 ) {
-               $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
-             }
-             setTimeout("LongQuery()", 3000);
-             return ;
-         },
-         error : function() {
-             console.log("Error in AJAX GET");
-         }
-       });
-    }
-    $(document).ready(function(){
-      setTimeout(function(){
-        if ($("#balanceid").html() == "") {
-          // alert("Cannot detect the account balance! Go back to home page now.");
-          web3.eth.getBalance(web3.eth.accounts[0],function(err,res){
-            if(!err){
-              $('#balanceid').html(res.c[0]/10000);
-            }
-          });
-        }
-      }, 500);
-      sessionStorage.newDealCount = 0;
-      $('#userAccount').val(sessionStorage.userAccount);
-      $(".dropdown-button").dropdown();
-      $(".button-collapse").sideNav();
-      $('.datepicker').pickadate({
-        selectMonths: true, // Creates a dropdown to control month
-        selectYears: 4 // Creates a dropdown of 15 years to control year
-      });
-      LongQuery();
-    });
-  </script>
 </head>
 
 <body>
@@ -229,8 +71,8 @@
         <div class="row">
           <script type="text/javascript">
             function fill(){
-              $("#stid").val(new Date('2019-01-01'));
-              $("#etid").val(new Date('2019-01-31'));
+              $("#stid").val('2019-01-01');
+              $("#etid").val('2019-01-31');
               $("#priceid").val(1);
               $("#nicknameid").val('nick1');
               $("#addrnameid").val('addr1');
@@ -272,9 +114,17 @@
           </div>
         </div>
         <div class="row" id="submitRow">
+          <div class="col s12 m3 offset-m6">
+            <button class="btn-large waves-effect waves-light right" type="button" onclick="end30days()" name="action">Set 30days
+              <i class="material-icons right">link</i>
+            </button>
+          </div>
+          <div class="col s12 m3">
             <button class="btn-large waves-effect waves-light right" type="button" onclick="bind()" name="action">BIND
               <i class="material-icons right">link</i>
             </button>
+          </div>
+
         </div>
         <div class="hide">
           <input id="SLIDid" name="SLIDname" type="text" required>
@@ -286,4 +136,10 @@
   </div>
   <br><br><br>
 </body>
+<script type="text/javascript" src="./js/jquery.min.js"></script>
+<script type="text/javascript" src="./js/base.js"></script>
+<script type="text/javascript" src="./js/common.js"></script>
+<script type="text/javascript" src="./js/web3.min.js"></script>
+<script type="text/javascript" src="./js/materialize.min.js"></script>
+<script type="text/javascript" src="./js/pages/BindLock.js"></script>
 </html>

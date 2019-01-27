@@ -190,25 +190,6 @@ router.get('/MyLock', function(req, res)
   }
   var client = mysql.connect();
   console.log("userAccount in get/MyLock:", req.session.userAccount == "", req.session.userAccount);
-  //  改成根据以太坊交易更新
-  // mysql.select_Info_BoughtLockView(client, req.session.userAccount, function(result){
-  //     var modified = false;
-  //     // 将时间改成当前或以后,当前的则更新,以后的则传到前端
-  //     req.session.MyLockInfo = result;
-  //     for (var i = result.length - 1; i >= 0; i--) {
-  //         mysql.update_SmartLock_Renting(client, result[i].SLID, req.session.userAccount, function(error){
-  //             if(error){
-  //                 throw error;
-  //             }
-  //             modified = true;
-  //         });
-  //     }
-  //     if (modified == true) {
-  //         return res.redirect('/MyLock');
-  //     } else {
-  //
-  //     }
-  // });
   mysql.select_Info_SoldLockView(client, req.session.userAccount, function(result) {
     console.log("WithdrawableDeal:", result);
     req.WithdrawableDeal = result;
@@ -218,7 +199,6 @@ router.get('/MyLock', function(req, res)
       mysql.select_SmartLock_by_CurrentUser(client, req.session.userAccount, function(result) {
           req.Userlock = result;
           console.log("Userlock:\n", result);
-
           mysql.select_Info_MyLockFutureView(client, req.session.userAccount, function(result) {
               var temp = {};
               for (var i = 0; i < result.length; i++) {
@@ -243,14 +223,11 @@ router.get('/MyLock', function(req, res)
   .post('/MyLock', function(req,res)
   {
     console.log("req.body", req.body);
-    // console.log("res", res);
     var client = mysql.connect();
     if (req.body.hidden_state == 3) {
       mysql.update_SmartLock_showStore(
         client,
         req.body.SLIDname,
-        // req.body.stname,
-        // req.body.etname,
         function(error){
           if (error) {
               throw error;
@@ -261,13 +238,10 @@ router.get('/MyLock', function(req, res)
       mysql.update_SmartLock_hideStore(
         client,
         req.body.SLIDname,
-        // req.body.stname == "" ? "null" : '"' + req.body.stname + ' 12:00:00"',
-        // req.body.etname == "" ? "null" : '"' + req.body.etname + ' 12:00:00"',
         function(error){
           if (error) {
               throw error;
           }
-          // res.redirect('/MyLock');
           return res.send("Discontinue Successfully");
         });
     }
