@@ -1,5 +1,5 @@
 var express = require('express');
-var mysql = require('dao/dbConnect.js');
+var mysql = require('../dao/dbConnect.js');
 var router = express.Router();
 
 /*GET the user account !*/

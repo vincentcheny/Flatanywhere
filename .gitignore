@@ -1,2 +1,1 @@
-﻿server_part/node_modules/*
-!﻿server_part/node_modules/dao/dbConnect.js
+/server_part/node_modules/*
