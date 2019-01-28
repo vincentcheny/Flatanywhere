@@ -442,7 +442,6 @@ error: function() {
 }
 });
 }
-
 $(document).ready(function() {
     $('#userAccount').val(sessionStorage.userAccount);
     $(".dropdown-button").dropdown();
@@ -468,40 +467,4 @@ $(document).ready(function() {
             display: 'none'
         });
     });
-    '<%for (var key in LastDeal) {%>'
-        sessionStorage.setItem('<%=key%>', JSON.stringify('<%=LastDeal[key]%>'));
-    '<%}%>'
-    '<%for (var i = 0; i < WithdrawableDeal.length; ++i) { var res = WithdrawableDeal[i];%>'
-        console.log('<%=res.DEALID%>');
-        var event = Flatanywhere.WithdrawableDeal({
-        filter: {
-            DEALID: '<%=res.DEALID%>',
-            sellerAddr: sessionStorage.userAccount
-        }
-        });
-        event.watch(function(error, result) {
-            event.stopWatching();
-            var SLID = result.args.SLID;
-            var amount = result.args.totalAmount / 1000000000000000000;
-            $.ajax({
-                type: "POST", //方法类型
-                dataType: "text", //预期服务器返回的数据类型
-                url: "/Withdraw", //url
-                data: {
-                    'DEALID': result.args.DEALID
-                },
-                timeout: 10000,
-                success: function(result) {
-                    if (result != '0') {
-                        console.log("Abnormal ajax POST to /Withdraw response:", result);
-                    } else {
-                        Materialize.toast("You withdraw " + amount + " ETH for " + SLID.substring(0, 7) + "...", 5000);
-                    }
-                },
-                error: function() {
-                    console.log("Error in AJAX POST to /Withdraw");
-                }
-            });
-        });
-    '<%}%>'
 });
