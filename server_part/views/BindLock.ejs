@@ -3,6 +3,7 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
   <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
   <!--//永远以最新的IE版本模式来显示网页-->
@@ -15,9 +16,14 @@
     html{
       min-width: 320px;
     }
+    html{height:100%}
+    body{height:100%;margin:0px;padding:0px}
+    #abc {width: 80%;height: 50%;margin:0 auto;font-family:"微软雅黑";}
+    #allmap {width: 100%;height: 100%;margin:0;font-family:"微软雅黑";}
   </style>
   <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <%# <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=snoAEWAAv9l2ydGA6HZmCYh0YQL85BQx"></script> %>
 </head>
 
 <body>
@@ -124,7 +130,6 @@
               <i class="material-icons right">link</i>
             </button>
           </div>
-
         </div>
         <div class="hide">
           <input id="SLIDid" name="SLIDname" type="text" required>
@@ -135,7 +140,24 @@
     </form>
   </div>
   <br><br><br>
+  <%# <div class="" id="abc">
+    <div id="allmap"></div>
+  </div> %>
+  <br><br><br>
 </body>
+<%# <script type="text/javascript">
+	// 百度地图API功能
+	var map = new BMap.Map("allmap");    // 创建Map实例
+	map.centerAndZoom(new BMap.Point(114.08, 22.20), 15);  // 初始化地图,设置中心点坐标和地图级别
+	//添加地图类型控件
+	map.addControl(new BMap.MapTypeControl({
+		mapTypes:[
+            BMAP_NORMAL_MAP,
+            BMAP_HYBRID_MAP
+        ]}));
+	map.setCurrentCity("香港");          // 设置地图显示的城市 此项是必须设置的
+	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+</script> %>
 <script type="text/javascript" src="./js/jquery.min.js"></script>
 <script type="text/javascript" src="./js/base.js"></script>
 <script type="text/javascript" src="./js/common.js"></script>

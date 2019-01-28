@@ -134,7 +134,7 @@ function LongQuery() {
       } else if (sessionStorage.newDealCount > 0) {
         $("#mylock").html('MyLock ' + '<span class="new badge">' + result[0].count + '</span>');
       }
-      setTimeout("LongQuery()", 3000);
+      setTimeout("LongQuery()", 1000);
       return;
     },
     error: function() {
