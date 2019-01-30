@@ -27,141 +27,173 @@
 </head>
 
 <body>
-  <!-- Dropdown Structure -->
-  <ul id="dropdown-contact" class="dropdown-content">
-    <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
-    <li class="divider"></li>
-    <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-  </ul>
-  <ul id="dropdown-profile" class="dropdown-content">
-    <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br>UserAccount<br><br></a></li>
-  </ul>
-  <!-- Navbar -->
-  <nav>
-    <div class="nav-wrapper">
-      <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-      <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
-        <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat" id="mylock">MyLock</a></li>
-        <li><a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Explore Your Favourite Flat">Store</a></li>
-        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
-        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
-      </ul>
-      <ul class="side-nav" id="mobile-demo">
-        <li><a href="/MyLock">MyLock</a></li>
-        <li><a href="/Store">Store</a></li>
+    <!-- Dropdown Structure -->
+    <ul id="dropdown-contact" class="dropdown-content">
         <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+        <li class="divider"></li>
         <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
-      </ul>
+    </ul>
+    <ul id="dropdown-profile" class="dropdown-content">
+        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br>UserAccount<br><br></a></li>
+    </ul>
+    <!-- Navbar -->
+    <nav>
+        <div class="nav-wrapper">
+            <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
+            <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
+            <ul class="right hide-on-med-and-down">
+                <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
+                <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat" id="mylock">MyLock</a></li>
+                <li><a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Explore Your Favourite Flat">Store</a></li>
+                <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
+                <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
+            </ul>
+            <ul class="side-nav" id="mobile-demo">
+                <li><a href="/MyLock">MyLock</a></li>
+                <li><a href="/Store">Store</a></li>
+                <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+                <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+                <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+            </ul>
+        </div>
+    </nav>
+    <!--------------------------------------------------------------------------------------------------------->
+    <!-- Body Part -->
+    <div style="margin-top:100px;">
     </div>
-  </nav>
-  <!--------------------------------------------------------------------------------------------------------->
-  <!-- Body Part -->
-  <div style="margin-top:100px;">
-  </div>
 
-  <div class="container">
-    <form accept-charset="UTF-8" method="post">
-      <div class="switch">
-        <label>
-          Private
-          <input type="checkbox" name="isShown" onclick="checkboxOnclick(this)" value="show" checked>
-          <span class="lever"></span>
-          Public
-        </label>
-      </div>
+    <div class="container">
+        <form accept-charset="UTF-8" method="post">
+            <div class="switch">
+                <label>
+                    Private
+                    <input type="checkbox" name="isShown" onclick="checkboxOnclick(this)" value="show" checked>
+                    <span class="lever"></span>
+                    Public
+                </label>
+            </div>
 
-      <div class="row">
+            <div class="row">
+                <div class="row">
+                    <script type="text/javascript">
+                        function fill() {
+                            $("#stid").val('2019-01-01');
+                            $("#etid").val('2019-01-31');
+                            $("#priceid").val(1);
+                            $("#nicknameid").val('nick1');
+                            $("#addrnameid").val('addr1');
+                        }
+                    </script>
+                    <button class="btn-large waves-effect waves-light right" type="button" onclick="fill()">FILL
+                    </button>
+                    <!-- Placeholder -->
+                </div>
+                <div class="row" id="dateRow">
+                    <div class="input-field col s12 m6">
+                        <i class="material-icons prefix">date_range</i>
+                        <input id="stid" type="date" name="stname" class="datepicker">
+                        <label for="stid">Available Since</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <i class="material-icons prefix">date_range</i>
+                        <label for="etid">Available Until</label>
+                        <input id="etid" type="date" name="etname" class="datepicker">
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12 m6">
+                        <i class="material-icons prefix">attach_money</i>
+                        <input placeholder="e.g. 0.5" id="priceid" type="text" class="validate" name="pricename" pattern="[0-9].?[0-9]{0,2}" onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')" required>
+                        <label for="priceid">Price (ETH/day)</label>
+                    </div>
+                    <div class="input-field col s12 m6">
+                        <i class="material-icons prefix">insert_emoticon</i>
+                        <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Home" onkeydown="pressEnter(event)" maxlength="15" required>
+                        <label for="nicknameid">Nickname (max-length:15)</label>
+                    </div>
+                </div>
+                <div class="row" id="addrRow">
+                    <div class="input-field col s12">
+                        <i class="material-icons prefix">location_on</i>
+                        <input id="addrnameid" name="addrname" type="text" placeholder="e.g. Wall Street A1-09" onkeydown="pressEnter(event)" maxlength="60">
+                        <label for="addrnameid">Address (max-length:60)</label>
+                    </div>
+                </div>
+                <div class="row" id="submitRow">
+                    <div class="col s12 m3 offset-m6">
+                        <button class="btn-large waves-effect waves-light right" type="button" onclick="end30days()" name="action">Set 30days
+                            <i class="material-icons right">link</i>
+                        </button>
+                    </div>
+                    <div class="col s12 m3">
+                        <button class="btn-large waves-effect waves-light right" type="button" onclick="bind()" name="action">BIND
+                            <i class="material-icons right">link</i>
+                        </button>
+                    </div>
+                </div>
+                <div class="hide">
+                    <input id="SLIDid" name="SLIDname" type="text" required>
+                    <input id="self0" type="text" name="ownername" required>
+                    <input id="userAccount" type="text" name="userAccount" required>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br>
+    <style media="screen">
+        #map{
+            height: 100%
+        }
+        #mapContainer {
+          height: 80vh;
+        }
+    </style>
+    <div class="container" id="mapContainer">
         <div class="row">
-          <script type="text/javascript">
-            function fill(){
-              $("#stid").val('2019-01-01');
-              $("#etid").val('2019-01-31');
-              $("#priceid").val(1);
-              $("#nicknameid").val('nick1');
-              $("#addrnameid").val('addr1');
-            }
-          </script>
-          <button class="btn-large waves-effect waves-light right" type="button" onclick="fill()">FILL
-          </button>
-          <!-- Placeholder -->
-        </div>
-        <div class="row" id="dateRow">
-          <div class="input-field col s12 m6">
-            <i class="material-icons prefix">date_range</i>
-            <input id="stid" type="date" name="stname" class="datepicker">
-            <label for="stid">Available Since</label>
-          </div>
-          <div class="input-field col s12 m6">
-            <i class="material-icons prefix">date_range</i>
-            <label for="etid">Available Until</label>
-            <input id="etid" type="date" name="etname" class="datepicker">
-          </div>
+            <div class="col s6">
+                <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+            </div>
+            <div class="col s6">
+                <button class="btn-large waves-effect waves-light right" type="button" onclick="clickSearchBtn()">Search
+                </button>
+            </div>
         </div>
         <div class="row">
-          <div class="input-field col s12 m6">
-            <i class="material-icons prefix">attach_money</i>
-            <input placeholder="e.g. 0.5" id="priceid" type="text" class="validate" name="pricename" pattern="[0-9].?[0-9]{0,2}" onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')" required>
-            <label for="priceid">Price (ETH/day)</label>
-          </div>
-          <div class="input-field col s12 m6">
-            <i class="material-icons prefix">insert_emoticon</i>
-            <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Home" onkeydown="pressEnter(event)" maxlength="15" required>
-            <label for="nicknameid">Nickname (max-length:15)</label>
-          </div>
+            <input id="resultAddr" type="text" readonly>
         </div>
-        <div class="row" id="addrRow">
-          <div class="input-field col s12">
-            <i class="material-icons prefix">location_on</i>
-            <input id="addrnameid" name="addrname" type="text" placeholder="e.g. Wall Street A1-09" onkeydown="pressEnter(event)" maxlength="60">
-            <label for="addrnameid">Address (max-length:60)</label>
-          </div>
+
+        <div id="map"></div>
+        <div id="infowindow-content" class="hide">
+          <img src="" width="16" height="16" id="place-icon">
+          <span id="place-name"  class="title"></span><br>
+          <span id="place-address"></span>
         </div>
-        <div class="row" id="submitRow">
-          <div class="col s12 m3 offset-m6">
-            <button class="btn-large waves-effect waves-light right" type="button" onclick="end30days()" name="action">Set 30days
-              <i class="material-icons right">link</i>
-            </button>
-          </div>
-          <div class="col s12 m3">
-            <button class="btn-large waves-effect waves-light right" type="button" onclick="bind()" name="action">BIND
-              <i class="material-icons right">link</i>
-            </button>
-          </div>
-        </div>
-        <div class="hide">
-          <input id="SLIDid" name="SLIDname" type="text" required>
-          <input id="self0" type="text" name="ownername" required>
-          <input id="userAccount" type="text" name="userAccount" required>
-        </div>
-      </div>
-    </form>
-  </div>
-  <br><br><br>
-  <%# <div class="" id="abc">
+        <br><br>
+    </div>
+    <%# <div class="" id="abc">
     <div id="allmap"></div>
   </div> %>
-  <br><br><br>
+    <br><br><br>
 </body>
-<%# <script type="text/javascript">
-	// 百度地图API功能
-	var map = new BMap.Map("allmap");    // 创建Map实例
-	map.centerAndZoom(new BMap.Point(114.08, 22.20), 15);  // 初始化地图,设置中心点坐标和地图级别
-	//添加地图类型控件
-	map.addControl(new BMap.MapTypeControl({
-		mapTypes:[
-            BMAP_NORMAL_MAP,
-            BMAP_HYBRID_MAP
-        ]}));
-	map.setCurrentCity("香港");          // 设置地图显示的城市 此项是必须设置的
-	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
-</script> %>
-<script type="text/javascript" src="./js/jquery.min.js"></script>
-<script type="text/javascript" src="./js/base.js"></script>
-<script type="text/javascript" src="./js/common.js"></script>
-<script type="text/javascript" src="./js/web3.min.js"></script>
-<script type="text/javascript" src="./js/materialize.min.js"></script>
-<script type="text/javascript" src="./js/pages/BindLock.js"></script>
+    <%# <script type="text/javascript">
+    	// 百度地图API功能
+    	var map = new BMap.Map("allmap");    // 创建Map实例
+    	map.centerAndZoom(new BMap.Point(114.08, 22.20), 15);  // 初始化地图,设置中心点坐标和地图级别
+    	//添加地图类型控件
+    	map.addControl(new BMap.MapTypeControl({
+    		mapTypes:[
+                BMAP_NORMAL_MAP,
+                BMAP_HYBRID_MAP
+            ]}));
+    	map.setCurrentCity("香港");          // 设置地图显示的城市 此项是必须设置的
+    	map.enableScrollWheelZoom(true);     //开启鼠标滚轮缩放
+    </script> %>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/base.js"></script>
+    <script type="text/javascript" src="./js/common.js"></script>
+    <script type="text/javascript" src="./js/web3.min.js"></script>
+    <script type="text/javascript" src="./js/materialize.min.js"></script>
+    <script type="text/javascript" src="./js/pages/BindLock.js"></script>
+    <script type="text/javascript" src="./js/pages/Map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTzVI-RmzUWigMZZaV2oXVPLAzrcbFdGs&libraries=places&callback=InitMap" async defer></script>
 </html>
