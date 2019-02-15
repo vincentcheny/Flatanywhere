@@ -53,7 +53,8 @@ contract Flatanywhere {
   event WithdrawableDeal(
     bytes32 indexed DEALID,
     bytes32 SLID,
-    uint256 totalAmount
+    uint256 totalAmount,
+    address indexed sellerAddr
   );
 
   event Newunlock(
@@ -208,7 +209,8 @@ contract Flatanywhere {
     emit WithdrawableDeal(
       DEALID,
       SLID,
-      Deals[DEALID].totalAmount
+      Deals[DEALID].totalAmount,
+      Deals[DEALID].sellerAddr
     );
   }
 
