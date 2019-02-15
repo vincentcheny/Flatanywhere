@@ -30,8 +30,8 @@ function Order(num) {
     alert("The price is abnormal.");
     return;
   }
-  $('#checkinid').val(dateFormat(cidate));
-  $('#checkoutid').val(dateFormat(codate));
+  $("#checkinid").val(new Date(cidate).toLocaleDateString().replace(/\//g,"-"));
+  $("#checkoutid").val(new Date(codate).toLocaleDateString().replace(/\//g,"-"));
   var SLID = $("#SLIDid" + num).val();
   var owner = $("#ownerid" + num).val();
   var cisecond = parseInt(cidate / 1000);
