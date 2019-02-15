@@ -95,7 +95,7 @@
   }
 }
 
-@media screen and (min-width: 820px) and (max-width: 1280px) {
+@media screen and (min-width: 820px) and (max-width: 1320px) {
   .btn-lg {
     padding-top: 2rem;
     padding-bottom: 4rem;
@@ -115,7 +115,7 @@
   }
 }
 
-@media screen and (min-width: 1280px) {
+@media screen and (min-width: 1320px) {
   .btn-lg {
     padding-top: 2rem;
     padding-bottom: 4rem;

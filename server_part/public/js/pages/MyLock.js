@@ -62,12 +62,14 @@ function addLock(type, nickname, num, price, SLID, address, isShown, st, et) {
     }
     if (type < 2 && isShown == true && new Date().getTime() < new Date(et).getTime()) {
         $card_content.find("span").eq(2).html("On Sale");
+    } else if (type < 2 && new Date().getTime() > new Date(et).getTime()) {
+        $card_content.find("span").eq(2).css("color", "red").html("Expired");
     }
 
     var $card_reveal;
     if (type == 0 || type == 1) {
         // own
-        $card_reveal = $('<div><span></span><p></p><a></a><a></a><a></a></div>');
+        $card_reveal = $('<div><span></span><p></p><hr/><a></a><a></a><a></a></div>');
         $card_reveal.find("a")
             .eq(0)
             .attr({
