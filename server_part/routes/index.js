@@ -165,6 +165,7 @@ router.get('/Store', function(req, res)
   .post('/Store', function(req,res)
   {
       var client = mysql.connect();
+      console.log("req.body", req.body);
       mysql.insert_Deal(
         client,
         req.body.DEALIDname,

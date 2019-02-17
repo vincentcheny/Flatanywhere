@@ -102,8 +102,8 @@ function select_SmartLock_by_CurrentUser(client, currentUser, callback) {
 
 function insert_Deal(client, DEALID, SLID, sellerAddr, buyerAddr, totalAmount, checkInTime, checkOutTime, callback) {
     client.getConnection(function(err, connection) {
-        connection.query('insert into Deal (DEALID, SLID, seller_Addr, buyer_Addr, total_Amount, check_in_time, check_out_time) value(?,?,?,?,?,?,?)',
-            [DEALID, SLID, sellerAddr, buyerAddr, totalAmount, checkInTime, checkOutTime],
+        connection.query('insert into Deal (DEALID, SLID, seller_Addr, buyer_Addr, total_Amount, check_in_time, check_out_time, isRead, isWithdraw, isCheckedIn) value(?,?,?,?,?,?,?,?,?,?)',
+            [DEALID, SLID, sellerAddr, buyerAddr, totalAmount, checkInTime, checkOutTime, false, false, false],
             function (err) {
                 if (err) {
                     console.log("insert_Deal error:" + err.message);
@@ -119,7 +119,7 @@ function select_Deal_Unread(client, currentUser, callback) {
     client.getConnection(function(err, connection) {
         connection.query('select COUNT(*) AS count from Deal d where d.seller_Addr="' + currentUser + '" AND d.isRead=false', function(err, result) {
             if (err)
-              throw err;
+                throw err;
             else
                 callback(result);
             connection.release();
