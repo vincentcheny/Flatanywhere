@@ -19,6 +19,10 @@ function bind() {
         alert("Price should be a positive number!");
         return;
     }
+    if ($("#serialnumid")[0].value == "") {
+        alert("Serial number is empty!");
+        return;
+    }
     var st = 0;
     var et = 0;
     if ($('input[type="checkbox"]')[0].checked == true) { // choose public mode
@@ -49,6 +53,7 @@ function bind() {
         $("#stid").val(new Date($("#stid").val()).toLocaleDateString().replace(/\//g,"-"));
         $("#etid").val(new Date($("#etid").val()).toLocaleDateString().replace(/\//g,"-"));
     }
+    var serialNum = $("#serialnumid")[0].value;
     var now = new Date().getTime();
     var price = parseInt($("#priceid").val() * 100); // keep two decimal places 精确到0.01ETH
     $("#submitRow").html("");
@@ -58,8 +63,8 @@ function bind() {
             owner: sessionStorage.userAccount
         }
     });
-    console.log(price, st, et, now);
-    Flatanywhere.CreateSmartLock.sendTransaction(price, st, et, now, {
+    console.log(serialNum, price, st, et, now);
+    Flatanywhere.CreateSmartLock.sendTransaction(serialNum, price, st, et, now, {
         from: sessionStorage.userAccount
     }, function(error, res) {
         if (!error) {

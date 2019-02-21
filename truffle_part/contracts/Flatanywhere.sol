@@ -32,7 +32,8 @@ contract Flatanywhere {
   */
   event NewSmartLock(
     bytes32 SLID,
-    address indexed owner
+    address indexed owner,
+    bytes32 indexed serialNum
   );
 
   event NewDeal(
@@ -128,7 +129,7 @@ contract Flatanywhere {
     buy = (Deals[DEALID].buyerAddr == _buyer);
   }
 
-  function CreateSmartLock(uint256 _unitPrice, uint256 _startTime, uint256 _endTime, uint256 _now)
+  function CreateSmartLock(bytes32 serialNum, uint256 _unitPrice, uint256 _startTime, uint256 _endTime, uint256 _now)
     external
     returns (bytes32 _lockID)
   {
@@ -140,7 +141,7 @@ contract Flatanywhere {
       _unitPrice,
       _startTime,
       _endTime);
-    emit NewSmartLock(_lockID, msg.sender);
+    emit NewSmartLock(_lockID, msg.sender, serialNum);
   }
 
   function DeleteSmartLock(bytes32 SLID, address owner)
