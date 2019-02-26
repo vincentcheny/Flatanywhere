@@ -37,7 +37,7 @@ function bind() {
         }
         for (var id in inputBox) {
             if (!inputBox.hasOwnProperty(id) || $(id).val() == "") {
-                alert(inputBox[id] + " is emtpy. Please fill it in before binding.");
+                alert(inputBox[id] + " is empty. Please fill it in before binding.");
                 return;
             }
         }
@@ -50,8 +50,8 @@ function bind() {
             return;
         }
 
-        $("#stid").val(new Date($("#stid").val()).toLocaleDateString().replace(/\//g,"-"));
-        $("#etid").val(new Date($("#etid").val()).toLocaleDateString().replace(/\//g,"-"));
+        $("#stid").val(new Date($("#stid").val()).toLocaleDateString().replace(/\//g, "-"));
+        $("#etid").val(new Date($("#etid").val()).toLocaleDateString().replace(/\//g, "-"));
     }
     var serialNum = $("#serialnumid")[0].value;
     var now = new Date().getTime();
@@ -66,14 +66,14 @@ function bind() {
     console.log(serialNum, price, st, et, now);
     Flatanywhere.CreateSmartLock.sendTransaction(serialNum, price, st, et, now, {
         from: sessionStorage.userAccount
-    }, function(error, res) {
+    }, function (error, res) {
         if (!error) {
-            event.watch(function(error, result) {
+            event.watch(function (error, result) {
                 event.stopWatching();
                 console.log("SLID", result.args.SLID);
                 $('#self0').val(sessionStorage.userAccount);
                 $('#SLIDid').val(result.args.SLID);
-                setTimeout(function() {
+                setTimeout(function () {
                     $("form")[0].submit();
                 }, 3000);
             });
@@ -105,11 +105,11 @@ function checkboxOnclick(checkbox) {
 
 function end30days() {
     if ($("#stid").val() == "") {
-        $("#stid").val(new Date().toLocaleDateString().replace(/\//g,"-"));
+        $("#stid").val(new Date().toLocaleDateString().replace(/\//g, "-"));
     } else {
-        $("#stid").val(new Date($("#stid").val()).toLocaleDateString().replace(/\//g,"-"));
+        $("#stid").val(new Date($("#stid").val()).toLocaleDateString().replace(/\//g, "-"));
     }
-    $("#etid").val(new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30).toLocaleDateString().replace(/\//g,"-"));
+    $("#etid").val(new Date(new Date().getTime() + 24 * 60 * 60 * 1000 * 30).toLocaleDateString().replace(/\//g, "-"));
 }
 
 function LongQuery() {
@@ -118,7 +118,7 @@ function LongQuery() {
         dataType: "json", //预期服务器返回的数据类型
         url: "/Query", //url
         timeout: 10000,
-        success: function(result) {
+        success: function (result) {
             // console.log(result);//打印服务端返回的数据(调试用)
             if (result[0].count > sessionStorage.newDealCount) {
                 Materialize.toast("You receive " + (result[0].count - sessionStorage.newDealCount) + " new deals!", 5000);
@@ -130,16 +130,16 @@ function LongQuery() {
             setTimeout("LongQuery()", 3000);
             return;
         },
-        error: function() {
+        error: function () {
             console.log("Error in AJAX GET");
         }
     });
 }
 
-$(document).ready(function() {
-    setTimeout(function() {
+$(document).ready(function () {
+    setTimeout(function () {
         if ($("#balanceid").html() == "") {
-            web3.eth.getBalance(web3.eth.accounts[0], function(err, res) {
+            web3.eth.getBalance(web3.eth.accounts[0], function (err, res) {
                 if (!err) {
                     $('#balanceid').html(res.c[0] / 10000);
                 }
