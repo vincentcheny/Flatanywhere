@@ -31,7 +31,7 @@ function addLock(type, nickname, num, price, SLID, address, isShown, st, et) {
         .html(nickname);
     $card_content.find("a").eq(0).attr({
       'class': 'btn-floating halfway-fab waves-effect waves-light grey right',
-      'onclick': 'Unlock("' + SLID + '")',
+      'onclick': 'Unlock("' + sessionStorage.userAccount + '")',
       'href': 'javascript:void(0)'
     });
     $card_content.find("i").eq(0).attr({
@@ -100,7 +100,7 @@ function addLock(type, nickname, num, price, SLID, address, isShown, st, et) {
         var idx = parseInt((2 - type) / 2);
         $card_reveal.find("a").eq(idx)
             .attr({
-                'onclick': 'Unlock("' + SLID + '")',
+                'onclick': 'Unlock("' + sessionStorage.userAccount + '")',
                 'class': 'dropdown-item hoverable center-align',
             })
             .html("Unlock");
@@ -354,7 +354,7 @@ function CheckIn(num, SLID, checkintime, DEALID) {
                             $("#lock" + result).removeClass("futureDiv");
                             $("#lock" + result).addClass("rentingDiv");
                             $("#opBtn" + result).attr({
-                                'onclick': 'Unlock("' + SLID + '")'
+                                'onclick': 'Unlock("' + sessionStorage.userAccount + '")'
                             });
                             $("#opBtn" + result).html("Unlock");
                             $("#close" + result).click();
