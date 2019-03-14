@@ -25,7 +25,7 @@
   <script type="text/javascript" src="./js/jquery.min.js"></script>
   <script src="//instant.page/1.2.1" type="module" integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
   <script type="text/javascript">
-    function addLock(SLID, price, num, owner, address) {
+    function addLock(SLID, price, num, owner, address, intro) {
       var $card_image = $('<div><img><span></span></div>');
       $card_image.filter("div").eq(0).attr({
         'class': 'card-image waves-effect waves-block waves-light'
@@ -69,7 +69,7 @@
           'class': 'card-title activator grey-text text-darken-4',
         })
         .html("Introduction" + "<i class='material-icons right' id='close" + num + "'>close</i>");
-      $card_reveal.find("p").eq(0).html("");
+      $card_reveal.find("p").eq(0).html(intro);
       $card_reveal.find("input")
         .eq(0).attr({
           'id': 'SLIDid' + num,
@@ -105,7 +105,7 @@
   </ul>
   <!-- Navbar -->
   <nav>
-    <div class="nav-wrapper">
+    <div class="nav-wrapper green lighten-2">
       <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
       <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
       <ul class="right hide-on-med-and-down">
@@ -174,7 +174,7 @@
             <%}%>
           </div>
           <script type="text/javascript">
-            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "<%=res.owner%>", "<%=res.address%>");
+            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "<%=res.owner%>", "<%=res.address%>", "<%=res.intro%>");
           </script>
         </div>
       <%}%>
