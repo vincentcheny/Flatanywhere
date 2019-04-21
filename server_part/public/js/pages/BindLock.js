@@ -75,7 +75,6 @@ function bind() {
     }
   });
   console.log(serialNum, price, st, et, now);
-  console.log($("#introid").val());
   Flatanywhere.CreateSmartLock.sendTransaction(serialNum,price,st,et,now,
     {
       from: sessionStorage.userAccount
