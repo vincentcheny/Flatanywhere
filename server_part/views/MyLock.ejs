@@ -103,11 +103,12 @@
   <div style="margin-top:30px;">
   </div>
 
-  <div id="LoginBox">
+  <div id="LoginBox" style="text-align:center">
       <div class="row1">
           Unlock Code<a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn">×</a>
       </div>
       <div class="row" id="qrimg"></div>
+      <img id="barcode"></img>
   </div>
   <form accept-charset="UTF-8" method="post">
     <div class="hide container" id="newDate">
@@ -181,21 +182,25 @@
       <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
         <%if(res.currentuser == locals.userAccount){%>
           <script type="text/javascript">
+            // green
             addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
           </script>
         <%} else {%>
           <script type="text/javascript">
+            // yellow
             addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
           </script>
         <%}%>
       <%}%>
       <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
         <script type="text/javascript">
+          // blue
           addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>");
         </script>
       <%}%>
       <% for(var i = Ownerlock.length + Userlock.length; i < Ownerlock.length + Userlock.length + Futurelock.length; ++i){ var res = Futurelock[i - Ownerlock.length - Userlock.length]; %>
         <script type="text/javascript">
+          // grey
           addLock(3, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.check_in_time%>", "<%=res.DEALID%>");
         </script>
       <%}%>
@@ -208,4 +213,5 @@
 <script type="text/javascript" src="./js/materialize.min.js"></script>
 <script type="text/javascript" src="./js/qrcode2.min.js"></script>
 <script type="text/javascript" src="./js/common.js"></script>
+<script type="text/javascript" src="./js/JsBarcode.all.min.js"></script>
 </html>
