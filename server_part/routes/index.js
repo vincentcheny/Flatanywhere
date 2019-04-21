@@ -157,13 +157,19 @@ router
   })
   .post("/BindLock", function(req, res) {
     var client = mysql.connect();
-    console.log(
-      "req.body.isShown:",
-      req.body.isShown,
-      req.body.isShown == "hide"
-    );
-    console.log("req.body.stname:", req.body.stname);
-    console.log("req.body", req.body);
+    // console.log(
+    //   "req.body.isShown:",
+    //   req.body.isShown,
+    //   req.body.isShown == "hide"
+    // );
+    // console.log("req.body.stname:", req.body.stname);
+    // console.log("req.body", req.body);
+    // console.log("info:", req.body.introname);
+    // console.log("SLID:", req.body.SLIDname);
+    var price = req.body.pricename;
+    if (price == "" || price == undefined) {
+      price = 0;
+    }
     if (req.body.stname != "" && req.body.stname != undefined) {
       req.body.stname += " 12:00:00";
       req.body.etname += " 12:00:00";
@@ -178,10 +184,10 @@ router
       req.body.ownername,
       req.body.stname,
       req.body.etname,
-      req.body.pricename,
+      price,
       req.body.nickname,
       req.body.addrname,
-      req.body.introid,
+      req.body.introname,
       req.body.isShown == "show" ? true : false,
       function(error) {
         if (error) {
