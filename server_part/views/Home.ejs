@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -11,27 +12,29 @@
         font-family: "微软雅黑";
         background-color: #fff;
       }
+
       html {
         min-width: 320px;
       }
+
+      #title {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
     </style>
     <link rel="stylesheet" type="text/css" href="./css/materialize.min.css" />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link rel="stylesheet" type="text/css" href="./css/pages/Home.css" />
     <link rel="shortcut icon" href="./favicon.ico" />
     <link rel="bookmark" href="./favicon.ico" />
-    <script
-      src="//instant.page/1.2.1"
-      type="module"
-      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"
-    ></script>
+    <script src="//instant.page/1.2.1" type="module"
+      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
     <script src="./js/socket.io.js"></script>
   </head>
 
-  <body>
+  <body style="background-color: rgb(242, 250, 250)">
     <!-- Dropdown Structure -->
     <ul id="dropdown-contact" class="dropdown-content">
       <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
@@ -40,104 +43,80 @@
     </ul>
     <ul id="dropdown-profile" class="dropdown-content">
       <li>
-        <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"
-          ><br />UserAccount<br /><br
-        /></a>
+        <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br />UserAccount<br /><br /></a>
       </li>
     </ul>
     <!-- Navbar -->
     <nav>
       <div class="nav-wrapper green lighten-2">
         <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-        <a
-          href="javascript:void(0)"
-          data-activates="mobile-demo"
-          class="button-collapse"
-          ><i class="material-icons">menu</i></a
-        >
+        <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i
+            class="material-icons">menu</i></a>
         <ul class="right hide-on-med-and-down">
           <li>
-            <a
-              href="javascript:void(0)"
-              class="tooltipped"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Your account balance"
-              ><span id="balanceid"></span>&nbsp;ETH</a
-            >
+            <a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Your account balance" style="color:rgb(224, 235, 235)"><span
+                id="balanceid"></span>&nbsp;ETH</a>
           </li>
           <li>
-            <a
-              onclick="jump(1)"
-              class="dropdown-button tooltipped"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="See My Own Flat"
-              id="mylock"
-              >MyLock</a
-            >
+            <a onclick="jump(0)" class=" tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Bind a lock to you">Become a host</a>
+          </li>
+          <!-- <li>
+            <a onclick="jump(1)" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="See My Own Flat" id="mylock">MyLock</a>
           </li>
           <li>
-            <a
-              onclick="jump(2)"
-              class="dropdown-button tooltipped"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Explore Your Favourite Flat"
-              >Store</a
-            >
+            <a onclick="jump(2)" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Explore Your Favourite Flat">Store</a>
+          </li> -->
+          <li>
+            <a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Developers' Emails" data-activates="dropdown-contact"
+              style="color:rgb(224, 235, 235)">Contact<i class="material-icons right">arrow_drop_down</i></a>
           </li>
           <li>
-            <a
-              class="dropdown-button tooltipped"
-              href="javascript:void(0)"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Developers' Emails"
-              data-activates="dropdown-contact"
-              >Contact<i class="material-icons right">arrow_drop_down</i></a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-button tooltipped"
-              href="javascript:void(0)"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Your Account Number"
-              data-activates="dropdown-profile"
-              >Profile<i class="material-icons right">arrow_drop_down</i></a
-            >
+            <a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Your Account Number" data-activates="dropdown-profile"
+              style="color:rgb(224, 235, 235)">Profile<i class="material-icons right">arrow_drop_down</i></a>
           </li>
         </ul>
         <ul class="side-nav" id="mobile-demo">
+          <li><a href="/BindLock">Become a host</a></li>
           <li><a href="/MyLock">MyLock</a></li>
           <li><a href="/Store">Store</a></li>
+
           <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
           <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
           <li>
-            <a
-              href="javascript:void(0)"
-              onclick="alert(sessionStorage.userAccount)"
-              >UserAccount</a
-            >
+            <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a>
           </li>
         </ul>
       </div>
     </nav>
     <!--------------------------------------------------------------------------------------------------------->
     <!-- Body Part -->
+
     <div class="section no-pad-top">
+      <div class="carousel carousel-slider center hide" data-indicators="true" style="z-index: -2;">
+        <div class="carousel-fixed-item center">
+          <a class="btn waves-effect white grey-text darken-text-2">按钮</a>
+        </div>
+        <div class="carousel-item red white-text" style="background-image: url(./images/bg.png);
+          background-size: 100%"></div>
+      </div>
       <div class="container">
         <div class="row" id="rowholder1"></div>
         <div class="row">
           <div class="col s12" style="text-align:center;">
             <img id="logo" src="./images/roof-short.png" />
-            <p id="title">&nbsp;Flatanywhere</p>
-            <br />
+            <p id="title">
+              &nbsp;Flatanywhere
+            </p>
+            <!-- <br /> -->
           </div>
         </div>
-        <div class="row" id="rowholder2"></div>
+        <!-- <div class="row" id="rowholder2"></div> -->
         <div class="row hide" style="text-align:center">
           <div class="col s8 offset-s2 m4 offset-m4">
             <div href="javascript::void(0)" class="btn btn-outline btn-lg">
@@ -146,36 +125,62 @@
           </div>
         </div>
         <div class="row" style="text-align:center;">
-          <div class="col s12 m4">
-            <a
-              class="waves-effect waves-light btn-large"
-              href="javascript::void(0)"
-              onclick="jump(0)"
-              ><i class="material-icons left">cloud</i>BIND</a
-            >
+          <div class="col s12 m6">
+            <div class="card horizontal hoverable" onclick="jump(1)">
+              <div class="card-stacked">
+                <div class="card-content">
+                  <h3>I'm a Host</h3>
+                  <p style="color:darkgray">GO TO MYLOCK</p>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col s12 m4">
-            <a
-              class="waves-effect waves-light btn-large"
-              href="javascript::void(0)"
-              onclick="jump(1)"
-              ><i class="material-icons left">cloud</i>MYLOCK</a
-            >
+          <div class="col s12 m6">
+            <div class="card horizontal hoverable" onclick="jump(2)">
+              <div class="card-stacked">
+                <div class="card-content">
+                  <h3>I'm a Traveler</h3>
+                  <p style="color:darkgray">GO TO STORE</p>
+                </div>
+              </div>
+            </div>
           </div>
+          <!-- 
+            <div class="col s12 m6">
+                    <a class="waves-effect waves-light btn-large" href="javascript::void(0)" onclick="jump(1)"><i
+                        class="material-icons left">cloud</i>MYLOCK</a>
+                  </div>
+                  <div class="col s12 m6">
+                    <a class="waves-effect waves-light btn-large" href="javascript::void(0)" onclick="jump(2)"><i
+                        class="material-icons left">cloud</i>STORE</a>
+                  </div> 
+                -->
+        </div>
+        <div class="row">
+          <script>
+            function WebSocketTest()
+            {
+              var ws = new WebSocket("ws://192.168.137.4:4300");
+              ws.onopen = function ()
+              {
+                ws.send("这是测试数据");
+                console.log("数据发送中");
+              };
+              ws.onmessage = (evt) =>
+              {
+                ws.close();
+              }
+            }
+          </script>
           <div class="col s12 m4">
-            <a
-              class="waves-effect waves-light btn-large"
-              href="javascript::void(0)"
-              onclick="jump(2)"
-              ><i class="material-icons left">cloud</i>STORE</a
-            >
+            <!-- <a onclick="WebSocketTest()">TestIcon</a> -->
           </div>
         </div>
       </div>
     </div>
     <ul id="notes"></ul>
     <div id="usersConnected"></div>
-    <button id="newNote">Create a new note</button>
+    <!-- <button id="newNote">Create a new note</button> -->
     <form method="post">
       <input id="hidden_state" type="text" name="hidden_state" class="hide" />
       <input id="userAccount" type="text" name="userAccount" class="hide" />
@@ -187,26 +192,31 @@
   <script type="text/javascript" src="./js/web3.min.js"></script>
   <script type="text/javascript" src="./js/materialize.min.js"></script>
   <script type="text/javascript">
-    function jump(num) {
+    function jump(num)
+    {
       $("#hidden_state").val(num);
       $("form").submit();
     }
-    $(document).ready(function() {
+    $(document).ready(function ()
+    {
       $("#userAccount").val(sessionStorage.userAccount);
-      $(".carousel.carousel-slider").carousel({ full_width: true });
       $(".dropdown-button").dropdown();
       $(".button-collapse").sideNav();
     });
   </script>
   <script>
-    $(document).ready(function() {
+    $(document).ready(function ()
+    {
+      $(".carousel.carousel-slider").carousel({ full_width: true });
       // Connect to our node/websockets server
       var socket = io.connect("http://localhost:3000");
 
       // Initial set of notes, loop through and add to list
-      socket.on("initial notes", function(data) {
+      socket.on("initial notes", function (data)
+      {
         var html = "";
-        for (var i = 0; i < data.length; i++) {
+        for (var i = 0; i < data.length; i++)
+        {
           // We store html as a var then add to DOM after for efficiency
           html += "<li>" + JSON.stringify(data[i].note) + "</li>";
         }
@@ -214,17 +224,20 @@
       });
 
       // New note emitted, add it to our list of current notes
-      socket.on("new note", function(data) {
+      socket.on("new note", function (data)
+      {
         $("#notes").append("<li>" + JSON.stringify(data.note) + "</li>");
       });
 
       // New socket connected, display new count on page
-      socket.on("users connected", function(data) {
+      socket.on("users connected", function (data)
+      {
         $("#usersConnected").html("Users connected: " + data);
       });
 
       // Add a new (random) note, emit to server to let others know
-      $("#newNote").click(function() {
+      $("#newNote").click(function ()
+      {
         var newNote =
           "This is a random " + (Math.floor(Math.random() * 100) + 1) + " note";
         socket.emit("new note", {
@@ -243,4 +256,5 @@
       });
     });
   </script>
+
 </html>

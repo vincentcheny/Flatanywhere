@@ -1,164 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-  <!--//永远以最新的IE版本模式来显示网页-->
-  <title>Store</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <!--//永远以最新的IE版本模式来显示网页-->
+    <title>Store</title>
 
-  <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <style media="screen">
-    body{
-      font-family: "微软雅黑";
-      background-color: #fff;
-    }
-    html{
-      min-width: 320px;
-    }
-    .card{
-      border-radius: 20px;
-    }
-  </style>
-  <script type="text/javascript" src="./js/jquery.min.js"></script>
-  <script src="//instant.page/1.2.1" type="module" integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
-  <script type="text/javascript">
-    function addLock(SLID, price, num, owner, address, intro) {
-      var $card_image = $('<div><img><span></span></div>');
-      $card_image.filter("div").eq(0).attr({
-        'class': 'card-image waves-effect waves-block waves-light'
-      });
-      $card_image.children("img").attr({
-        'class': 'activator',
-        'src': 'images/lock_store.svg',
-      });
+    <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style media="screen">
+      body {
+        font-family: "微软雅黑";
+        background-color: #fff;
+      }
 
-      var $card_content = $('<div><span><p></p><a><i>add_shopping_cart</i></a></span><p></p></div>');
-      $card_content.filter("div").eq(0).attr({
-        'class': 'card-content'
-      });
-      $card_content.find("span").eq(0).attr({
-        'class': 'card-title  grey-text text-darken-4 truncate',
-      });
-      $card_content.find("a").eq(0).attr({
-        'class': 'btn-floating halfway-fab waves-effect waves-light grey right',
-        'onclick': 'Order(' + num + ')',
-        'href': 'javascript:void(0)'
-      });
-      $card_content.find("i").eq(0).attr({
-        'class': 'material-icons hoverable',
-      });
-      $card_content.find("p").eq(0).attr({
-        'style': 'display: inline',
-        'id': 'priceid' + num,
-        'readonly': 'readonly'
-      });
-      $card_content.find("p")
-        .eq(0).html(price + " ETH").end()
-        .eq(1).html(address.substring(0, 100) || "Undefined Address");
+      html {
+        min-width: 320px;
+      }
 
-      var $card_reveal = $('<div><span></span><p></p><input><input></div>');
-      $card_reveal.filter("div").eq(0).attr({
-        'class': 'card-reveal ',
-        'id': 'reveal' + num
-      });
-      $card_reveal.find("span").eq(0)
-        .attr({
-          'class': 'card-title activator grey-text text-darken-4',
-        })
-        .html("Introduction" + "<i class='material-icons right' id='close" + num + "'>close</i>");
-      $card_reveal.find("p").eq(0).html(intro);
-      $card_reveal.find("input")
-        .eq(0).attr({
-          'id': 'SLIDid' + num,
-          'value': SLID,
-          'class': 'hide'
-        }).end()
-        .eq(1).attr({
-          'id': 'ownerid' + num,
-          'value': owner,
-          'class': 'hide'
+      .card {
+        border-radius: 20px;
+      }
+    </style>
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script src="//instant.page/1.2.1" type="module"
+      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
+    <script type="text/javascript">
+      function addLock(SLID, price, num, owner, address, intro)
+      {
+        var $card_image = $('<div><img><span></span></div>');
+        $card_image.filter("div").eq(0).attr({
+          'class': 'card-image waves-effect waves-block waves-light'
+        });
+        $card_image.children("img").attr({
+          'class': 'activator',
+          'src': 'images/lock_store.svg',
         });
 
-      var $newLockCard = $('<div><div class="card hoverable"></div></div>');
-      $newLockCard.filter("div").eq(0).attr({
-        'id': 'lockid' + num,
-        'class': 'col s6 m4 l3 lock'
-      });
-      $newLockCard.children("div").append($card_image).append($card_content).append($card_reveal);
-      $("#lock-list").append($newLockCard);
-    }
-  </script>
-</head>
+        var $card_content = $('<div><span><p></p><a><i>add_shopping_cart</i></a></span><p></p></div>');
+        $card_content.filter("div").eq(0).attr({
+          'class': 'card-content'
+        });
+        $card_content.find("span").eq(0).attr({
+          'class': 'card-title  grey-text text-darken-4 truncate',
+        });
+        $card_content.find("a").eq(0).attr({
+          'class': 'btn-floating halfway-fab waves-effect waves-light grey right',
+          'onclick': 'Order(' + num + ')',
+          'href': 'javascript:void(0)'
+        });
+        $card_content.find("i").eq(0).attr({
+          'class': 'material-icons hoverable',
+        });
+        $card_content.find("p").eq(0).attr({
+          'style': 'display: inline',
+          'id': 'priceid' + num,
+          'readonly': 'readonly'
+        });
+        $card_content.find("p")
+          .eq(0).html(price + " ETH").end()
+          .eq(1).html(address.substring(0, 100) || "Undefined Address");
 
-<body>
-  <!-- Dropdown Structure -->
-  <ul id="dropdown-contact" class="dropdown-content">
-    <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
-    <li class="divider"></li>
-    <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-  </ul>
-  <ul id="dropdown-profile" class="dropdown-content">
-    <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
-  </ul>
-  <!-- Navbar -->
-  <nav>
-    <div class="nav-wrapper green lighten-2">
-      <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-      <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
-        <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Bind A New Lock">Bind</a></li>
-        <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="See My Own Flat" id="mylock">MyLock</a></li>
-        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
-        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
-      </ul>
-      <ul class="side-nav" id="mobile-demo">
-        <li><a href="/BindLock">BindLock</a></li>
-        <li><a href="/MyLock">MyLock</a></li>
-        <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
-        <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
-      </ul>
+        var $card_reveal = $('<div><span></span><p></p><input><input></div>');
+        $card_reveal.filter("div").eq(0).attr({
+          'class': 'card-reveal ',
+          'id': 'reveal' + num
+        });
+        $card_reveal.find("span").eq(0)
+          .attr({
+            'class': 'card-title activator grey-text text-darken-4',
+          })
+          .html("Introduction" + "<i class='material-icons right' id='close" + num + "'>close</i>");
+        $card_reveal.find("p").eq(0).html(intro);
+        $card_reveal.find("input")
+          .eq(0).attr({
+            'id': 'SLIDid' + num,
+            'value': SLID,
+            'class': 'hide'
+          }).end()
+          .eq(1).attr({
+            'id': 'ownerid' + num,
+            'value': owner,
+            'class': 'hide'
+          });
+
+        var $newLockCard = $('<div><div class="card hoverable"></div></div>');
+        $newLockCard.filter("div").eq(0).attr({
+          'id': 'lockid' + num,
+          'class': 'col s6 m4 l3 lock'
+        });
+        $newLockCard.children("div").append($card_image).append($card_content).append($card_reveal);
+        $("#lock-list").append($newLockCard);
+      }
+    </script>
+  </head>
+
+  <body>
+    <!-- Dropdown Structure -->
+    <ul id="dropdown-contact" class="dropdown-content">
+      <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+      <li class="divider"></li>
+      <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+    </ul>
+    <ul id="dropdown-profile" class="dropdown-content">
+      <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+    </ul>
+    <!-- Navbar -->
+    <nav>
+      <div class="nav-wrapper green lighten-2">
+        <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
+        <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i
+            class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
+          <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Bind A New Lock">Bind</a></li>
+          <li><a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="See My Own Flat" id="mylock">MyLock</a></li>
+          <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+          <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+          <li><a href="/BindLock">BindLock</a></li>
+          <li><a href="/MyLock">MyLock</a></li>
+          <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+          <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+          <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+        </ul>
+      </div>
+    </nav>
+    <!--------------------------------------------------------------------------------------------------------->
+    <!-- Body Part -->
+    <div style="margin-top:100px;">
     </div>
-  </nav>
-  <!--------------------------------------------------------------------------------------------------------->
-  <!-- Body Part -->
-  <div style="margin-top:100px;">
-  </div>
-  <div class="container">
-    <form method="post">
-      <div class="row">
-        <div class="input-field col s12 m4 offset-m1">
-          <i class="material-icons prefix">date_range</i>
-          <input id="checkinid" type="date" name="checkinname" class="datepicker">
-          <label for="checkinid">Check-in Date</label>
+    <div class="container">
+      <form method="post">
+        <div class="row">
+          <div class="input-field col s12 m4 offset-m1">
+            <i class="material-icons prefix">date_range</i>
+            <input id="checkinid" type="date" name="checkinname" class="datepicker">
+            <label for="checkinid">Check-in Date</label>
+          </div>
+          <div class="input-field col s12 m4">
+            <i class="material-icons prefix">date_range</i>
+            <input id="checkoutid" type="date" name="checkoutname" class="datepicker">
+            <label for="checkoutid">Check-out Date</label>
+          </div>
+          <div class="col s12 m3">
+            <button class="btn-large waves-effect waves-light right btn-flat" type="button"
+              onclick="search()">&nbsp;Search&nbsp;
+              <i class="material-icons right">search</i>
+            </button>
+          </div>
         </div>
-        <div class="input-field col s12 m4">
-          <i class="material-icons prefix">date_range</i>
-          <input id="checkoutid" type="date" name="checkoutname" class="datepicker">
-          <label for="checkoutid">Check-out Date</label>
+        <div class="hide">
+          <input id="DEALID" type="text" name="DEALIDname" required />
+          <input id="SLIDid" type="text" name="SLIDname" required />
+          <input id="sellerid" type="text" name="sellername" required />
+          <input id="buyerid" type="text" name="buyerDname" required />
+          <input id="amountid" type="text" name="amountname" required />
+          <input id="userAccount" type="text" name="userAccount" required>
         </div>
-        <div class="col s12 m3">
-          <button class="btn-large waves-effect waves-light right btn-flat" type="button" onclick="search()">&nbsp;Search&nbsp;
-            <i class="material-icons right">search</i>
-          </button>
-        </div>
-      </div>
-      <div class="hide">
-        <input id="DEALID" type="text" name="DEALIDname" required/>
-        <input id="SLIDid" type="text" name="SLIDname" required/>
-        <input id="sellerid" type="text" name="sellername" required/>
-        <input id="buyerid" type="text" name="buyerDname" required/>
-        <input id="amountid" type="text" name="amountname" required/>
-        <input id="userAccount" type="text" name="userAccount" required>
-      </div>
-    </form>
+      </form>
 
-    <div id="lock-list" class="row">
-      <%for(var i = 0; i < StoreLocks.length; ++i){%>
+      <div id="lock-list" class="row">
+        <%for(var i = 0; i < StoreLocks.length; ++i){%>
         <%var res = StoreLocks[i]; %>
         <%var start = arrStartTime[res.SLID]; %>
         <%var end = arrEndTime[res.SLID]; %>
@@ -167,17 +180,17 @@
             <div class=st<%=i%>><%=res.start_time%></div>
             <div class=et<%=i%>><%=res.end_time%></div>
             <%if(start != undefined) { %>
-              <%for(var j = 0; j < Object.keys(start).length; ++j){  %>
-                <div class=in<%=i%>><%=start[j]%></div>
-                <div class=out<%=i%>><%=end[j]%></div>
-              <%}%>
+            <%for(var j = 0; j < Object.keys(start).length; ++j){  %>
+            <div class=in<%=i%>><%=start[j]%></div>
+            <div class=out<%=i%>><%=end[j]%></div>
+            <%}%>
             <%}%>
           </div>
           <script type="text/javascript">
-            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i%>, "<%=res.owner%>", "<%=res.address%>", "<%=res.intro%>");
+            addLock("<%=res.SLID%>", "<%=res.unit_price%>", <%=i %>, "<%=res.owner%>", "<%=res.address%>", "<%=res.intro%>");
           </script>
         </div>
-      <%}%>
+        <%}%>
     </div>
   </div>
   <br><br><br>

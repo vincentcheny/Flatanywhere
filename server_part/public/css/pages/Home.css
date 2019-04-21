@@ -94,6 +94,14 @@
     font-size: 6rem;
   }
 }
+.card {
+  background-color: rgb(242, 250, 250);
+}
+.card:hover {
+  background-color: rgb(129, 199, 132) !important;
+  color: #fff;
+  cursor: pointer;
+}
 
 @media screen and (min-width: 820px) and (max-width: 1320px) {
   .btn-lg {
