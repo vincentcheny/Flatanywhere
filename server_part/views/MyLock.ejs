@@ -1,209 +1,230 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
-  <!--//永远以最新的IE版本模式来显示网页-->
-  <title>MyLock</title>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1">
+    <!--//永远以最新的IE版本模式来显示网页-->
+    <title>MyLock</title>
 
-  <link rel="stylesheet" type="text/css" href="./css/qrcodeDialog.css">
-  <style media="screen">
-    body{
-      font-family: "微软雅黑";
-      background-color: #fff;
-    }
-    html {
-      min-width: 320px;
-    }
-  </style>
-  <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
-  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="./css/pages/MyLock.css">
+    <link rel="stylesheet" type="text/css" href="./css/qrcodeDialog.css">
+    <style media="screen">
+      body {
+        font-family: "微软雅黑";
+        background-color: #fff;
+      }
 
-  <script type="text/javascript" src="./js/jquery.min.js"></script>
-  <script type="text/javascript" src="./js/pages/MyLock.js"></script>
-  <script src="//instant.page/1.2.1" type="module" integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
-  <script type="text/javascript">
-  $(document).ready(function() {
-      '<%for (var key in LastDeal) {%>'
-          sessionStorage.setItem('<%=key%>', JSON.stringify('<%=LastDeal[key]%>'));
-      '<%}%>'
-      '<%for (var i = 0; i < WithdrawableDeal.length; ++i) { var res = WithdrawableDeal[i];%>'
-          console.log('<%=res.DEALID%>');
-          var event = Flatanywhere.WithdrawableDeal({
-              filter: {
-                  DEALID: '<%=res.DEALID%>',
-                  sellerAddr: sessionStorage.userAccount
+      html {
+        min-width: 320px;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./css/materialize.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./css/pages/MyLock.css">
+
+    <script type="text/javascript" src="./js/jquery.min.js"></script>
+    <script type="text/javascript" src="./js/pages/MyLock.js"></script>
+    <script src="//instant.page/1.2.1" type="module"
+      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
+    <script type="text/javascript">
+      $(document).ready(function ()
+      {
+        '<%for (var key in LastDeal) {%>'
+        sessionStorage.setItem('<%=key%>', JSON.stringify('<%=LastDeal[key]%>'));
+        '<%}%>'
+        '<%for (var i = 0; i < WithdrawableDeal.length; ++i) { var res = WithdrawableDeal[i];%>'
+        console.log('<%=res.DEALID%>');
+        var event = Flatanywhere.WithdrawableDeal({
+          filter: {
+            DEALID: '<%=res.DEALID%>',
+            sellerAddr: sessionStorage.userAccount
+          }
+        });
+        event.watch(function (error, result)
+        {
+          event.stopWatching();
+          var SLID = result.args.SLID;
+          var amount = result.args.totalAmount / 1000000000000000000;
+          $.ajax({
+            type: "POST", //方法类型
+            dataType: "text", //预期服务器返回的数据类型
+            url: "/Withdraw", //url
+            data: {
+              'DEALID': result.args.DEALID
+            },
+            timeout: 10000,
+            success: function (result)
+            {
+              if (result != '0')
+              {
+                console.log("Abnormal ajax POST to /Withdraw response:", result);
+              } else
+              {
+                Materialize.toast("You withdraw " + amount + " ETH for " + SLID.substring(0, 7) + "...", 5000);
               }
+            },
+            error: function ()
+            {
+              console.log("Error in AJAX POST to /Withdraw");
+            }
           });
-          event.watch(function(error, result) {
-              event.stopWatching();
-              var SLID = result.args.SLID;
-              var amount = result.args.totalAmount / 1000000000000000000;
-              $.ajax({
-                  type: "POST", //方法类型
-                  dataType: "text", //预期服务器返回的数据类型
-                  url: "/Withdraw", //url
-                  data: {
-                      'DEALID': result.args.DEALID
-                  },
-                  timeout: 10000,
-                  success: function(result) {
-                      if (result != '0') {
-                          console.log("Abnormal ajax POST to /Withdraw response:", result);
-                      } else {
-                          Materialize.toast("You withdraw " + amount + " ETH for " + SLID.substring(0, 7) + "...", 5000);
-                      }
-                  },
-                  error: function() {
-                      console.log("Error in AJAX POST to /Withdraw");
-                  }
-              });
-          });
-      '<%}%>'
-  });
-  </script>
-</head>
+        });
+        '<%}%>'
+      });
+    </script>
+  </head>
 
-<body>
-  <!-- Dropdown Structure -->
-  <ul id="dropdown-contact" class="dropdown-content">
-    <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
-    <li class="divider"></li>
-    <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
-  </ul>
-  <ul id="dropdown-profile" class="dropdown-content">
-    <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br>UserAccount<br><br></a></li>
-  </ul>
-  <!-- Navbar -->
-  <nav>
-    <div class="nav-wrapper green lighten-2">
-      <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-      <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i class="material-icons">menu</i></a>
-      <ul class="right hide-on-med-and-down">
-        <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50" data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
-        <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Bind A New Lock">Bind</a></li>
-        <li><a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50" data-tooltip="Explore Your Favourite Flat">Store</a></li>
-        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i class="material-icons right">arrow_drop_down</i></a></li>
-        <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50" data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i class="material-icons right">arrow_drop_down</i></a></li>
-      </ul>
-      <ul class="side-nav" id="mobile-demo">
-        <li><a href="/BindLock">BindLock</a></li>
-        <li><a href="/Store">Store</a></li>
-        <li><a href="mailto:1155107972@link.cuhk.edu.hk">Email to: WU ZhuoMing</a></li>
-        <li><a href="mailto:1155107977@link.cuhk.edu.hk">Email to: CHEN Yu</a></li>
-        <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
-      </ul>
+  <body>
+    <!-- Dropdown Structure -->
+    <ul id="dropdown-contact" class="dropdown-content">
+      <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+      <li class="divider"></li>
+      <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+    </ul>
+    <ul id="dropdown-profile" class="dropdown-content">
+      <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br>UserAccount<br><br></a></li>
+    </ul>
+    <!-- Navbar -->
+    <nav>
+      <div class="nav-wrapper green lighten-2">
+        <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
+        <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i
+            class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li><a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a></li>
+          <li><a href="/BindLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Bind A New Lock">Bind</a></li>
+          <li><a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Explore Your Favourite Flat">Store</a></li>
+          <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+          <li><a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i
+                class="material-icons right">arrow_drop_down</i></a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+          <li><a href="/BindLock">BindLock</a></li>
+          <li><a href="/Store">Store</a></li>
+          <li><a href="mailto:1155107972@link.cuhk.edu.hk">Email to: WU ZhuoMing</a></li>
+          <li><a href="mailto:1155107977@link.cuhk.edu.hk">Email to: CHEN Yu</a></li>
+          <li><a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a></li>
+        </ul>
+      </div>
+    </nav>
+    <!--------------------------------------------------------------------------------------------------------->
+    <!-- Body Part -->
+    <div style="margin-top:30px;">
     </div>
-  </nav>
-  <!--------------------------------------------------------------------------------------------------------->
-  <!-- Body Part -->
-  <div style="margin-top:30px;">
-  </div>
 
-  <div id="LoginBox" style="text-align:center">
+    <div id="LoginBox" style="text-align:center">
       <div class="row1">
-          Unlock Code<a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn">×</a>
+        Unlock Code<a href="javascript:void(0)" title="关闭窗口" class="close_btn" id="closeBtn">×</a>
       </div>
       <div class="row" id="qrimg"></div>
       <img id="barcode"></img>
-  </div>
-  <form accept-charset="UTF-8" method="post">
-    <div class="hide container" id="newDate">
-      <div class="row">
-        <div class="card-panel center-align ">
-          <span class="red-text text-darken-5">Please assign a valid time period for the published lock.</span>
-        </div>
-      </div>
-      <div class="row">
-        <div class="input-field col s12 m6 disabled">
-          <i class="material-icons prefix">date_range</i>
-          <input id="stid" type="date" name="stname" class="datepicker">
-          <label for="stid">Available Since</label>
-        </div>
-        <div class="input-field col s12 m6 disabled">
-          <i class="material-icons prefix">date_range</i>
-          <label for="etid">Available Until</label>
-          <input id="etid" type="date" name="etname" class="datepicker">
-        </div>
-      </div>
-      <div class="row" id="submitRow"  style="text-align:center">
-        <div class="input-field col s12 m6">
-          <i class="material-icons prefix">location_on</i>
-          <input disabled id="nicknameid" name="nickname" type="text">
-          <label for="nicknameid">Address</label>
-        </div>
-        <div class="col s12 m3">
-          <button class="btn-large waves-effect waves-light red tooltipped" type="button" onclick="cencelNewDateSubmit()" name="cancel" data-position="bottom" data-delay="50" data-tooltip="Cancel Publishment">CANCEL
-            <i class="material-icons right">cancel</i>
-          </button>
-        </div>
-        <div class="col s12 m3">
-          <button class="btn-large waves-effect waves-light tooltipped" type="button" name="bind" data-position="bottom" data-delay="50" data-tooltip="Bind a New Time and Publish">&nbsp;BIND&nbsp;
-            <i class="material-icons right">link</i>
-          </button>
-        </div>
-        <div class="col s12 m3 hide">
-          <button class="btn-large waves-effect waves-light tooltipped" type="button" name="reset" data-position="bottom" data-delay="50" data-tooltip="Publish with Last Available Time">PUBLISH
-            <i class="material-icons right">link</i>
-          </button>
-        </div>
-      </div>
-      <div class="row">
-
-      </div>
     </div>
-
-    <div class="hide">
-      <input id="SLIDid_store" name="SLIDname" type="text" required>
-      <input id="hsid_store" name="hidden_state" type="text" required>
-      <input id="userAccount_store" type="text" name="userAccount" required>
-    </div>
-  </form>
-
-  <script type="text/javascript">
-    sessionStorage.numOfLocks = '<%=Ownerlock.length + Userlock.length%>';
-  </script>
-  <div class="container">
-    <div class="row">
-      <div class="col s12">
-        <ul class="tabs">
-          <li class="tab col s2 hoverable"><a class="active" onclick="selectType()">All</a></li>
-          <li class="tab col s2 hoverable"><a onclick="selectType(0)">Unleased</a></li>
-          <li class="tab col s3 hoverable"><a onclick="selectType(1)">Being Rented</a></li>
-          <li class="tab col s2 hoverable"><a onclick="selectType(2)">Renting</a></li>
-          <li class="tab col s2 hoverable"><a onclick="selectType(3)">Booked</a></li>
-        </ul>
+    <form accept-charset="UTF-8" method="post">
+      <!-- Modal Structure -->
+      <div id="modal1" class="modal modal-fixed-footer">
+        <div class="modal-content">
+          <div class="container" id="newDate">
+            <!-- <div class="row">
+              <div class="card-panel center-align ">
+                <span class="red-text text-darken-5">Please assign a valid time period for the published lock.</span>
+              </div>
+            </div> -->
+            <div class="row" style="text-align:center">
+              <div class="input-field col s12 m6 disabled">
+                <i class="material-icons prefix">date_range</i>
+                <input id="stid" type="date" name="stname" class="datepicker">
+                <label for="stid">Available Since</label>
+              </div>
+              <div class="input-field col s12 m6 disabled">
+                <i class="material-icons prefix">date_range</i>
+                <label for="etid">Available Until</label>
+                <input id="etid" type="date" name="etname" class="datepicker">
+              </div>
+            <!-- </div>
+            <div class="row" id="submitRow"> -->
+              <div class="input-field col s12">
+                <i class="material-icons prefix">attach_money</i>
+                <input id="priceid" type="text" name="pricename" pattern="[0-9].?[0-9]{0,2}"
+                  onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')" required />
+                <label for="priceid">Price (ETH/day)</label>
+              </div>
+              <div class="input-field col s12">
+                <i class="material-icons prefix">location_on</i>
+                <input id="addressid" name="addressname" type="text">
+                <label for="addressid">Address</label>
+              </div>
+              <div class="input-field col s12">
+                <i class="material-icons prefix">info_outline</i>
+                <input id="introid" name="introname" type="text" maxlength="50" />
+                <label for="introid">Additional Information (optional)</label>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <a href="javascript:void(0)" onclick="cancelNewDateSubmit()"
+            class=" modal-action modal-close waves-effect btn-flat">Cancel</a>
+          <a href="javascript:void(0)" id="publishBtn"
+            class=" modal-action modal-close waves-effect btn-flat">Publish</a>
+        </div>
       </div>
-    </div>
-    <div id="lock-list" class="row" >
-      <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
+
+
+      <div class="hide">
+        <input id="SLIDid_store" name="SLIDname" type="text" required>
+        <input id="hsid_store" name="hidden_state" type="text" required>
+        <input id="userAccount_store" type="text" name="userAccount" required>
+      </div>
+    </form>
+
+    <script type="text/javascript">
+      sessionStorage.numOfLocks = '<%=Ownerlock.length + Userlock.length%>';
+    </script>
+    <div class="container">
+      <div class="row">
+        <div class="col s12">
+          <ul class="tabs">
+            <li class="tab col s2 hoverable"><a class="active" onclick="selectType()">All</a></li>
+            <li class="tab col s2 hoverable"><a onclick="selectType(0)">Unleased</a></li>
+            <li class="tab col s3 hoverable"><a onclick="selectType(1)">Being Rented</a></li>
+            <li class="tab col s2 hoverable"><a onclick="selectType(2)">Renting</a></li>
+            <li class="tab col s2 hoverable"><a onclick="selectType(3)">Booked</a></li>
+          </ul>
+        </div>
+      </div>
+      <div id="lock-list" class="row">
+        <% for(var i = 0; i < Ownerlock.length; ++i){ var res = Ownerlock[i]; %>
         <%if(res.currentuser == locals.userAccount){%>
-          <script type="text/javascript">
-            // green
-            addLock(0, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
-          </script>
+        <script type="text/javascript">
+          // green
+          addLock(0, "<%=res.nickname%>", <%=i %>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+        </script>
         <%} else {%>
-          <script type="text/javascript">
-            // yellow
-            addLock(1, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
-          </script>
+        <script type="text/javascript">
+          // yellow
+          addLock(1, "<%=res.nickname%>", <%=i %>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.isShown%>", "<%=res.start_time%>", "<%=res.end_time%>");
+        </script>
         <%}%>
       <%}%>
-      <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
+        <% for(var i = Ownerlock.length; i < Ownerlock.length + Userlock.length; ++i){ var res = Userlock[i - Ownerlock.length]; %>
         <script type="text/javascript">
           // blue
-          addLock(2, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>");
+          addLock(2, "<%=res.nickname%>", <%=i %>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>");
         </script>
-      <%}%>
+        <%}%>
       <% for(var i = Ownerlock.length + Userlock.length; i < Ownerlock.length + Userlock.length + Futurelock.length; ++i){ var res = Futurelock[i - Ownerlock.length - Userlock.length]; %>
         <script type="text/javascript">
           // grey
-          addLock(3, "<%=res.nickname%>", <%=i%>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.check_in_time%>", "<%=res.DEALID%>");
+          addLock(3, "<%=res.nickname%>", <%=i %>, "<%=res.unit_price%>", "<%=res.SLID%>", "<%=res.address%>", "<%=res.check_in_time%>", "<%=res.DEALID%>");
         </script>
-      <%}%>
+        <%}%>
     </div>
   </div>
   <br><br><br>

@@ -194,7 +194,7 @@ router
           throw error;
           res.redirect("/BindLock");
         }
-        return res.redirect("/MyLock");
+        return res.redirect("/");
       }
     );
   });
@@ -317,14 +317,21 @@ router
     console.log("req.body", req.body);
     var client = mysql.connect();
     if (req.body.hidden_state == 3) {
-      mysql.update_SmartLock_showStore(client, req.body.SLIDname, function(
-        error
-      ) {
-        if (error) {
-          throw error;
+      mysql.update_SmartLock_showStore(
+        client,
+        req.body.stname,
+        req.body.etname,
+        req.body.SLIDname,
+        req.body.addressname,
+        req.body.pricename,
+        req.body.introname,
+        function(error) {
+          if (error) {
+            throw error;
+          }
+          return res.send(req.body.SLIDname);
         }
-        return res.send(req.body.SLIDname);
-      });
+      );
     } else if (req.body.hidden_state == 4) {
       mysql.update_SmartLock_hideStore(client, req.body.SLIDname, function(
         error

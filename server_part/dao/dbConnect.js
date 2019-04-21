@@ -318,11 +318,12 @@ function update_Info_Renting(client, SLID, DEALID, currentUser, callback) {
   });
 }
 
-function update_SmartLock_showStore(client, SLID, callback) {
+function update_SmartLock_showStore(client, stname, etname, SLID, address, price, intro, callback) {
   client.getConnection(function(err, connection) {
     // client.query('UPDATE SmartLock SET isShown = true, start_time="' + st + '", end_time="' + et + '" WHERE SLID = "'+SLID+'"',
     connection.query(
-      'UPDATE SmartLock SET isShown = true WHERE SLID = "' + SLID + '"',
+      `UPDATE SmartLock SET isShown = true, start_time = '${stname}', end_time = '${etname}', address = '${address}', unit_price = '${price}', intro = '${intro}' WHERE SLID = '${SLID}'`,
+      // 'UPDATE SmartLock SET isShown = true, address = "' + address + '" WHERE SLID = "' + SLID + '"',
       function(err) {
         if (err) {
           console.log("update_SmartLock_showStore error:" + err.message);

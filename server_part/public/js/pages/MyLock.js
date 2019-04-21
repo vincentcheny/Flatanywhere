@@ -73,7 +73,9 @@ function addLock(type, nickname, num, price, SLID, address, isShown, st, et) {
       id: "priceid" + num,
       readonly: "readonly"
     })
-    .html(type<3?price + " ETH":new Date(arguments[6]).toLocaleDateString());
+    .html(
+      type < 3 ? price + " ETH" : new Date(arguments[6]).toLocaleDateString()
+    );
   if (screen.width > 375) {
     $card_content
       .find("span")
@@ -126,23 +128,10 @@ function addLock(type, nickname, num, price, SLID, address, isShown, st, et) {
       .find("a")
       .eq(0)
       .attr({
-        onclick:
-          "toggleStore('" +
-          SLID +
-          "', " +
-          isShown +
-          ", '" +
-          st +
-          "', '" +
-          et +
-          "'," +
-          num +
-          ", '" +
-          nickname +
-          "' )",
+        onclick:`toggleStore('${SLID}','${isShown}','${st}','${et}','${num}','${address}')`,
         class: "dropdown-item hoverable center-align"
       })
-      .html(isShown == true ? "Discontinue" : "Publish")
+      .html(isShown == true ? "Remove" : "Publish")
       .end()
       .eq(2)
       .attr({
@@ -263,47 +252,16 @@ function dateFormat(time, addDay) {
   return date;
 }
 
-function toggleStore(SLID, isOnStore, st, et, num, nickname) {
+function toggleStore(SLID, isOnStore, st, et, num, address) {
   // publish or discontinue from store
   $("#SLIDid_store").val(SLID);
+  console.log("isOnStore", isOnStore);
   if (isOnStore == false) {
     // Currently not in store and want to publish
-    $("#nicknameid")[0].value = nickname;
+    $("#addressid")[0].value = address;
     Materialize.updateTextFields();
-    $("#newDate").removeClass("hide");
-    $("#submitRow button[name='bind']").attr({
-      onclick: "newDateSubmit(" + num + ", '" + nickname + "', '" + SLID + "' )"
-    });
-    $(".lock-item, .activator").css({
-      "pointer-events": "none"
-    });
-    if (st != "") {
-      // There is a future deal for the flat
-      // if resetting the end_time, it has to be later than the origin one 'cause there is a future deal
-      $("#submitRow")
-        .find("div")
-        .eq(0)
-        .removeClass("m6")
-        .addClass("m3");
-      $("#submitRow")
-        .find("div")
-        .eq(3)
-        .removeClass("hide");
-      $("#submitRow button[name='reset']").attr({
-        onclick:
-          "resetNewDateSubmit(" +
-          num +
-          ", '" +
-          nickname +
-          "', '" +
-          st +
-          "', '" +
-          et +
-          "', '" +
-          SLID +
-          "' )"
-      });
-    }
+    $("#publishBtn").attr({onclick: `newDateSubmit(${num},'${SLID}')`});
+    $('#modal1').modal('open');
   } else {
     // Currently in store and want to discontinue
     if (st == "") {
@@ -320,74 +278,97 @@ function toggleStore(SLID, isOnStore, st, et, num, nickname) {
         $("#etid").val(dateFormat(JSON.parse(sessionStorage.getItem(SLID))));
       }
       $("#hsid_store").val(4);
-      sendAJAX("text", num, false, SLID, st, et, nickname, false);
+      sendAJAX("text", num, false, SLID, st, et, address);
     }
   }
 }
 
-function sendAJAX(
-  datatype,
-  num,
-  isPublish,
-  SLID,
-  st,
-  et,
-  nickname,
-  clearReset
-) {
-  // toggleStore() and update server DB
-  $.ajax({
-    type: "POST", //方法类型
-    dataType: datatype, //预期服务器返回的数据类型
-    async: false,
-    data: $("form").serialize(),
-    success: function(result) {
-      console.log(result);
-      var currentState = isPublish ? "Publish" : "Remove";
-      var newState = isPublish ? "Remove" : "Publish";
-      Materialize.toast(currentState + " Successfully!", 4000);
-      $("#reveal" + num)
-        .find("a")
-        .eq(0)
-        .attr({
-          onclick:
-            "toggleStore('" +
-            SLID +
-            "', " +
-            isPublish +
-            ", '" +
-            st +
-            "', '" +
-            et +
-            "'," +
-            num +
-            ", '" +
-            nickname +
-            "' )"
-        });
-      $("#reveal" + num)
-        .find("a")
-        .eq(0)
-        .html(newState);
-      $("#newDate").addClass("hide");
-      $("#close" + num).click();
-      $("#stid").val("");
-      $("#etid").val("");
-      if (clearReset) {
-        $("#submitRow")
-          .find("div")
+function sendAJAX(datatype, num, isPublish, SLID, st, et, address) {
+  if (!isPublish) {
+    $.ajax({
+      type: "POST", //方法类型
+      dataType: datatype, //预期服务器返回的数据类型
+      async: false,
+      data: $("form").serialize(),
+      success: function(result) {
+        console.log(result);
+        var currentState = isPublish ? "Publish" : "Remove";
+        var newState = isPublish ? "Remove" : "Publish";
+        Materialize.toast(currentState + " Successfully!", 4000);
+        $("#reveal" + num)
+          .find("a")
           .eq(0)
-          .addClass("m6");
-        $("#submitRow")
-          .find("div")
-          .eq(3)
-          .addClass("hide");
+          .attr({
+            onclick:`toggleStore('${SLID}',${isPublish},'${st}','${et}','${num}','${address}')`
+          });
+        $("#reveal" + num)
+          .find("a")
+          .eq(0)
+          .html(newState);
+        $("#priceid" + num).html($("#priceid").val() + " ETH");
+        $("#close" + num).click();
+        $("#stid").val("");
+        $("#etid").val("");
+      },
+      error: function() {
+        alert("Error in AJAX!");
       }
-    },
-    error: function() {
-      alert("Error in AJAX!");
+    });
+    return;
+  }
+  // toggleStore() and update server DB
+  st = new Date(st);
+  st = parseInt(st.getTime() / 1000) + 4 * 60 * 60;
+  et = new Date(et);
+  et = parseInt(et.getTime() / 1000) + 4 * 60 * 60;
+  var event = Flatanywhere.UpdateLock({
+    filter: {
+      SLID: SLID
     }
   });
+  Flatanywhere.UpdateSmartLock.sendTransaction(SLID, $("#priceid").val(), st, et, 
+    {
+      from: sessionStorage.userAccount
+    },
+    function(error, res) {
+      if (!error) {
+        event.watch(function(error, result) {
+          event.stopWatching();
+          if(result.args.success) {
+            $.ajax({
+              type: "POST", //方法类型
+              dataType: datatype, //预期服务器返回的数据类型
+              async: false,
+              data: $("form").serialize(),
+              success: function(result) {
+                console.log(result);
+                var currentState = isPublish ? "Publish" : "Remove";
+                var newState = isPublish ? "Remove" : "Publish";
+                Materialize.toast(currentState + " Successfully!", 4000);
+                $("#reveal" + num)
+                  .find("a")
+                  .eq(0)
+                  .attr({
+                    onclick:`toggleStore('${SLID}',${isPublish},'${st}','${et}','${num}','${address}')`
+                  });
+                $("#reveal" + num)
+                  .find("a")
+                  .eq(0)
+                  .html(newState);
+                $("#priceid" + num).html($("#priceid").val() + " ETH");
+                $("#close" + num).click();
+                $("#stid").val("");
+                $("#etid").val("");
+              },
+              error: function() {
+                alert("Error in AJAX!");
+              }
+            });
+          }
+        })
+      }
+    }
+  );
 }
 
 function deleteLock(SLID, num) {
@@ -469,40 +450,48 @@ function deleteLock(SLID, num) {
   });
 }
 
-function cencelNewDateSubmit() {
+function cancelNewDateSubmit() {
   $("#stid").val("");
   $("#etid").val("");
-  $("#newDate").addClass("hide");
-  $(".lock-item, .activator").css({
-    "pointer-events": "auto"
-  });
+  // $("#newDate").addClass("hide");
+  // $(".lock-item, .activator").css({
+  //   "pointer-events": "auto"
+  // });
 }
 
-function resetNewDateSubmit(num, nickname, st, et, SLID) {
+function resetNewDateSubmit(num, address, st, et, SLID) {
   $("#stid").val(dateFormat(st));
   $("#etid").val(dateFormat(et));
   $("#hsid_store").val(3);
   $(".lock-item, .activator").css({
     "pointer-events": "auto"
   });
-  sendAJAX("text", num, true, SLID, st, et, nickname, true);
+  sendAJAX("text", num, true, SLID, st, et, address);
 }
 
-function newDateSubmit(num, nickname, SLID) {
+function newDateSubmit(num, SLID) {
   // publish and use the new available time
   var stdate = new Date($("#stid").val());
   var eddate = new Date($("#etid").val());
+  var address = $("#addressid").val();
+  var price = $("#priceid").val();
   if (stdate == "Invalid Date" || eddate == "Invalid Date") {
     alert("Lack of start date or end date!");
     return;
   } else if (stdate >= eddate) {
     alert("Start date should be greater than end date!");
     return;
+  } else if (price == "") {
+    alert("Empty price!");
+    return;
+  } else if (address == "") {
+    alert("Empty address!");
+    return;
   }
   $("#stid").val(dateFormat(stdate));
   $("#etid").val(dateFormat(eddate));
   $("#hsid_store").val(3);
-  sendAJAX("text", num, true, SLID, stdate, eddate, nickname, false);
+  sendAJAX("text", num, true, SLID, stdate, eddate, address);
 }
 
 function CheckIn(num, SLID, checkintime, DEALID) {
@@ -544,19 +533,25 @@ function CheckIn(num, SLID, checkintime, DEALID) {
                 });
                 $("#lock" + result).removeClass("futureDiv");
                 $("#lock" + result).addClass("rentingDiv");
-                $("#lock" + result).find(".card-content a").eq(0).attr({
-                    class: "btn-floating halfway-fab waves-effect waves-light grey right",
+                $("#lock" + result)
+                  .find(".card-content a")
+                  .eq(0)
+                  .attr({
+                    class:
+                      "btn-floating halfway-fab waves-effect waves-light grey right",
                     onclick: 'Unlock("' + SLID + '", 0)',
                     href: "javascript:void(0)"
                   });
-                $("#lock" + result).find(".card-content i").eq(0).html("lock_open").attr({class: "material-icons hoverable"});
+                $("#lock" + result)
+                  .find(".card-content i")
+                  .eq(0)
+                  .html("lock_open")
+                  .attr({ class: "material-icons hoverable" });
                 $("#opBtn" + result).attr({
                   onclick: 'Unlock("' + SLID + '", 1)'
                 });
                 $("#opBtn" + result).html("Unlock");
                 $("#close" + result).click();
-
-
               },
               error: function() {
                 alert("Error in ajax POST!");
@@ -570,55 +565,53 @@ function CheckIn(num, SLID, checkintime, DEALID) {
 }
 
 function Unlock(SLID, type) {
-    var password = sessionStorage.userAccount.substring(0, 10);
-    if (type == 0) {
-      var ws = new WebSocket("ws://192.168.137.4:4300");
-      ws.onopen = function() {
-        ws.send(password);
-      };
-      ws.onmessage = evt => {
-        ws.close();
-      };
-    } else {
-      // show the unlock qrcode
-      $("#qrimg").empty();
-      $("body").append("<div id='mask'></div>");
-      $("#mask")
-        .addClass("mask")
-        .fadeIn("slow");
-      $("#LoginBox").fadeIn("slow");
-      var qrcode = new QRCode2.default($("#qrimg")[0], {
-        width: 200,
-        height: 200
-      });
-      qrcode.clear();
-      qrcode.makeCode(password);
-      $("html,body").animate(
-        {
-          scrollTop: 0
-        },
-        500
-      );
-    }    
-  
-  
-//   JsBarcode("#barcode", password, {
-//     displayValue: false
-//   });
+  console.log("SLID", SLID);
+  var password = sessionStorage.userAccount.substring(0, 10);
+  if (type == 0) {
+    var ws = new WebSocket("ws://192.168.137.4:4300");
+    ws.onopen = function() {
+      ws.send(password);
+    };
+    ws.onmessage = evt => {
+      ws.close();
+    };
+  } else {
+    // show the unlock qrcode
+    $("#qrimg").empty();
+    $("body").append("<div id='mask'></div>");
+    $("#mask")
+      .addClass("mask")
+      .fadeIn("slow");
+    $("#LoginBox").fadeIn("slow");
+    var qrcode = new QRCode2.default($("#qrimg")[0], {
+      width: 200,
+      height: 200
+    });
+    qrcode.clear();
+    qrcode.makeCode(password);
+    $("html,body").animate(
+      {
+        scrollTop: 0
+      },
+      500
+    );
+  }
+
+  //   JsBarcode("#barcode", password, {
+  //     displayValue: false
+  //   });
   // or with jQuery
   // $("#barcode").JsBarcode("Hi!");
-
 
   return;
 
   var ws = new WebSocket("ws://192.168.137.4:4300");
-  ws.onopen = function ()
-  {
+  ws.onopen = function() {
     ws.send(password);
   };
-  ws.onmessage=(evt)=>{
+  ws.onmessage = evt => {
     ws.close();
-  }
+  };
 
   return;
 
@@ -712,6 +705,7 @@ $(document).ready(function() {
   $("#userAccount").val(sessionStorage.userAccount);
   $(".dropdown-button").dropdown();
   $(".button-collapse").sideNav();
+  $('.modal').modal();
   $(".datepicker").pickadate({
     selectMonths: true, // Creates a dropdown to control month
     selectYears: 4 // Creates a dropdown of 15 years to control year
