@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
-    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
     <!--//永远以最新的IE版本模式来显示网页-->
     <title>BindLock</title>
@@ -15,23 +13,28 @@
         font-family: "微软雅黑";
         background-color: #fff;
       }
+
       html {
         min-width: 320px;
       }
+
       html {
         height: 100%;
       }
+
       body {
         height: 100%;
         margin: 0px;
         padding: 0px;
       }
+
       #abc {
         width: 80%;
         height: 50%;
         margin: 0 auto;
         font-family: "微软雅黑";
       }
+
       #allmap {
         width: 100%;
         height: 100%;
@@ -40,15 +43,9 @@
       }
     </style>
     <link rel="stylesheet" type="text/css" href="./css/materialize.min.css" />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Icons"
-      rel="stylesheet"
-    />
-    <script
-      src="//instant.page/1.2.1"
-      type="module"
-      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"
-    ></script>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <script src="//instant.page/1.2.1" type="module"
+      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
     <%#
     <script
       type="text/javascript"
@@ -66,74 +63,37 @@
     </ul>
     <ul id="dropdown-profile" class="dropdown-content">
       <li>
-        <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"
-          ><br />UserAccount<br /><br
-        /></a>
+        <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br />UserAccount<br /><br /></a>
       </li>
     </ul>
     <!-- Navbar -->
     <nav>
       <div class="nav-wrapper green lighten-2">
         <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
-        <a
-          href="javascript:void(0)"
-          data-activates="mobile-demo"
-          class="button-collapse"
-          ><i class="material-icons">menu</i></a
-        >
+        <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i
+            class="material-icons">menu</i></a>
         <ul class="right hide-on-med-and-down">
           <li>
-            <a
-              href="javascript:void(0)"
-              class="tooltipped"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Your account balance"
-              ><span id="balanceid"></span>&nbsp;ETH</a
-            >
+            <a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Your account balance"><span id="balanceid"></span>&nbsp;ETH</a>
           </li>
           <li>
-            <a
-              href="/MyLock"
-              class="dropdown-button tooltipped"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="See My Own Flat"
-              id="mylock"
-              >MyLock</a
-            >
+            <a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="See My Own Flat" id="mylock">MyLock</a>
           </li>
           <li>
-            <a
-              href="/Store"
-              class="dropdown-button tooltipped"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Explore Your Favourite Flat"
-              >Store</a
-            >
+            <a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Explore Your Favourite Flat">Store</a>
           </li>
           <li>
-            <a
-              class="dropdown-button tooltipped"
-              href="javascript:void(0)"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Developers' Emails"
-              data-activates="dropdown-contact"
-              >Contact<i class="material-icons right">arrow_drop_down</i></a
-            >
+            <a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Developers' Emails" data-activates="dropdown-contact">Contact<i
+                class="material-icons right">arrow_drop_down</i></a>
           </li>
           <li>
-            <a
-              class="dropdown-button tooltipped"
-              href="javascript:void(0)"
-              data-position="bottom"
-              data-delay="50"
-              data-tooltip="Your Account Number"
-              data-activates="dropdown-profile"
-              >Profile<i class="material-icons right">arrow_drop_down</i></a
-            >
+            <a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Your Account Number" data-activates="dropdown-profile">Profile<i
+                class="material-icons right">arrow_drop_down</i></a>
           </li>
         </ul>
         <ul class="side-nav" id="mobile-demo">
@@ -142,11 +102,7 @@
           <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
           <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
           <li>
-            <a
-              href="javascript:void(0)"
-              onclick="alert(sessionStorage.userAccount)"
-              >UserAccount</a
-            >
+            <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a>
           </li>
         </ul>
       </div>
@@ -160,13 +116,7 @@
         <div class="switch">
           <label>
             Private
-            <input
-              type="checkbox"
-              name="isShown"
-              onclick="checkboxOnclick(this)"
-              value="show"
-              checked
-            />
+            <input type="checkbox" name="isShown" onclick="checkboxOnclick(this)" value="show" checked />
             <span class="lever"></span>
             Public
           </label>
@@ -174,7 +124,7 @@
         <br />
 
         <div class="row">
-          <div class="row" id="dateRow">
+          <div id="dateRow">
             <div class="input-field col s12 m6">
               <i class="material-icons prefix">date_range</i>
               <input id="stid" type="date" name="stname" class="datepicker" />
@@ -185,91 +135,52 @@
               <label for="etid">Available Until</label>
               <input id="etid" type="date" name="etname" class="datepicker" />
             </div>
-          </div>
-          <div class="row">
             <div class="input-field col s12 m6">
               <i class="material-icons prefix">attach_money</i>
-              <input
-                placeholder="e.g. 0.5"
-                id="priceid"
-                type="text"
-                class="validate"
-                name="pricename"
-                pattern="[0-9].?[0-9]{0,2}"
-                onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')"
-                required
-              />
+              <input placeholder="e.g. 0.5" id="priceid" type="text" class="validate" name="pricename"
+                pattern="[0-9].?[0-9]{0,2}" onkeyup="this.value=this.value.replace(/[^0-9\.]/g,'')" required />
               <label for="priceid">Price (ETH/day)</label>
             </div>
-            <div class="input-field col s12 m6">
-              <i class="material-icons prefix">insert_emoticon</i>
-              <input
-                id="nicknameid"
-                name="nickname"
-                type="text"
-                placeholder="e.g. Home"
-                onkeydown="pressEnter(event)"
-                maxlength="15"
-                required
-              />
-              <label for="nicknameid">Nickname (max-length:15)</label>
-            </div>
-            <div class="input-field col s12">
-              <i class="material-icons prefix">info_outline</i>
-              <input
-                id="introid"
-                type="text"
-                placeholder="You are free to add some introduction here."
-                onkeydown="pressEnter(event)"
-                maxlength="50"
-              />
-              <label for="introid"
-                >Additional Information (max-length:50)</label
-              >
-            </div>
-            <div class="input-field col s12 m9">
-              <i class="material-icons prefix">vpn_key</i>
-              <input
-                id="serialnumid"
-                type="text"
-                onkeydown="pressEnter(event)"
-                maxlength="32"
-                required
-              />
-              <label for="serialnumid">Serial Number (max-length:32)</label>
-            </div>
-            <div class="col s12 m3">
-              <button
-                class="btn-large waves-effect waves-light right"
-                type="button"
-                onclick="bind()"
-                name="action"
-              >
-                &nbsp;&nbsp;BIND&nbsp;&nbsp;
-                <i class="material-icons right">link</i>
-              </button>
-            </div>
-            <div class="input-field col s12 m9">
-              <i class="material-icons prefix">location_on</i>
-              <input
-                id="pac-input"
-                class="controls"
-                type="text"
-                placeholder="e.g. CUHK"
-              />
-              <label for="pac-input">Location</label>
-            </div>
-            <div class="col s12 m3">
-              <button
-                class="btn-large waves-effect waves-light right"
-                type="button"
-                onclick="clickSearchBtn()"
-              >
-                Search
-                <i class="material-icons right">search</i>
-              </button>
-            </div>
+
           </div>
+          <!-- <div class="row"> -->
+          <div class="input-field col s12 m6" id="nicknameDiv">
+            <i class="material-icons prefix">insert_emoticon</i>
+            <input id="nicknameid" name="nickname" type="text" placeholder="e.g. Home" onkeydown="pressEnter(event)"
+              maxlength="15" required />
+            <label for="nicknameid">Nickname (max-length:15)</label>
+          </div>
+          <div class="input-field col s12" id="infoDiv">
+            <i class="material-icons prefix">info_outline</i>
+            <input id="introid" name="introname" type="text" placeholder="You are free to add some introduction here."
+              onkeydown="pressEnter(event)" maxlength="50" />
+            <label for="introid">Additional Information (optional)</label>
+          </div>
+          <div class="input-field col s12">
+            <i class="material-icons prefix">vpn_key</i>
+            <input id="serialnumid" type="text" onkeydown="pressEnter(event)" maxlength="32" required />
+            <label for="serialnumid">Serial Number</label>
+          </div>
+          <div class="input-field col s12">
+            <i class="material-icons prefix">location_on</i>
+            <input id="pac-input" class="controls" type="text" placeholder="e.g. CUHK" />
+            <label for="pac-input">Location</label>
+          </div>
+          <div class="col s12 m6">
+            <button class="btn-large waves-effect waves-light right" type="button" onclick="bind()" name="action"
+              style="width:100%">
+              &nbsp;&nbsp;BIND&nbsp;&nbsp;
+              <i class="material-icons right">link</i>
+            </button>
+          </div>
+          <div class="col s12 m6">
+            <button class="btn-large waves-effect waves-light right" type="button" onclick="clickSearchBtn()"
+              style="width:100%">
+              Search
+              <i class="material-icons right">search</i>
+            </button>
+          </div>
+          <!-- </div> -->
           <%#
           <!-- <div class="row" id="addrRow">
             <div class="input-field col s12">
@@ -299,6 +210,7 @@
         #map {
           height: 100%;
         }
+
         #mapContainer {
           height: 80vh;
         }
@@ -373,7 +285,6 @@
   <script type="text/javascript" src="./js/pages/Map.js"></script>
   <script
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBTzVI-RmzUWigMZZaV2oXVPLAzrcbFdGs&libraries=places&callback=InitMap"
-    async
-    defer
-  ></script>
+    async defer></script>
+
 </html>
