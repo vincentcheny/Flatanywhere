@@ -102,6 +102,12 @@
   color: #fff;
   cursor: pointer;
 }
+.card-content:hover p{
+  color: white !important;
+}
+.card-content p {
+  color: darkgrey !important;
+}
 
 @media screen and (min-width: 820px) and (max-width: 1320px) {
   .btn-lg {
