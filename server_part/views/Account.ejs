@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge,chrome=1" />
+    <!--//永远以最新的IE版本模式来显示网页-->
+    <title>Home</title>
+    <style media="screen">
+      body {
+        font-family: "微软雅黑";
+        background-color: #fff;
+      }
+
+      html {
+        min-width: 320px;
+      }
+
+      #title {
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+    </style>
+    <link rel="stylesheet" type="text/css" href="./css/materialize.min.css" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+    <link rel="stylesheet" type="text/css" href="./css/pages/Home.css" />
+    <link rel="shortcut icon" href="./favicon.ico" />
+    <link rel="bookmark" href="./favicon.ico" />
+    <script src="//instant.page/1.2.1" type="module"
+      integrity="sha384-/IkE5iZAM/RxPto8B0nvKlMzIyCWtYocF01PbGGp1qElJuxv9J4whdWBRtzZltWn"></script>
+    <script src="./js/socket.io.js"></script>
+  </head>
+
+  <body style="background-color: rgb(242, 250, 250)">
+    <!-- Dropdown Structure -->
+    <!-- <ul id="dropdown-contact" class="dropdown-content">
+      <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+      <li class="divider"></li>
+      <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+    </ul> -->
+    <ul id="dropdown-profile" class="dropdown-content">
+      <li>
+        <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)"><br />UserAccount<br /><br /></a>
+      </li>
+    </ul>
+    <!-- Navbar -->
+    <nav>
+      <div class="nav-wrapper green lighten-2">
+        <a href="/" class="brand-logo">&nbsp;Flatanywhere</a>
+        <a href="javascript:void(0)" data-activates="mobile-demo" class="button-collapse"><i
+            class="material-icons">menu</i></a>
+        <ul class="right hide-on-med-and-down">
+          <li>
+            <a href="javascript:void(0)" class="tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Your account balance" style="color:rgb(224, 235, 235)"><span
+                id="balanceid"></span>&nbsp;ETH</a>
+          </li>
+          <li>
+            <a href="/MyLock" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="See My Own Flat" id="mylock">MyLock</a>
+          </li>
+          <li>
+            <a href="/Store" class="dropdown-button tooltipped" data-position="bottom" data-delay="50"
+              data-tooltip="Explore Your Favourite Flat">Store</a>
+          </li>
+          <!-- <li>
+            <a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Developers' Emails" data-activates="dropdown-contact"
+              style="color:rgb(224, 235, 235)">Contact<i class="material-icons right">arrow_drop_down</i></a>
+          </li> -->
+          <li>
+            <a class="dropdown-button tooltipped" href="javascript:void(0)" data-position="bottom" data-delay="50"
+              data-tooltip="Your Account Number" data-activates="dropdown-profile"
+              style="color:rgb(224, 235, 235)">Profile<i class="material-icons right">arrow_drop_down</i></a>
+          </li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+          <li><a href="/BindLock">Become a host</a></li>
+          <li><a href="/MyLock">MyLock</a></li>
+          <li><a href="/Store">Store</a></li>
+
+          <li><a href="mailto:1155107972@link.cuhk.edu.hk">WU ZhuoMing</a></li>
+          <li><a href="mailto:1155107977@link.cuhk.edu.hk">CHEN Yu</a></li>
+          <li>
+            <a href="javascript:void(0)" onclick="alert(sessionStorage.userAccount)">UserAccount</a>
+          </li>
+        </ul>
+      </div>
+    </nav>
+    <!--------------------------------------------------------------------------------------------------------->
+    <!-- Body Part -->
+
+    <script>
+    var str = `<p>Address: 0x2237d9dc72621c8b0a14b3fc833f4b0cbedeb1be
+(0) 0xfaf8c592be514b19f7611cd0d197d11124ddb52d87b0b3390743f8f22c100714
+(1) 0xeb3dfa4f183c9983f81c038e9dd66214b34bb3c39fc4525f332680363fdf5d4b
+(2) 0x46bd62c0a4c1e99cb60d7be75a1cd1651f4e6bb3509fa54dcc939950b915589c
+(3) 0xd0d2c9c7808cdf3ab753754aa986cce80998691a4fab6a87030de97db67899a5
+(4) 0x4f29dbdcd0ad25502a7123f742be54265bb64f8fddf8f7ddef59e81007b260b4
+(5) 0x724843cce93d482258d9033b4d339c80328d9c07e937dbaf15f7c1044805a3e1
+(6) 0x38dac972e1c582d8b4e45d13c8551315350ac56c2de17e8c8a0e95d5b0235e84
+(7) 0x1df7d33fa3941a25a038b0f5d2ca540825466f65fca87aa9d47ea2bdf01e4b30
+(8) 0xff9a3699162262224ae8583dbeb379549d1686e82a111c8dc93171f27d006b5c
+(9) 0xd18cdae2a5baf17683f9da0b99ddd33fc6e3c10880e7f8ab392ae07708f9880b
+    </p>`;
+    str = str.replace(/\s/g,"<br>");
+    document.write(str);
+    </script>
+  </body>
+  <script type="text/javascript" src="./js/jquery.min.js"></script>
+  <script type="text/javascript" src="./js/base.js"></script>
+  <script type="text/javascript" src="./js/common.js"></script>
+  <script type="text/javascript" src="./js/web3.min.js"></script>
+  <script type="text/javascript" src="./js/materialize.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function ()
+    {
+      $("#userAccount").val(sessionStorage.userAccount);
+      $(".dropdown-button").dropdown();
+      $(".button-collapse").sideNav();
+    });
+  </script>
+  
+
+</html>

@@ -84,6 +84,11 @@ router
   });
 
 router
+  .get("/Account", function(req, res) {
+    res.render("Account", req);
+  });
+
+router
   .get("/Query", function(req, res) {
     var client = mysql.connect();
     mysql.select_Deal_Unread(client, req.session.userAccount, function(result) {
