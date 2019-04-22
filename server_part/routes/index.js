@@ -1,5 +1,6 @@
 var express = require("express");
 var mysql = require("../dao/dbConnect.js");
+var client = mysql.connect();
 var router = express.Router();
 var http = require("http").Server(express);
 var io = require("socket.io")(http);
@@ -90,13 +91,13 @@ router
 
 router
   .get("/Query", function(req, res) {
-    var client = mysql.connect();
+    // var client = mysql.connect();
     mysql.select_Deal_Unread(client, req.session.userAccount, function(result) {
       return res.send(result);
     });
   })
   .post("/Query", function(req, res) {
-    var client = mysql.connect();
+    // var client = mysql.connect();
     mysql.update_Deal_Unread(client, req.session.userAccount, function(error) {
       if (error) {
         throw error;
@@ -106,7 +107,7 @@ router
   });
 
 router.post("/RemovalQuery", function(req, res) {
-  var client = mysql.connect();
+  // var client = mysql.connect();
   mysql.select_SmartLock_Deletable(client, req.body.SLID, function(result) {
     console.log("RemovalQuery result\n", result);
     return res.send(result);
@@ -114,7 +115,7 @@ router.post("/RemovalQuery", function(req, res) {
 });
 
 router.post("/Removal", function(req, res) {
-  var client = mysql.connect();
+  // var client = mysql.connect();
   mysql.delete_SmartLock_by_SLID(client, req.body.SLID, function(error) {
     console.log("delete_SmartLock_by_SLID");
     if (error) {
@@ -125,7 +126,7 @@ router.post("/Removal", function(req, res) {
 });
 
 router.post("/Withdraw", function(req, res) {
-  var client = mysql.connect();
+  // var client = mysql.connect();
   mysql.update_Deal_Withdraw(client, req.body.DEALID, function(error) {
     console.log("update_Deal_Withdraw");
     if (error) {
@@ -136,7 +137,7 @@ router.post("/Withdraw", function(req, res) {
 });
 
 router.post("/CheckIn", function(req, res) {
-  var client = mysql.connect();
+  // var client = mysql.connect();
   mysql.update_Info_Renting(
     client,
     req.body.SLID,
@@ -161,7 +162,7 @@ router
     res.render("BindLock", req);
   })
   .post("/BindLock", function(req, res) {
-    var client = mysql.connect();
+    // var client = mysql.connect();
     // console.log(
     //   "req.body.isShown:",
     //   req.body.isShown,
@@ -209,7 +210,7 @@ router
     if (req.session.userAccount == undefined) {
       return res.redirect("/");
     }
-    var client = mysql.connect();
+    // var client = mysql.connect();
     mysql.select_SmartLock_Store(client, function(result) {
       req.StoreLocks = result;
       console.log("intro:\n", result.intro);
@@ -241,7 +242,7 @@ router
     });
   })
   .post("/Store", function(req, res) {
-    var client = mysql.connect();
+    // var client = mysql.connect();
     console.log("req.body", req.body);
     mysql.insert_Deal(
       client,
@@ -266,7 +267,7 @@ router
     if (req.session.userAccount == undefined) {
       return res.redirect("/");
     }
-    var client = mysql.connect();
+    // var client = mysql.connect();
     console.log(
       "userAccount in get/MyLock:",
       req.session.userAccount == "",
@@ -320,7 +321,7 @@ router
   })
   .post("/MyLock", function(req, res) {
     console.log("req.body", req.body);
-    var client = mysql.connect();
+    // var client = mysql.connect();
     if (req.body.hidden_state == 3) {
       mysql.update_SmartLock_showStore(
         client,
